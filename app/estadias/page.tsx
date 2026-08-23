@@ -1,7 +1,8 @@
 "use client";
 
 import {
-  FormEvent,
+FormEvent,
+  Suspense,
   useEffect,
   useState,
 } from "react";
@@ -46,6 +47,22 @@ type Estadia = {
   retirado_por: string | null;
   alimentacion_estadia: string | null;
   observaciones: string | null;
+
+  perritos: {
+  nombre: string;
+} | null;
+
+tipos_estadia: {
+  nombre: string;
+} | null;
+
+estados_estadia: {
+  nombre: string;
+} | null;
+
+estados_pago: {
+  nombre: string;
+} | null;
 };
 
 
@@ -87,7 +104,7 @@ function formatearColones(valor: number) {
 
 
 
-export default function EstadiasPage() {
+function EstadiasContent() {
 
 const router = useRouter();  
 
@@ -264,9 +281,9 @@ observaciones,
       return;
     }
 
-    setEstadias(
-      (data ?? []) as Estadia[]
-    );
+  setEstadias(
+  (data ?? []) as unknown as Estadia[]
+);
 
     setCargando(false);
   }
@@ -326,8 +343,8 @@ supabase
     );
   } else {
     setPerritos(
-      (perritosResult.data ?? []) as Perrito[]
-    );
+  (perritosResult.data ?? []) as unknown as Perrito[]
+);
   }
 
   if (tiposResult.error) {
@@ -365,6 +382,8 @@ if (estadosEstadiaResult.error) {
 }
 
 }
+
+
 
 
 function limpiarFormulario() {
@@ -948,7 +967,10 @@ const perritosFiltrados =
         .trim()
         .toLowerCase()
     );
-  }); 
+  }
+); 
+
+  
 
   return (
     <div>
@@ -1788,4 +1810,21 @@ onChange={(e) => {
 
     </div>
   );
+
+  }/*return estadias*/
+
+export default function EstadiasPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="empty-state">
+          Cargando estadías...
+        </div>
+      }
+    >
+      <EstadiasContent />
+    </Suspense>
+  );
+
+
 }

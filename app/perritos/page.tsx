@@ -2,6 +2,7 @@
 
 import {
   FormEvent,
+  Suspense,
   useEffect,
   useMemo,
   useState,
@@ -40,7 +41,7 @@ type Perrito = {
   } | null;
 };
 
-export default function PerritosPage() {
+function PerritosContent() {
   const searchParams = useSearchParams();
 
   const propietarioDesdeUrl =
@@ -114,7 +115,9 @@ const [precioGuarderia, setPrecioGuarderia] =
       return;
     }
 
-    setPerritos((data ?? []) as Perrito[]);
+    setPerritos(
+  (data ?? []) as unknown as Perrito[]
+);
   }
 
   async function cargarPropietarios() {
@@ -707,5 +710,19 @@ precio_guarderia:
       )}
 
     </div>
+  );
+}
+
+export default function PerritosPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="empty-state">
+          Cargando perritos...
+        </div>
+      }
+    >
+      <PerritosContent />
+    </Suspense>
   );
 }

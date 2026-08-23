@@ -167,9 +167,9 @@ export default function EstadiaDetallePage() {
       return;
     }
 
-    setEstadia(
-      data as EstadiaDetalle
-    );
+ setEstadia(
+  data as unknown as EstadiaDetalle
+);
 
     setCargando(false);
   }

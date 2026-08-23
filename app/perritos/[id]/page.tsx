@@ -464,7 +464,9 @@ const ultimaDesparasitacion =
       return;
     }
 
-    setPerrito(data as Perrito);
+   setPerrito(
+  data as unknown as Perrito
+);
 
     setNombre(data.nombre ?? "");
     setFechaNacimiento(
@@ -585,7 +587,7 @@ setPrecioGuarderia(
     }
 
     setVacunas(
-      (data ?? []) as Vacuna[]
+     (data ?? []) as unknown as Vacuna[]
     );
   }
 
@@ -612,7 +614,7 @@ setPrecioGuarderia(
     }
 
     setDesparasitaciones(
-      (data ?? []) as Desparasitacion[]
+      (data ?? []) as unknown as Desparasitacion[]
     );
   }
 

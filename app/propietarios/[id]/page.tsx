@@ -131,7 +131,7 @@ export default function PropietarioDetallePage() {
       return;
     }
 
-    setPerritos((data ?? []) as Perrito[]);
+    setPerritos((data ?? []) as unknown as Perrito[]);
   }
 
   useEffect(() => {

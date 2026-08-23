@@ -159,9 +159,9 @@ const [cargando, setCargando] =
     return;
   }
 
-  setEstadias(
-    (data ?? []) as EstadiaCalendario[]
-  );
+setEstadias(
+  (data ?? []) as unknown as EstadiaCalendario[]
+);
 
   setCargando(false);
 }

@@ -189,6 +189,30 @@ hora_salida,
       )
     `);    
 
+const estadiasHoy =
+  (estadiasHoyData ?? []) as unknown as {
+    id: number;
+    perrito_id: number;
+
+    fecha_entrada: string;
+    fecha_salida: string;
+
+    hora_entrada: string | null;
+    hora_salida: string | null;
+
+    perritos: {
+      nombre: string;
+    } | null;
+
+    tipos_estadia: {
+      nombre: string;
+    } | null;
+
+    estados_estadia: {
+      nombre: string;
+    } | null;
+  }[];    
+
 const { data: vacunasData } =
   await supabase
     .from("vacunas_perrito")
@@ -208,12 +232,12 @@ const { data: vacunasData } =
       )
     `);
 
-  if (estadiasHoyData) {
+ if (estadiasHoy.length > 0) {
   const hoyTexto =
     hoy.toISOString().split("T")[0];
 
   const activasHoy =
-    estadiasHoyData.filter((estadia) => {
+    estadiasHoy.filter((estadia) => {
       const estado =
         estadia.estados_estadia?.nombre;
 
@@ -232,7 +256,7 @@ const { data: vacunasData } =
 );
 
 const entradas =
-  estadiasHoyData.filter(
+  estadiasHoy.filter(
     (estadia) =>
       estadia.fecha_entrada === hoyTexto &&
       estadia.estados_estadia?.nombre !==
@@ -249,7 +273,7 @@ setDetalleEntradasHoy(
 
 
 const salidas =
-  estadiasHoyData.filter(
+  estadiasHoy.filter(
     (estadia) =>
       estadia.fecha_salida === hoyTexto &&
       estadia.estados_estadia?.nombre !==
