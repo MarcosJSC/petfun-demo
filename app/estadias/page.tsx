@@ -1,0 +1,1791 @@
+"use client";
+
+import {
+  FormEvent,
+  useEffect,
+  useState,
+} from "react";
+import { supabase } from "@/lib/supabase";
+
+import Link from "next/link";
+
+import {
+  useRouter,
+  useSearchParams,
+} from "next/navigation";
+
+type Estadia = {
+   id: number;
+
+  perrito_id: number;
+  tipo_estadia_id: number;
+  estado_estadia_id: number;
+  estado_pago_id: number;
+  forma_pago_id: number | null;
+
+  fecha_entrada: string;
+  hora_entrada: string | null;
+
+  fecha_salida: string;
+  hora_salida: string | null;
+
+  dias_hotel: number;
+  dias_guarderia: number;
+
+  precio_hotel_aplicado: number;
+  precio_guarderia_aplicado: number;
+
+  subtotal_hotel: number;
+  subtotal_guarderia: number;
+
+  descuento: number;
+  total: number;
+  monto_pagado: number;
+
+  entregado_por: string | null;
+  retirado_por: string | null;
+  alimentacion_estadia: string | null;
+  observaciones: string | null;
+};
+
+
+type Perrito = {
+  id: number;
+  nombre: string;
+  precio_hotel: number | null;
+  precio_guarderia: number | null;
+
+  propietarios: {
+    nombre: string;
+    apellidos: string | null;
+  } | null;
+};
+
+type TipoEstadia = {
+  id: number;
+  nombre: string;
+};
+
+function formatearFecha(fecha: string) {
+  return new Intl.DateTimeFormat("es-CR", {
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric",
+  }).format(
+    new Date(`${fecha}T00:00:00`)
+  );
+}
+
+function formatearColones(valor: number) {
+  return new Intl.NumberFormat("es-CR", {
+    style: "currency",
+    currency: "CRC",
+    maximumFractionDigits: 0,
+  }).format(valor);
+}
+
+
+
+
+export default function EstadiasPage() {
+
+const router = useRouter();  
+
+const searchParams = useSearchParams();
+
+const estadiaEditarDesdeUrl =
+  searchParams.get("editar");
+
+const fechaNuevaDesdeUrl =
+  searchParams.get("nueva");
+
+  const [estadias, setEstadias] =
+    useState<Estadia[]>([]);
+
+  const [cargando, setCargando] =
+    useState(true);
+
+  const [mensaje, setMensaje] =
+    useState("");
+
+ const [perritos, setPerritos] =
+  useState<Perrito[]>([]);
+
+const [tiposEstadia, setTiposEstadia] =
+  useState<TipoEstadia[]>([]);
+
+const [modalAbierto, setModalAbierto] =
+  useState(false);
+
+const [perritoId, setPerritoId] =
+  useState("");
+
+  const [busquedaPerrito, setBusquedaPerrito] =
+  useState("");
+
+const [tipoEstadiaId, setTipoEstadiaId] =
+  useState("");   
+
+  const [fechaEntrada, setFechaEntrada] =
+  useState("");
+
+const [horaEntrada, setHoraEntrada] =
+  useState("");
+
+const [fechaSalida, setFechaSalida] =
+  useState("");
+
+const [horaSalida, setHoraSalida] =
+  useState("");
+
+const [diasHotel, setDiasHotel] =
+  useState(0);
+
+const [diasGuarderia, setDiasGuarderia] =
+  useState(0);
+
+  const [precioHotel, setPrecioHotel] =
+  useState(0);
+
+const [precioGuarderia, setPrecioGuarderia] =
+  useState(0);
+
+const [descuento, setDescuento] =
+  useState(0);
+
+ const [estadosPago, setEstadosPago] =
+  useState<{ id: number; nombre: string }[]>([]);
+
+const [formasPago, setFormasPago] =
+  useState<{ id: number; nombre: string }[]>([]);
+
+const [estadoPagoId, setEstadoPagoId] =
+  useState("");
+
+const [formaPagoId, setFormaPagoId] =
+  useState("");
+
+const [montoPagado, setMontoPagado] =
+  useState(0); 
+
+const [estadosEstadia, setEstadosEstadia] =
+  useState<{ id: number; nombre: string }[]>([]);
+
+const [estadoEstadiaId, setEstadoEstadiaId] =
+  useState("");
+
+const [entregadoPor, setEntregadoPor] =
+  useState("");
+
+const [retiradoPor, setRetiradoPor] =
+  useState("");
+
+const [alimentacionEstadia, setAlimentacionEstadia] =
+  useState("");
+
+const [observaciones, setObservaciones] =
+  useState("");  
+
+  const [guardando, setGuardando] =
+  useState(false);
+
+  const [estadiaEditando, setEstadiaEditando] =
+  useState<Estadia | null>(null);
+
+  const [
+  permitirRecalculoEdicion,
+  setPermitirRecalculoEdicion,
+] = useState(false);
+
+  async function cargarEstadias() {
+    setCargando(true);
+
+    const { data, error } = await supabase
+      .from("estadias")
+      .select(`
+    id,
+perrito_id,
+tipo_estadia_id,
+estado_estadia_id,
+estado_pago_id,
+forma_pago_id,
+
+fecha_entrada,
+hora_entrada,
+fecha_salida,
+hora_salida,
+
+dias_hotel,
+dias_guarderia,
+
+precio_hotel_aplicado,
+precio_guarderia_aplicado,
+
+subtotal_hotel,
+subtotal_guarderia,
+
+descuento,
+total,
+monto_pagado,
+
+entregado_por,
+retirado_por,
+alimentacion_estadia,
+observaciones,
+
+        perritos (
+          nombre
+        ),
+
+        tipos_estadia (
+          nombre
+        ),
+
+        estados_estadia (
+          nombre
+        ),
+
+        estados_pago (
+          nombre
+        )
+      `)
+      .order("fecha_entrada", {
+        ascending: false,
+      });
+
+    if (error) {
+      console.error(error);
+
+      setMensaje(
+        "No se pudieron cargar las estadías."
+      );
+
+      setCargando(false);
+      return;
+    }
+
+    setEstadias(
+      (data ?? []) as Estadia[]
+    );
+
+    setCargando(false);
+  }
+
+  async function cargarCatalogos() {
+const [
+  perritosResult,
+  tiposResult,
+  estadosPagoResult,
+  formasPagoResult,
+  estadosEstadiaResult,
+] = await Promise.all([
+supabase
+  .from("perritos")
+  .select(`
+    id,
+    nombre,
+    precio_hotel,
+    precio_guarderia,
+
+    propietarios (
+      nombre,
+      apellidos
+    )
+  `)
+      .eq("activo", true)
+      .order("nombre"),
+
+    supabase
+      .from("tipos_estadia")
+      .select("id, nombre")
+      .order("id"),
+
+  supabase
+  .from("estados_pago")
+  .select("id, nombre")
+  .order("id"),
+
+supabase
+  .from("formas_pago")
+  .select("id, nombre")
+  .order("id"),  
+  
+ supabase
+  .from("estados_estadia")
+  .select("id, nombre")
+  .order("id"),
+
+
+  ]);
+
+  
+
+  if (perritosResult.error) {
+    console.error(
+      perritosResult.error
+    );
+  } else {
+    setPerritos(
+      (perritosResult.data ?? []) as Perrito[]
+    );
+  }
+
+  if (tiposResult.error) {
+    console.error(
+      tiposResult.error
+    );
+  } else {
+    setTiposEstadia(
+      (tiposResult.data ?? []) as TipoEstadia[]
+    );
+  }
+
+if (estadosPagoResult.error) {
+  console.error(estadosPagoResult.error);
+} else {
+  setEstadosPago(
+    estadosPagoResult.data ?? []
+  );
+}
+
+if (formasPagoResult.error) {
+  console.error(formasPagoResult.error);
+} else {
+  setFormasPago(
+    formasPagoResult.data ?? []
+  );
+}
+
+if (estadosEstadiaResult.error) {
+  console.error(estadosEstadiaResult.error);
+} else {
+  setEstadosEstadia(
+    estadosEstadiaResult.data ?? []
+  );
+}
+
+}
+
+
+function limpiarFormulario() {
+  setPerritoId("");
+  setBusquedaPerrito("");
+  setTipoEstadiaId("");
+
+  setFechaEntrada("");
+  setHoraEntrada("");
+  setFechaSalida("");
+  setHoraSalida("");
+
+  setDiasHotel(0);
+  setDiasGuarderia(0);
+
+  setPrecioHotel(0);
+  setPrecioGuarderia(0);
+
+  setDescuento(0);
+
+  setFormaPagoId("");
+  setMontoPagado(0);
+
+  setEntregadoPor("");
+  setRetiradoPor("");
+  setAlimentacionEstadia("");
+  setObservaciones("");
+
+  // Los dejamos vacíos para que el useEffect
+  // vuelva a seleccionar automáticamente
+  // Reservada y Pendiente.
+  setEstadoEstadiaId("");
+  setEstadoPagoId("");
+}
+
+function cerrarModal() {
+  if (guardando) {
+    return;
+  }
+
+  limpiarFormulario();
+  setEstadiaEditando(null);
+  setModalAbierto(false);
+
+if (
+  estadiaEditarDesdeUrl ||
+  fechaNuevaDesdeUrl
+) {
+  router.replace("/estadias");
+}
+}
+
+function abrirEditarEstadia(estadia: Estadia) {
+
+   setPermitirRecalculoEdicion(false);
+
+  setEstadiaEditando(estadia);
+
+  setPerritoId(
+    String(estadia.perrito_id)
+  );
+
+  setBusquedaPerrito("");
+
+  setTipoEstadiaId(
+    String(estadia.tipo_estadia_id)
+  );
+
+  setFechaEntrada(
+    estadia.fecha_entrada
+  );
+
+  setHoraEntrada(
+    estadia.hora_entrada ?? ""
+  );
+
+  setFechaSalida(
+    estadia.fecha_salida
+  );
+
+  setHoraSalida(
+    estadia.hora_salida ?? ""
+  );
+
+  setDiasHotel(
+    estadia.dias_hotel
+  );
+
+  setDiasGuarderia(
+    estadia.dias_guarderia
+  );
+
+  setPrecioHotel(
+    Number(
+      estadia.precio_hotel_aplicado
+    )
+  );
+
+  setPrecioGuarderia(
+    Number(
+      estadia.precio_guarderia_aplicado
+    )
+  );
+
+  setDescuento(
+    Number(estadia.descuento)
+  );
+
+  setEstadoEstadiaId(
+    String(estadia.estado_estadia_id)
+  );
+
+  setEstadoPagoId(
+    String(estadia.estado_pago_id)
+  );
+
+  setFormaPagoId(
+    estadia.forma_pago_id
+      ? String(estadia.forma_pago_id)
+      : ""
+  );
+
+  setMontoPagado(
+    Number(estadia.monto_pagado)
+  );
+
+  setEntregadoPor(
+    estadia.entregado_por ?? ""
+  );
+
+  setRetiradoPor(
+    estadia.retirado_por ?? ""
+  );
+
+  setAlimentacionEstadia(
+    estadia.alimentacion_estadia ?? ""
+  );
+
+  setObservaciones(
+    estadia.observaciones ?? ""
+  );
+
+  setMensaje("");
+  setModalAbierto(true);
+}
+
+async function eliminarEstadia(
+  estadia: Estadia
+) {
+  const confirmar = window.confirm(
+    `¿Seguro que deseas eliminar esta estadía de ${
+      estadia.perritos?.nombre ?? "este perrito"
+    }?\n\nEsta acción no se puede deshacer.`
+  );
+
+  if (!confirmar) {
+    return;
+  }
+
+  const { error } = await supabase
+    .from("estadias")
+    .delete()
+    .eq("id", estadia.id);
+
+  if (error) {
+    console.error(error);
+
+    setMensaje(
+      "No se pudo eliminar la estadía."
+    );
+
+    return;
+  }
+
+  setMensaje(
+    "Estadía eliminada correctamente."
+  );
+
+  await cargarEstadias();
+}
+
+function abrirModal() {
+  setEstadiaEditando(null);
+  setPermitirRecalculoEdicion(true);
+
+  limpiarFormulario();
+  setMensaje("");
+  setModalAbierto(true);
+}
+
+async function guardarEstadia(
+  e: FormEvent
+) {
+  e.preventDefault();
+
+  if (
+    !perritoId ||
+    !tipoEstadiaId ||
+    !fechaEntrada ||
+    !fechaSalida ||
+    !estadoEstadiaId ||
+    !estadoPagoId
+  ) {
+    setMensaje(
+      "Completa los campos obligatorios."
+    );
+
+    return;
+  }
+
+  setGuardando(true);
+  setMensaje("");
+
+  const datosEstadia = {
+    perrito_id:
+      Number(perritoId),
+
+    tipo_estadia_id:
+      Number(tipoEstadiaId),
+
+    estado_estadia_id:
+      Number(estadoEstadiaId),
+
+    estado_pago_id:
+      Number(estadoPagoId),
+
+    forma_pago_id:
+      formaPagoId
+        ? Number(formaPagoId)
+        : null,
+
+    fecha_entrada:
+      fechaEntrada,
+
+    hora_entrada:
+      horaEntrada || null,
+
+    fecha_salida:
+      fechaSalida,
+
+    hora_salida:
+      horaSalida || null,
+
+    dias_hotel:
+      diasHotel,
+
+    dias_guarderia:
+      diasGuarderia,
+
+    precio_hotel_aplicado:
+      precioHotel,
+
+    precio_guarderia_aplicado:
+      precioGuarderia,
+
+    subtotal_hotel:
+      subtotalHotel,
+
+    subtotal_guarderia:
+      subtotalGuarderia,
+
+    descuento:
+      descuento,
+
+    total:
+      total,
+
+    monto_pagado:
+      montoPagado,
+
+    entregado_por:
+      entregadoPor || null,
+
+    retirado_por:
+      retiradoPor || null,
+
+    alimentacion_estadia:
+      alimentacionEstadia || null,
+
+    observaciones:
+      observaciones || null,
+  };
+
+  let error;
+
+  if (estadiaEditando) {
+    const resultado = await supabase
+      .from("estadias")
+      .update(datosEstadia)
+      .eq("id", estadiaEditando.id);
+
+    error = resultado.error;
+  } else {
+    const resultado = await supabase
+      .from("estadias")
+      .insert(datosEstadia);
+
+    error = resultado.error;
+  }
+
+  setGuardando(false);
+
+  if (error) {
+    console.error(error);
+
+    setMensaje(
+      estadiaEditando
+        ? "No se pudo actualizar la estadía."
+        : "No se pudo guardar la estadía."
+    );
+
+    return;
+  }
+
+  setMensaje(
+    estadiaEditando
+      ? "Estadía actualizada correctamente 🐶"
+      : "Estadía guardada correctamente 🐶"
+  );
+
+limpiarFormulario();
+setEstadiaEditando(null);
+setModalAbierto(false);
+
+if (
+  estadiaEditarDesdeUrl ||
+  fechaNuevaDesdeUrl
+) {
+  router.replace("/estadias");
+}
+
+await cargarEstadias();
+}
+
+useEffect(() => {
+  cargarEstadias();
+  cargarCatalogos();
+}, []);
+
+
+useEffect(() => {
+  if (
+    estadosEstadia.length > 0 &&
+    !estadoEstadiaId
+  ) {
+    const reservada =
+      estadosEstadia.find(
+        (estado) =>
+          estado.nombre === "Reservada"
+      );
+
+    if (reservada) {
+      setEstadoEstadiaId(
+        String(reservada.id)
+      );
+    }
+  }
+
+  if (
+    estadosPago.length > 0 &&
+    !estadoPagoId
+  ) {
+    const pendiente =
+      estadosPago.find(
+        (estado) =>
+          estado.nombre === "Pendiente"
+      );
+
+    if (pendiente) {
+      setEstadoPagoId(
+        String(pendiente.id)
+      );
+    }
+  }
+}, [
+  estadosEstadia,
+  estadosPago,
+  estadoEstadiaId,
+  estadoPagoId,
+]);
+
+
+useEffect(() => {
+  if (!fechaNuevaDesdeUrl) {
+    return;
+  }
+
+  setEstadiaEditando(null);
+
+  limpiarFormulario();
+
+  setFechaEntrada(
+    fechaNuevaDesdeUrl
+  );
+
+  setFechaSalida(
+    fechaNuevaDesdeUrl
+  );
+
+  setMensaje("");
+  setModalAbierto(true);
+
+}, [fechaNuevaDesdeUrl]);
+
+
+useEffect(() => {
+if (
+  estadiaEditando &&
+  !permitirRecalculoEdicion
+) {
+  return;
+}
+  if (
+    !fechaEntrada ||
+    !fechaSalida ||
+    !tipoEstadiaId
+  ) {
+    return;
+  }
+
+  const entrada = new Date(
+    `${fechaEntrada}T00:00:00`
+  );
+
+  const salida = new Date(
+    `${fechaSalida}T00:00:00`
+  );
+
+  const diferencia =
+    salida.getTime() -
+    entrada.getTime();
+
+  const dias = Math.max(
+    0,
+    Math.round(
+      diferencia /
+        (1000 * 60 * 60 * 24)
+    )
+  );
+
+  const tipoSeleccionado =
+    tiposEstadia.find(
+      (tipo) =>
+        tipo.id === Number(tipoEstadiaId)
+    );
+
+  if (!tipoSeleccionado) {
+    return;
+  }
+
+  if (
+    tipoSeleccionado.nombre === "Hotel"
+  ) {
+    setDiasHotel(dias);
+    setDiasGuarderia(0);
+  }
+
+  if (
+    tipoSeleccionado.nombre === "Guardería"
+  ) {
+    setDiasHotel(0);
+    setDiasGuarderia(
+      Math.max(1, dias)
+    );
+  }
+
+  if (
+    tipoSeleccionado.nombre === "Mixta"
+  ) {
+    setDiasHotel(
+      Math.max(0, dias - 1)
+    );
+
+    setDiasGuarderia(1);
+  }
+}, [
+  fechaEntrada,
+  fechaSalida,
+  tipoEstadiaId,
+  tiposEstadia,
+  estadiaEditando,
+  permitirRecalculoEdicion,
+]);
+
+
+
+const perritoSeleccionado =
+  perritos.find(
+    (perrito) =>
+      perrito.id === Number(perritoId)
+  );
+
+
+  useEffect(() => {
+  if (!perritoSeleccionado) {
+    setPrecioHotel(0);
+    setPrecioGuarderia(0);
+    return;
+  }
+
+  setPrecioHotel(
+    Number(
+      perritoSeleccionado.precio_hotel ?? 0
+    )
+  );
+
+  setPrecioGuarderia(
+    Number(
+      perritoSeleccionado.precio_guarderia ?? 0
+    )
+  );
+}, [perritoSeleccionado]);
+
+
+useEffect(() => {
+  if (
+    !estadiaEditarDesdeUrl ||
+    estadias.length === 0
+  ) {
+    return;
+  }
+
+  const estadia =
+    estadias.find(
+      (item) =>
+        item.id ===
+        Number(estadiaEditarDesdeUrl)
+    );
+
+  if (!estadia) {
+    return;
+  }
+
+  abrirEditarEstadia(estadia);
+
+}, [
+  estadiaEditarDesdeUrl,
+  estadias,
+]);
+
+
+const subtotalHotel =
+  diasHotel * precioHotel;
+
+
+
+const subtotalGuarderia =
+  diasGuarderia * precioGuarderia;
+
+const subtotal =
+  subtotalHotel +
+  subtotalGuarderia;
+
+const total =
+  Math.max(
+    0,
+    subtotal - descuento
+  );
+
+const saldoPendiente =
+  Math.max(
+    0,
+    total - montoPagado
+  );  
+
+const perritosFiltrados =
+  perritos.filter((perrito) => {
+    const propietario =
+      perrito.propietarios
+        ? `${perrito.propietarios.nombre} ${
+            perrito.propietarios.apellidos ?? ""
+          }`
+        : "";
+
+    const texto =
+      `${perrito.nombre} ${propietario}`
+        .toLowerCase();
+
+    return texto.includes(
+      busquedaPerrito
+        .trim()
+        .toLowerCase()
+    );
+  }); 
+
+  return (
+    <div>
+      <div className="page-header">
+        <div>
+          <h1 className="page-title">
+            Estadías
+          </h1>
+
+          <p className="page-description">
+            Administración de hotel y guardería
+          </p>
+        </div>
+
+<div
+  style={{
+    display: "flex",
+    gap: "10px",
+    alignItems: "center",
+  }}
+>
+  <Link
+    href="/estadias/calendario"
+    className="secondary-button"
+  >
+    📅 Calendario
+  </Link>
+
+  <button
+    type="button"
+    className="primary-button"
+    onClick={abrirModal}
+  >
+    + Nueva estadía
+  </button>
+</div>
+      </div>
+
+      {mensaje && (
+        <div className="status-message">
+          {mensaje}
+        </div>
+      )}
+
+      <section className="list-card">
+        <div className="list-toolbar">
+          <div>
+            <strong>
+              Estadías registradas
+            </strong>
+
+            <div
+              style={{
+                color:
+                  "var(--color-text-secondary)",
+                fontSize: "14px",
+                marginTop: "3px",
+              }}
+            >
+              Total: {estadias.length}
+            </div>
+          </div>
+        </div>
+
+        {cargando ? (
+          <div className="empty-state">
+            Cargando estadías...
+          </div>
+        ) : estadias.length === 0 ? (
+          <div className="empty-state">
+            Todavía no hay estadías registradas.
+          </div>
+        ) : (
+          <table className="data-table">
+            <thead>
+              <tr>
+                <th>Perrito</th>
+                <th>Tipo</th>
+                <th>Entrada</th>
+                <th>Salida</th>
+                <th>Hotel</th>
+                <th>Guardería</th>
+                <th>Estado</th>
+                <th>Pago</th>
+                <th>Total</th>
+                <th>Saldo</th>
+                <th>Acciones</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              {estadias.map((estadia) => {
+                const saldo =
+                  estadia.total -
+                  estadia.monto_pagado;
+
+
+
+                return (
+                  <tr key={estadia.id}>
+                    <td>
+                      <strong>
+                        🐶{" "}
+                        {estadia.perritos?.nombre ||
+                          "—"}
+                      </strong>
+                    </td>
+
+                    <td>
+                      {estadia.tipos_estadia
+                        ?.nombre || "—"}
+                    </td>
+
+                    <td>
+                      {formatearFecha(
+                        estadia.fecha_entrada
+                      )}
+                    </td>
+
+                    <td>
+                      {formatearFecha(
+                        estadia.fecha_salida
+                      )}
+                    </td>
+
+                    <td>
+                      {estadia.dias_hotel}
+                    </td>
+
+                    <td>
+                      {estadia.dias_guarderia}
+                    </td>
+
+                    <td>
+                      {estadia.estados_estadia
+                        ?.nombre || "—"}
+                    </td>
+
+                    <td>
+                      {estadia.estados_pago
+                        ?.nombre || "—"}
+                    </td>
+
+                    <td>
+                      {formatearColones(
+                        estadia.total
+                      )}
+                    </td>
+
+                    <td>
+                      {formatearColones(
+                        saldo
+                      )}
+                    </td>
+ <td>
+  <div
+    style={{
+      display: "flex",
+      gap: "8px",
+      alignItems: "center",
+    }}
+  >
+    <button
+      type="button"
+      className="secondary-button"
+      onClick={() =>
+        abrirEditarEstadia(estadia)
+      }
+    >
+      Editar
+    </button>
+
+    <button
+      type="button"
+      className="danger-button"
+      onClick={() =>
+        eliminarEstadia(estadia)
+      }
+    >
+      Eliminar
+    </button>
+  </div>
+</td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        )}
+      </section>
+
+
+{modalAbierto && (
+  <div
+    className="modal-backdrop"
+ onMouseDown={(e) => {
+  if (e.target === e.currentTarget) {
+    cerrarModal();
+  }
+}}
+  >
+    <div className="modal">
+
+      <div className="modal-header">
+   <h2>
+  {estadiaEditando
+    ? "Editar estadía"
+    : "Nueva estadía"}
+</h2>
+
+        <button
+          type="button"
+          className="icon-button"
+         onClick={cerrarModal}
+        >
+          ×
+        </button>
+      </div>
+
+      <div className="modal-body">
+
+        <form onSubmit={guardarEstadia}>
+
+        <div className="form-grid">
+
+          <div className="form-group full">
+            <label className="form-label">
+              Perrito *
+            </label>
+
+<div style={{ marginBottom: "10px" }}>
+  <input
+    type="text"
+    className="form-input"
+    placeholder="Buscar por perrito o propietario..."
+    value={busquedaPerrito}
+    onChange={(e) =>
+      setBusquedaPerrito(e.target.value)
+    }
+  />
+</div>
+
+            <select
+              className="form-select"
+              value={perritoId}
+              onChange={(e) =>
+                setPerritoId(
+                  e.target.value
+                )
+              }
+            >
+              <option value="">
+                Selecciona perrito
+              </option>
+
+{perritosFiltrados.map((perrito) => (
+  <option
+    key={perrito.id}
+    value={perrito.id}
+  >
+    {perrito.nombre}
+    {" — "}
+    {perrito.propietarios
+      ? `${perrito.propietarios.nombre} ${
+          perrito.propietarios.apellidos ?? ""
+        }`
+      : "Sin propietario"}
+  </option>
+))}
+            </select>
+          </div>
+
+          <div className="form-group full">
+            <label className="form-label">
+              Tipo de estadía *
+            </label>
+
+            <select
+              className="form-select"
+              value={tipoEstadiaId}
+       onChange={(e) => {
+  setPermitirRecalculoEdicion(true);
+  setTipoEstadiaId(e.target.value);
+}}
+            >
+              <option value="">
+                Selecciona tipo
+              </option>
+
+              {tiposEstadia.map(
+                (tipo) => (
+                  <option
+                    key={tipo.id}
+                    value={tipo.id}
+                  >
+                    {tipo.nombre}
+                  </option>
+                )
+              )}
+            </select>
+          </div>
+
+        </div>
+
+     <div className="form-group full">
+  <label className="form-label">
+    Estado de la estadía
+  </label>
+
+  <select
+    className="form-select"
+    value={estadoEstadiaId}
+    onChange={(e) =>
+      setEstadoEstadiaId(e.target.value)
+    }
+  >
+    <option value="">
+      Selecciona estado
+    </option>
+
+    {estadosEstadia.map((estado) => (
+      <option
+        key={estado.id}
+        value={estado.id}
+      >
+        {estado.nombre}
+      </option>
+    ))}
+  </select>
+</div>   
+
+        <div className="form-group">
+  <label className="form-label">
+    Fecha de entrada *
+  </label>
+
+  <input
+    type="date"
+    className="form-input"
+    value={fechaEntrada}
+onChange={(e) => {
+  setPermitirRecalculoEdicion(true);
+  setFechaEntrada(e.target.value);
+}}
+  />
+</div>
+
+<div className="form-group">
+  <label className="form-label">
+    Hora de entrada
+  </label>
+
+  <input
+    type="time"
+    className="form-input"
+    value={horaEntrada}
+    onChange={(e) =>
+      setHoraEntrada(e.target.value)
+    }
+  />
+</div>
+
+<div className="form-group">
+  <label className="form-label">
+    Fecha de salida *
+  </label>
+
+  <input
+    type="date"
+    className="form-input"
+    value={fechaSalida}
+    min={fechaEntrada || undefined}
+ onChange={(e) => {
+  setPermitirRecalculoEdicion(true);
+  setFechaSalida(e.target.value);
+}}
+  />
+</div>
+
+<div className="form-group">
+  <label className="form-label">
+    Hora de salida
+  </label>
+
+  <input
+    type="time"
+    className="form-input"
+    value={horaSalida}
+    onChange={(e) =>
+      setHoraSalida(e.target.value)
+    }
+  />
+</div>
+
+<div className="form-group">
+  <label className="form-label">
+    Días de hotel
+  </label>
+
+  <input
+    type="number"
+    min="0"
+    className="form-input"
+    value={diasHotel}
+    onChange={(e) =>
+      setDiasHotel(
+        Math.max(
+          0,
+          Number(e.target.value)
+        )
+      )
+    }
+  />
+</div>
+
+<div className="form-group">
+  <label className="form-label">
+    Días de guardería
+  </label>
+
+  <input
+    type="number"
+    min="0"
+    className="form-input"
+    value={diasGuarderia}
+    onChange={(e) =>
+      setDiasGuarderia(
+        Math.max(
+          0,
+          Number(e.target.value)
+        )
+      )
+    }
+  />
+</div>
+
+<div className="form-group">
+  <label className="form-label">
+    Precio hotel
+  </label>
+
+  <input
+    type="number"
+    min="0"
+    className="form-input"
+    value={precioHotel}
+    onChange={(e) =>
+      setPrecioHotel(
+        Math.max(
+          0,
+          Number(e.target.value)
+        )
+      )
+    }
+  />
+</div>
+
+<div className="form-group">
+  <label className="form-label">
+    Precio guardería
+  </label>
+
+  <input
+    type="number"
+    min="0"
+    className="form-input"
+    value={precioGuarderia}
+    onChange={(e) =>
+      setPrecioGuarderia(
+        Math.max(
+          0,
+          Number(e.target.value)
+        )
+      )
+    }
+  />
+</div>
+
+<div className="form-group full">
+  <label className="form-label">
+    Descuento
+  </label>
+
+  <input
+    type="number"
+    min="0"
+    className="form-input"
+    value={descuento}
+    onChange={(e) =>
+      setDescuento(
+        Math.max(
+          0,
+          Number(e.target.value)
+        )
+      )
+    }
+  />
+</div>
+
+<div className="form-group">
+  <label className="form-label">
+    Estado de pago
+  </label>
+
+  <select
+    className="form-select"
+    value={estadoPagoId}
+    onChange={(e) =>
+      setEstadoPagoId(e.target.value)
+    }
+  >
+    <option value="">
+      Selecciona estado
+    </option>
+
+    {estadosPago.map((estado) => (
+      <option
+        key={estado.id}
+        value={estado.id}
+      >
+        {estado.nombre}
+      </option>
+    ))}
+  </select>
+</div>
+
+<div className="form-group">
+  <label className="form-label">
+    Forma de pago
+  </label>
+
+  <select
+    className="form-select"
+    value={formaPagoId}
+    onChange={(e) =>
+      setFormaPagoId(e.target.value)
+    }
+  >
+    <option value="">
+      Selecciona forma
+    </option>
+
+    {formasPago.map((forma) => (
+      <option
+        key={forma.id}
+        value={forma.id}
+      >
+        {forma.nombre}
+      </option>
+    ))}
+  </select>
+</div>
+
+<div className="form-group full">
+  <label className="form-label">
+    Monto pagado
+  </label>
+
+  <input
+    className="form-input"
+    type="number"
+    min="0"
+    value={montoPagado}
+    onChange={(e) =>
+      setMontoPagado(
+        Math.max(
+          0,
+          Number(e.target.value)
+        )
+      )
+    }
+  />
+</div>
+
+<div
+  className="card"
+  style={{
+    marginTop: "20px",
+  }}
+>
+  <div
+    style={{
+      display: "flex",
+      justifyContent: "space-between",
+      marginBottom: "10px",
+    }}
+  >
+    <span>
+      Hotel
+    </span>
+
+    <strong>
+      {formatearColones(
+        subtotalHotel
+      )}
+    </strong>
+  </div>
+
+  <div
+    style={{
+      display: "flex",
+      justifyContent: "space-between",
+      marginBottom: "10px",
+    }}
+  >
+    <span>
+      Guardería
+    </span>
+
+    <strong>
+      {formatearColones(
+        subtotalGuarderia
+      )}
+    </strong>
+  </div>
+
+  <div
+    style={{
+      display: "flex",
+      justifyContent: "space-between",
+      marginBottom: "10px",
+    }}
+  >
+    <span>
+      Subtotal
+    </span>
+
+    <strong>
+      {formatearColones(
+        subtotal
+      )}
+    </strong>
+  </div>
+
+  <div
+    style={{
+      display: "flex",
+      justifyContent: "space-between",
+      marginBottom: "12px",
+    }}
+  >
+    <span>
+      Descuento
+    </span>
+
+    <strong>
+      - {formatearColones(
+        descuento
+      )}
+    </strong>
+  </div>
+
+  <div
+    style={{
+      height: "1px",
+      background:
+        "var(--color-border)",
+      marginBottom: "12px",
+    }}
+  />
+
+  <div
+    style={{
+      display: "flex",
+      justifyContent: "space-between",
+      alignItems: "center",
+    }}
+  >
+    <strong>
+      Total
+    </strong>
+
+    <strong
+      style={{
+        fontSize: "24px",
+      }}
+    >
+      {formatearColones(
+        total
+      )}
+    </strong>
+  </div>
+</div>
+
+<div
+  style={{
+    height: "1px",
+    background: "var(--color-border)",
+    marginTop: "12px",
+    marginBottom: "12px",
+  }}
+/>
+
+<div
+  style={{
+    display: "flex",
+    justifyContent: "space-between",
+    marginBottom: "10px",
+  }}
+>
+  <span>
+    Monto pagado
+  </span>
+
+  <strong>
+    {formatearColones(
+      montoPagado
+    )}
+  </strong>
+</div>
+
+<div
+  style={{
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "center",
+  }}
+>
+  <strong>
+    Saldo pendiente
+  </strong>
+
+  <strong
+    style={{
+      fontSize: "20px",
+      color:
+        saldoPendiente > 0
+          ? "var(--color-danger)"
+          : "var(--color-success)",
+    }}
+  >
+    {formatearColones(
+      saldoPendiente
+    )}
+  </strong>
+</div>
+
+
+
+<div
+  className="form-group"
+  style={{ marginTop: "24px" }}
+>
+  <label className="form-label">
+    Entregado por
+  </label>
+
+  <input
+    className="form-input"
+    value={entregadoPor}
+    onChange={(e) =>
+      setEntregadoPor(e.target.value)
+    }
+    placeholder="Nombre de quien entrega"
+  />
+</div>
+
+<div className="form-group">
+  <label className="form-label">
+    Retirado por
+  </label>
+
+  <input
+    className="form-input"
+    value={retiradoPor}
+    onChange={(e) =>
+      setRetiradoPor(e.target.value)
+    }
+    placeholder="Nombre de quien retira"
+  />
+</div>
+
+<div className="form-group full">
+  <label className="form-label">
+    Alimentación durante la estadía
+  </label>
+
+  <textarea
+    className="form-textarea"
+    value={alimentacionEstadia}
+    onChange={(e) =>
+      setAlimentacionEstadia(
+        e.target.value
+      )
+    }
+    placeholder="Indicaciones especiales de alimentación..."
+  />
+</div>
+
+<div className="form-group full">
+  <label className="form-label">
+    Observaciones
+  </label>
+
+  <textarea
+    className="form-textarea"
+    value={observaciones}
+    onChange={(e) =>
+      setObservaciones(e.target.value)
+    }
+    placeholder="Notas adicionales de esta estadía..."
+  />
+</div>
+
+        <div className="modal-footer">
+
+<button
+  type="submit"
+  className="primary-button"
+  disabled={guardando}
+>
+{guardando
+  ? "Guardando..."
+  : estadiaEditando
+    ? "Guardar cambios"
+    : "Guardar estadía"}
+</button>
+
+<button
+  type="button"
+  className="secondary-button"
+  onClick={cerrarModal}
+  disabled={guardando}
+>
+  Cancelar
+</button>
+
+        </div>
+ </form>
+      </div>
+    </div>
+   
+  </div>
+  
+)}
+
+
+    </div>
+  );
+}
