@@ -50,6 +50,11 @@ type Estadia = {
 
   perritos: {
   nombre: string;
+
+  propietarios: {
+    nombre: string;
+    apellidos: string | null;
+  } | null;
 } | null;
 
 tipos_estadia: {
@@ -209,6 +214,9 @@ const [observaciones, setObservaciones] =
   const [estadiaEditando, setEstadiaEditando] =
   useState<Estadia | null>(null);
 
+  const [busqueda, setBusqueda] =
+  useState("");
+
   const [
   permitirRecalculoEdicion,
   setPermitirRecalculoEdicion,
@@ -250,9 +258,14 @@ retirado_por,
 alimentacion_estadia,
 observaciones,
 
-        perritos (
-          nombre
-        ),
+   perritos (
+  nombre,
+
+  propietarios (
+    nombre,
+    apellidos
+  )
+),
 
         tipos_estadia (
           nombre
@@ -970,7 +983,33 @@ const perritosFiltrados =
   }
 ); 
 
-  
+const estadiasFiltradas =
+  estadias.filter((estadia) => {
+    const texto =
+      [
+        estadia.perritos?.nombre,
+
+        estadia.perritos?.propietarios
+          ?.nombre,
+
+        estadia.perritos?.propietarios
+          ?.apellidos,
+
+        estadia.tipos_estadia?.nombre,
+        estadia.estados_estadia?.nombre,
+        estadia.estados_pago?.nombre,
+        estadia.fecha_entrada,
+        estadia.fecha_salida,
+      ]
+        .filter(Boolean)
+        .join(" ")
+        .toLowerCase();
+
+    return texto.includes(
+      busqueda.trim().toLowerCase()
+    );
+  });
+
 
   return (
     <div>
@@ -1016,149 +1055,322 @@ const perritosFiltrados =
       )}
 
       <section className="list-card">
-        <div className="list-toolbar">
-          <div>
-            <strong>
-              Estadías registradas
-            </strong>
+  
+ <div className="list-toolbar">
+  <div>
+    <strong>
+      Estadías registradas
+    </strong>
 
-            <div
-              style={{
-                color:
-                  "var(--color-text-secondary)",
-                fontSize: "14px",
-                marginTop: "3px",
-              }}
-            >
-              Total: {estadias.length}
-            </div>
-          </div>
-        </div>
+    <div
+      style={{
+        color:
+          "var(--color-text-secondary)",
+        fontSize: "14px",
+        marginTop: "3px",
+      }}
+    >
+      Total: {estadias.length}
+    </div>
+  </div>
+
+  <input
+    className="search-input"
+    placeholder="Buscar por perrito, propietario, tipo, estado o fecha..."
+    value={busqueda}
+    onChange={(e) =>
+      setBusqueda(e.target.value)
+    }
+  />
+</div>
 
         {cargando ? (
           <div className="empty-state">
             Cargando estadías...
           </div>
-        ) : estadias.length === 0 ? (
-          <div className="empty-state">
-            Todavía no hay estadías registradas.
-          </div>
-        ) : (
-          <table className="data-table">
-            <thead>
-              <tr>
-                <th>Perrito</th>
-                <th>Tipo</th>
-                <th>Entrada</th>
-                <th>Salida</th>
-                <th>Hotel</th>
-                <th>Guardería</th>
-                <th>Estado</th>
-                <th>Pago</th>
-                <th>Total</th>
-                <th>Saldo</th>
-                <th>Acciones</th>
-              </tr>
-            </thead>
-
-            <tbody>
-              {estadias.map((estadia) => {
-                const saldo =
-                  estadia.total -
-                  estadia.monto_pagado;
-
-
-
-                return (
-                  <tr key={estadia.id}>
-                    <td>
-                      <strong>
-                        🐶{" "}
-                        {estadia.perritos?.nombre ||
-                          "—"}
-                      </strong>
-                    </td>
-
-                    <td>
-                      {estadia.tipos_estadia
-                        ?.nombre || "—"}
-                    </td>
-
-                    <td>
-                      {formatearFecha(
-                        estadia.fecha_entrada
-                      )}
-                    </td>
-
-                    <td>
-                      {formatearFecha(
-                        estadia.fecha_salida
-                      )}
-                    </td>
-
-                    <td>
-                      {estadia.dias_hotel}
-                    </td>
-
-                    <td>
-                      {estadia.dias_guarderia}
-                    </td>
-
-                    <td>
-                      {estadia.estados_estadia
-                        ?.nombre || "—"}
-                    </td>
-
-                    <td>
-                      {estadia.estados_pago
-                        ?.nombre || "—"}
-                    </td>
-
-                    <td>
-                      {formatearColones(
-                        estadia.total
-                      )}
-                    </td>
-
-                    <td>
-                      {formatearColones(
-                        saldo
-                      )}
-                    </td>
- <td>
-  <div
-    style={{
-      display: "flex",
-      gap: "8px",
-      alignItems: "center",
-    }}
-  >
-    <button
-      type="button"
-      className="secondary-button"
-      onClick={() =>
-        abrirEditarEstadia(estadia)
-      }
-    >
-      Editar
-    </button>
-
-    <button
-      type="button"
-      className="danger-button"
-      onClick={() =>
-        eliminarEstadia(estadia)
-      }
-    >
-      Eliminar
-    </button>
+      
+      ) : estadias.length === 0 ? (
+  <div className="empty-state">
+    Todavía no hay estadías registradas.
   </div>
-</td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
+) : estadiasFiltradas.length === 0 ? (
+  <div className="empty-state">
+    No se encontraron estadías.
+  </div>
+) : (
+
+
+ <>
+  {/* Vista escritorio */}
+  <div className="desktop-only">
+    <table className="data-table">
+      <thead>
+        <tr>
+          <th>Perrito</th>
+          <th>Tipo</th>
+          <th>Entrada</th>
+          <th>Salida</th>
+          <th>Hotel</th>
+          <th>Guardería</th>
+          <th>Estado</th>
+          <th>Pago</th>
+          <th>Total</th>
+          <th>Saldo</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        {estadiasFiltradas.map((estadia) => {
+          const saldo =
+            estadia.total -
+            estadia.monto_pagado;
+
+          return (
+            <tr key={estadia.id}>
+              <td>
+                <strong>
+                  🐶{" "}
+                  {estadia.perritos?.nombre || "—"}
+                </strong>
+              </td>
+
+              <td>
+                {estadia.tipos_estadia?.nombre || "—"}
+              </td>
+
+              <td>
+                {formatearFecha(
+                  estadia.fecha_entrada
+                )}
+              </td>
+
+              <td>
+                {formatearFecha(
+                  estadia.fecha_salida
+                )}
+              </td>
+
+              <td>
+                {estadia.dias_hotel}
+              </td>
+
+              <td>
+                {estadia.dias_guarderia}
+              </td>
+
+              <td>
+                {estadia.estados_estadia?.nombre || "—"}
+              </td>
+
+              <td>
+                {estadia.estados_pago?.nombre || "—"}
+              </td>
+
+              <td>
+                {formatearColones(
+                  estadia.total
+                )}
+              </td>
+
+              <td>
+                {formatearColones(
+                  Math.max(0, saldo)
+                )}
+              </td>
+
+              <td>
+                <div
+                  style={{
+                    display: "flex",
+                    gap: "8px",
+                    alignItems: "center",
+                  }}
+                >
+                  <button
+                    type="button"
+                    className="secondary-button"
+                    onClick={() =>
+                      abrirEditarEstadia(estadia)
+                    }
+                  >
+                    Editar
+                  </button>
+
+                  <button
+                    type="button"
+                    className="danger-button"
+                    onClick={() =>
+                      eliminarEstadia(estadia)
+                    }
+                  >
+                    Eliminar
+                  </button>
+                </div>
+              </td>
+            </tr>
+          );
+        })}
+      </tbody>
+    </table>
+  </div>
+
+  {/* Vista móvil */}
+  <div className="mobile-only">
+    <div className="mobile-list">
+
+      {estadiasFiltradas.map((estadia) => {
+        const saldo =
+          Math.max(
+            0,
+            estadia.total -
+              estadia.monto_pagado
+          );
+
+        return (
+          <button
+            key={estadia.id}
+            type="button"
+            className="mobile-record-card"
+            onClick={() => {
+              window.location.href =
+                `/estadias/${estadia.id}`;
+            }}
+          >
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "space-between",
+                gap: "12px",
+                alignItems: "flex-start",
+                marginBottom: "14px",
+              }}
+            >
+              <div className="mobile-record-title">
+                🐶{" "}
+                {estadia.perritos?.nombre ||
+                  "—"}
+              </div>
+
+              <span
+                style={{
+                  fontSize: "12px",
+                  fontWeight: 700,
+                  padding: "4px 8px",
+                  borderRadius: "999px",
+                  background:
+                    "var(--color-primary-soft)",
+                  color:
+                    "var(--color-primary)",
+                  whiteSpace: "nowrap",
+                }}
+              >
+                {estadia.tipos_estadia?.nombre ||
+                  "—"}
+              </span>
+            </div>
+
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: "8px",
+                marginBottom: "14px",
+                fontSize: "13px",
+                fontWeight: 600,
+              }}
+            >
+              <span>
+                {formatearFecha(
+                  estadia.fecha_entrada
+                )}
+              </span>
+
+              <span
+                style={{
+                  color:
+                    "var(--color-text-secondary)",
+                }}
+              >
+                →
+              </span>
+
+              <span>
+                {formatearFecha(
+                  estadia.fecha_salida
+                )}
+              </span>
+            </div>
+
+            <div className="mobile-record-grid">
+
+              <div>
+                <span className="mobile-record-label">
+                  Estado
+                </span>
+
+                <strong>
+                  {estadia.estados_estadia?.nombre ||
+                    "—"}
+                </strong>
+              </div>
+
+              <div>
+                <span className="mobile-record-label">
+                  Pago
+                </span>
+
+                <strong>
+                  {estadia.estados_pago?.nombre ||
+                    "—"}
+                </strong>
+              </div>
+
+              <div>
+                <span className="mobile-record-label">
+                  Total
+                </span>
+
+                <strong>
+                  {formatearColones(
+                    estadia.total
+                  )}
+                </strong>
+              </div>
+
+              <div>
+                <span className="mobile-record-label">
+                  Saldo
+                </span>
+
+                <strong
+                  style={{
+                    color:
+                      saldo > 0
+                        ? "var(--color-danger)"
+                        : "var(--color-success)",
+                  }}
+                >
+                  {formatearColones(
+                    saldo
+                  )}
+                </strong>
+              </div>
+
+            </div>
+
+            <div className="mobile-record-action">
+              Ver estadía →
+            </div>
+          </button>
+        );
+      })}
+
+    </div>
+  </div>
+</>
+
+
         )}
       </section>
 

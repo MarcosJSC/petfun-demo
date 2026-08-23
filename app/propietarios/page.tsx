@@ -13,6 +13,7 @@ type Propietario = {
   id: number;
   nombre: string;
   apellidos: string | null;
+  cedula: string | null;
   telefono: string | null;
   whatsapp: string | null;
   correo: string | null;
@@ -44,6 +45,9 @@ export default function PropietariosPage() {
     setContactoEmergenciaTelefono,
   ] = useState("");
 
+  const [cedula, setCedula] =
+  useState("");
+
   const [observaciones, setObservaciones] =
     useState("");
 
@@ -59,6 +63,7 @@ export default function PropietariosPage() {
         id,
         nombre,
         apellidos,
+        cedula,
         telefono,
         whatsapp,
         correo,
@@ -91,7 +96,7 @@ export default function PropietariosPage() {
     setTelefono("");
     setWhatsapp("");
     setCorreo("");
-
+    setCedula(""); 
     setContactoEmergenciaNombre("");
     setContactoEmergenciaTelefono("");
 
@@ -128,7 +133,7 @@ export default function PropietariosPage() {
         telefono: telefono || null,
         whatsapp: whatsapp || null,
         correo: correo || null,
-
+        cedula: cedula.trim() || null,
         contacto_emergencia_nombre:
           contactoEmergenciaNombre || null,
 
@@ -177,6 +182,7 @@ export default function PropietariosPage() {
           const contenido = `
             ${propietario.nombre}
             ${propietario.apellidos ?? ""}
+             ${propietario.cedula ?? ""}
             ${propietario.telefono ?? ""}
             ${propietario.whatsapp ?? ""}
             ${propietario.correo ?? ""}
@@ -246,7 +252,7 @@ export default function PropietariosPage() {
 
           <input
             className="search-input"
-            placeholder="Buscar por nombre, teléfono o correo..."
+            placeholder="Buscar por nombre, cédula, teléfono o correo..."
             value={busqueda}
             onChange={(e) =>
               setBusqueda(e.target.value)
@@ -255,68 +261,129 @@ export default function PropietariosPage() {
 
         </div>
 
-        {propietariosFiltrados.length === 0 ? (
-          <div className="empty-state">
-            No se encontraron propietarios.
-          </div>
-        ) : (
+      
+{propietariosFiltrados.length === 0 ? (
+  <div className="empty-state">
+    No se encontraron propietarios.
+  </div>
+) : (
+  <>
+    {/* Vista escritorio */}
+    <div className="desktop-only">
+      <table className="data-table">
 
-          <table className="data-table">
+        <thead>
+          <tr>
+            <th>Nombre</th>
+            <th>Teléfono</th>
+            <th>WhatsApp</th>
+            <th>Correo</th>
+          </tr>
+        </thead>
 
-            <thead>
-              <tr>
-                <th>Nombre</th>
-                <th>Teléfono</th>
-                <th>WhatsApp</th>
-                <th>Correo</th>
+        <tbody>
+          {propietariosFiltrados.map(
+            (propietario) => (
+              <tr
+                key={propietario.id}
+                className="clickable-row"
+                onClick={() => {
+                  window.location.href =
+                    `/propietarios/${propietario.id}`;
+                }}
+              >
+                <td>
+                  <strong>
+                    {propietario.nombre}{" "}
+                    {propietario.apellidos}
+                  </strong>
+                </td>
+
+                <td>
+                  {propietario.telefono || "—"}
+                </td>
+
+                <td>
+                  {propietario.whatsapp || "—"}
+                </td>
+
+                <td>
+                  {propietario.correo || "—"}
+                </td>
               </tr>
-            </thead>
+            )
+          )}
+        </tbody>
 
-            <tbody>
+      </table>
+    </div>
 
-              {propietariosFiltrados.map(
-                (propietario) => (
 
-           <tr
-  key={propietario.id}
-  className="clickable-row"
-  onClick={() => {
-    window.location.href = `/propietarios/${propietario.id}`;
-  }}
->
+    {/* Vista móvil */}
+    <div className="mobile-only">
+      <div className="mobile-list">
+        {propietariosFiltrados.map(
+          (propietario) => (
+            <button
+              key={propietario.id}
+              type="button"
+              className="mobile-record-card"
+              onClick={() => {
+                window.location.href =
+                  `/propietarios/${propietario.id}`;
+              }}
+            >
+              <div className="mobile-record-title">
+                👤 {propietario.nombre}{" "}
+                {propietario.apellidos}
+              </div>
 
-                    <td>
-                      <strong>
-                        {propietario.nombre}{" "}
-                        {propietario.apellidos}
-                      </strong>
-                    </td>
+              <div className="mobile-record-grid">
 
-                    <td>
-                      {propietario.telefono ||
-                        "—"}
-                    </td>
+                <div>
+                  <span className="mobile-record-label">
+                    Teléfono
+                  </span>
 
-                    <td>
-                      {propietario.whatsapp ||
-                        "—"}
-                    </td>
+                  <strong>
+                    {propietario.telefono || "—"}
+                  </strong>
+                </div>
 
-                    <td>
-                      {propietario.correo ||
-                        "—"}
-                    </td>
+                <div>
+                  <span className="mobile-record-label">
+                    WhatsApp
+                  </span>
 
-                  </tr>
+                  <strong>
+                    {propietario.whatsapp || "—"}
+                  </strong>
+                </div>
 
-                )
-              )}
+                <div className="mobile-record-full">
+                  <span className="mobile-record-label">
+                    Correo
+                  </span>
 
-            </tbody>
+                  <strong>
+                    {propietario.correo || "—"}
+                  </strong>
+                </div>
 
-          </table>
+              </div>
 
+              <div className="mobile-record-action">
+                Ver propietario →
+              </div>
+            </button>
+          )
         )}
+      </div>
+    </div>
+  </>
+)}
+
+
 
       </section>
 
@@ -397,6 +464,23 @@ export default function PropietariosPage() {
                     />
 
                   </div>
+
+ <div className="form-group">
+
+  <label className="form-label">
+    Cédula / Identificación
+  </label>
+
+  <input
+    className="form-input"
+    value={cedula}
+    onChange={(e) =>
+      setCedula(e.target.value)
+    }
+    placeholder="Ej: 1-1234-5678"
+  />
+
+</div>                 
 
                   <div className="form-group">
 

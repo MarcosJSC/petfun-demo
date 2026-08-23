@@ -432,7 +432,7 @@ function crearEstadiaDesdeDia(
 </div>
 
 
-
+<div className="desktop-only">
 
         <div
           style={{
@@ -460,6 +460,9 @@ function crearEstadiaDesdeDia(
                   "var(--color-text-secondary)",
               }}
             >
+
+
+
               {dia}
             </div>
           ))}
@@ -630,6 +633,72 @@ onClick={(e) => {
             </div>
           ))}
         </div>
+         </div>
+        
+<div className="mobile-only">
+
+  <div className="calendar-mobile">
+
+    <div className="calendar-mobile-header">
+      {diasSemana.map((dia) => (
+        <div key={dia}>
+          {dia}
+        </div>
+      ))}
+    </div>
+
+    <div className="calendar-mobile-grid">
+
+      {dias.map((dia, index) => {
+        if (dia === null) {
+          return (
+            <div
+              key={index}
+              className="calendar-mobile-empty"
+            />
+          );
+        }
+
+        const cantidad =
+          estadiasDelDia(dia).length;
+
+        return (
+          <button
+            key={index}
+            type="button"
+            className={`calendar-mobile-day ${
+              esHoy(dia)
+                ? "calendar-mobile-today"
+                : ""
+            }`}
+            onClick={() =>
+              abrirDetalleDia(dia)
+            }
+          >
+            <span className="calendar-mobile-number">
+              {dia}
+            </span>
+
+            {cantidad > 0 && (
+              <span className="calendar-mobile-count">
+                {cantidad}
+              </span>
+            )}
+
+            {esHoy(dia) && (
+              <span className="calendar-mobile-hoy">
+                HOY
+              </span>
+            )}
+          </button>
+        );
+      })}
+
+    </div>
+
+  </div>
+
+</div>
 
       </section>
 
@@ -684,6 +753,45 @@ onClick={(e) => {
               )
             : ""}
         </div>
+
+        <div
+  style={{
+    display: "flex",
+    justifyContent: "flex-end",
+    marginBottom: "14px",
+  }}
+>
+  <button
+    type="button"
+    className="primary-button"
+    onClick={() => {
+      window.location.href =
+        `/estadias?nueva=${fechaDetalle}`;
+    }}
+  >
+    + Nueva estadía este día
+  </button>
+</div>
+
+<div
+  style={{
+    display: "flex",
+    justifyContent: "flex-end",
+    marginBottom: "14px",
+  }}
+>
+  <button
+    type="button"
+    className="primary-button"
+    onClick={() => {
+      window.location.href =
+        `/estadias?nueva=${fechaDetalle}`;
+    }}
+  >
+    + Nueva estadía este día
+  </button>
+</div>
+
 
         {estadiasDetalle.length === 0 ? (
           <div className="empty-state">

@@ -351,75 +351,152 @@ precio_guarderia:
 
         </div>
 
-        {perritosFiltrados.length === 0 ? (
-          <div className="empty-state">
-            No se encontraron perritos.
-          </div>
-        ) : (
+{perritosFiltrados.length === 0 ? (
+  <div className="empty-state">
+    No se encontraron perritos.
+  </div>
+) : (
+  <>
+    {/* Vista escritorio */}
+    <div className="desktop-only">
+      <table className="data-table">
 
-          <table className="data-table">
+        <thead>
+          <tr>
+            <th>Nombre</th>
+            <th>Raza</th>
+            <th>Sexo</th>
+            <th>Peso</th>
+            <th>Propietario</th>
+          </tr>
+        </thead>
 
-            <thead>
-              <tr>
-                <th>Nombre</th>
-                <th>Raza</th>
-                <th>Sexo</th>
-                <th>Peso</th>
-                <th>Propietario</th>
+        <tbody>
+          {perritosFiltrados.map(
+            (perrito) => (
+              <tr
+                key={perrito.id}
+                className="clickable-row"
+                onClick={() => {
+                  window.location.href =
+                    `/perritos/${perrito.id}`;
+                }}
+              >
+                <td>
+                  <strong>
+                    🐾 {perrito.nombre}
+                  </strong>
+                </td>
+
+                <td>
+                  {perrito.razas?.nombre || "—"}
+                </td>
+
+                <td>
+                  {perrito.sexo || "—"}
+                </td>
+
+                <td>
+                  {perrito.peso_kg
+                    ? `${perrito.peso_kg} kg`
+                    : "—"}
+                </td>
+
+                <td>
+                  {perrito.propietarios
+                    ? `${perrito.propietarios.nombre} ${
+                        perrito.propietarios.apellidos ?? ""
+                      }`
+                    : "—"}
+                </td>
               </tr>
-            </thead>
+            )
+          )}
+        </tbody>
 
-            <tbody>
+      </table>
+    </div>
 
-              {perritosFiltrados.map(
-                (perrito) => (
 
-                  <tr
-                    key={perrito.id}
-                    className="clickable-row"
-                    onClick={() => {
-                      window.location.href =
-                        `/perritos/${perrito.id}`;
-                    }}
-                  >
+    {/* Vista móvil */}
+    <div className="mobile-only">
+      <div className="mobile-list">
+        {perritosFiltrados.map(
+          (perrito) => (
+            <button
+              key={perrito.id}
+              type="button"
+              className="mobile-record-card"
+              onClick={() => {
+                window.location.href =
+                  `/perritos/${perrito.id}`;
+              }}
+            >
+              <div className="mobile-record-title">
+                🐾 {perrito.nombre}
+              </div>
 
-                    <td>
-                      <strong>
-                        🐾 {perrito.nombre}
-                      </strong>
-                    </td>
+              <div className="mobile-record-grid">
 
-                    <td>
-                      {perrito.razas?.nombre ||
-                        "—"}
-                    </td>
+                <div>
+                  <span className="mobile-record-label">
+                    Raza
+                  </span>
 
-                    <td>
-                      {perrito.sexo || "—"}
-                    </td>
+                  <strong>
+                    {perrito.razas?.nombre || "—"}
+                  </strong>
+                </div>
 
-                    <td>
-                      {perrito.peso_kg
-                        ? `${perrito.peso_kg} kg`
-                        : "—"}
-                    </td>
+                <div>
+                  <span className="mobile-record-label">
+                    Sexo
+                  </span>
 
-                    <td>
-                      {perrito.propietarios
-                        ? `${perrito.propietarios.nombre} ${perrito.propietarios.apellidos ?? ""}`
-                        : "—"}
-                    </td>
+                  <strong>
+                    {perrito.sexo || "—"}
+                  </strong>
+                </div>
 
-                  </tr>
+                <div>
+                  <span className="mobile-record-label">
+                    Peso
+                  </span>
 
-                )
-              )}
+                  <strong>
+                    {perrito.peso_kg
+                      ? `${perrito.peso_kg} kg`
+                      : "—"}
+                  </strong>
+                </div>
 
-            </tbody>
+                <div>
+                  <span className="mobile-record-label">
+                    Propietario
+                  </span>
 
-          </table>
+                  <strong>
+                    {perrito.propietarios
+                      ? `${perrito.propietarios.nombre} ${
+                          perrito.propietarios.apellidos ?? ""
+                        }`
+                      : "—"}
+                  </strong>
+                </div>
 
+              </div>
+
+              <div className="mobile-record-action">
+                Ver perrito →
+              </div>
+            </button>
+          )
         )}
+      </div>
+    </div>
+  </>
+)}
+
 
       </section>
 

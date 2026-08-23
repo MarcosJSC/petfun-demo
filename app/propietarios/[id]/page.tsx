@@ -8,6 +8,7 @@ type Propietario = {
   id: number;
   nombre: string;
   apellidos: string | null;
+  cedula: string | null;
   telefono: string | null;
   whatsapp: string | null;
   correo: string | null;
@@ -69,6 +70,9 @@ export default function PropietarioDetallePage() {
   const [observaciones, setObservaciones] =
     useState("");
 
+ const [cedula, setCedula] =
+  useState("");   
+
   async function cargarPropietario() {
     const { data, error } = await supabase
       .from("propietarios")
@@ -76,6 +80,7 @@ export default function PropietarioDetallePage() {
         id,
         nombre,
         apellidos,
+        cedula,
         telefono,
         whatsapp,
         correo,
@@ -96,6 +101,7 @@ export default function PropietarioDetallePage() {
 
     setNombre(data.nombre ?? "");
     setApellidos(data.apellidos ?? "");
+    setCedula(data.cedula ?? "");
     setTelefono(data.telefono ?? "");
     setWhatsapp(data.whatsapp ?? "");
     setCorreo(data.correo ?? "");
@@ -162,6 +168,7 @@ export default function PropietarioDetallePage() {
       .update({
         nombre,
         apellidos: apellidos || null,
+        cedula: cedula.trim() || null,
         telefono: telefono || null,
         whatsapp: whatsapp || null,
         correo: correo || null,
@@ -326,6 +333,16 @@ export default function PropietarioDetallePage() {
           marginBottom: "24px",
         }}
       >
+
+      <div className="card">
+  <div className="card-label">
+    Cédula / Identificación
+  </div>
+
+  <strong>
+    {propietario.cedula || "—"}
+  </strong>
+</div>
 
         <div className="card">
           <div className="card-label">
@@ -578,6 +595,25 @@ export default function PropietarioDetallePage() {
                     />
 
                   </div>
+
+
+<div className="form-group">
+
+  <label className="form-label">
+    Cédula / Identificación
+  </label>
+
+  <input
+    className="form-input"
+    value={cedula}
+    onChange={(e) =>
+      setCedula(e.target.value)
+    }
+    placeholder="Ej: 1-1234-5678"
+  />
+
+</div>
+
 
                   <div className="form-group">
 

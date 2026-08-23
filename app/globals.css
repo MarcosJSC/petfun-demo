@@ -135,6 +135,52 @@ textarea {
   color: white;
 }
 
+
+/* ========================================
+   Sidebar - elementos móviles
+======================================== */
+
+.mobile-header {
+  display: none;
+}
+
+.mobile-menu-button {
+  border: none;
+  background: transparent;
+  color: var(--color-text);
+  font-size: 26px;
+  cursor: pointer;
+  padding: 6px 10px;
+}
+
+.mobile-logo {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--color-text);
+}
+
+.sidebar-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.sidebar-close {
+  display: none;
+
+  border: none;
+  background: transparent;
+
+  color: var(--color-text);
+
+  font-size: 28px;
+  cursor: pointer;
+}
+
+.sidebar-overlay {
+  display: none;
+}
+
 /* Tarjetas */
 
 .card {
@@ -572,4 +618,320 @@ textarea {
 .danger-button:disabled {
   opacity: 0.6;
   cursor: not-allowed;
+}
+
+/* ========================================
+   RESPONSIVE GENERAL
+======================================== */
+
+@media (max-width: 768px) {
+
+  .app-container {
+    display: block;
+  }
+
+  .app-content {
+    width: 100%;
+    padding: 16px;
+    padding-top: 76px;
+  }
+
+
+  /* Barra superior móvil */
+
+  .mobile-header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+
+    height: 60px;
+
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    padding: 0 14px;
+
+    background: var(--color-surface);
+    border-bottom: 1px solid var(--color-border);
+
+    z-index: 900;
+  }
+
+
+  /* Sidebar móvil */
+
+  .sidebar {
+    position: fixed;
+
+    top: 0;
+    left: 0;
+
+    width: min(280px, 85vw);
+    height: 100vh;
+    min-height: 100vh;
+
+    z-index: 1100;
+
+    transform: translateX(-105%);
+    transition: transform 0.25s ease;
+
+    box-shadow:
+      8px 0 24px rgba(0, 0, 0, 0.18);
+  }
+
+  .sidebar.sidebar-open {
+    transform: translateX(0);
+  }
+
+  .sidebar-close {
+    display: block;
+  }
+
+  .sidebar-logo {
+    margin-bottom: 0;
+  }
+
+  .sidebar-top {
+    margin-bottom: 30px;
+  }
+
+
+  /* Fondo detrás del menú */
+
+  .sidebar-overlay {
+    display: block;
+
+    position: fixed;
+    inset: 0;
+
+    border: none;
+    padding: 0;
+
+    background:
+      rgba(0, 0, 0, 0.45);
+
+    z-index: 1000;
+  }
+}
+
+/* ========================================
+   Vistas escritorio / móvil
+======================================== */
+
+.desktop-only {
+  display: block;
+}
+
+.mobile-only {
+  display: none;
+}
+
+
+/* ========================================
+   Tarjetas móviles de registros
+======================================== */
+
+.mobile-list {
+  display: grid;
+  gap: 12px;
+  padding: 12px 16px 16px;
+}
+
+.mobile-record-card {
+  width: 100%;
+  display: block;
+  padding: 16px;
+
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+
+  background: var(--color-surface);
+  color: var(--color-text);
+
+  text-align: left;
+  cursor: pointer;
+}
+
+.mobile-record-title {
+  font-size: 17px;
+  font-weight: 700;
+
+  margin-bottom: 14px;
+}
+
+.mobile-record-grid {
+  display: grid;
+  grid-template-columns:
+    repeat(2, minmax(0, 1fr));
+
+  gap: 12px;
+}
+
+.mobile-record-grid > div {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+
+  min-width: 0;
+}
+
+.mobile-record-full {
+  grid-column: 1 / -1;
+}
+
+.mobile-record-label {
+  font-size: 12px;
+
+  color:
+    var(--color-text-secondary);
+}
+
+.mobile-record-card strong {
+  overflow-wrap: anywhere;
+}
+
+.mobile-record-action {
+  margin-top: 14px;
+
+  font-size: 13px;
+  font-weight: 600;
+
+  color: var(--color-primary);
+}
+
+
+@media (max-width: 768px) {
+
+.list-card {
+  overflow: hidden;
+}
+
+.list-toolbar {
+  padding: 16px;
+}
+
+  .desktop-only {
+    display: none;
+  }
+
+  .mobile-only {
+    display: block;
+  }
+
+  .list-toolbar {
+    align-items: stretch;
+    flex-direction: column;
+    gap: 14px;
+  }
+
+  .search-input {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+/* ========================================
+   Calendario móvil
+======================================== */
+
+.calendar-mobile {
+  width: 100%;
+}
+
+.calendar-mobile-header {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+
+  margin-bottom: 6px;
+
+  color: var(--color-text-secondary);
+
+  font-size: 11px;
+  font-weight: 700;
+
+  text-align: center;
+}
+
+.calendar-mobile-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+
+  gap: 5px;
+}
+
+.calendar-mobile-day,
+.calendar-mobile-empty {
+  aspect-ratio: 1 / 1;
+
+  min-width: 0;
+}
+
+.calendar-mobile-day {
+  position: relative;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border: 1px solid var(--color-border);
+  border-radius: 9px;
+
+  background: var(--color-surface);
+
+  color: var(--color-text);
+
+  cursor: pointer;
+}
+
+.calendar-mobile-number {
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.calendar-mobile-count {
+  position: absolute;
+
+  top: 4px;
+  right: 4px;
+
+  min-width: 17px;
+  height: 17px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 0 4px;
+
+  border-radius: 999px;
+
+  background: var(--color-primary);
+  color: white;
+
+  font-size: 9px;
+  font-weight: 700;
+}
+
+.calendar-mobile-today {
+  box-shadow:
+    inset 0 0 0 2px var(--color-primary);
+
+  background:
+    var(--color-primary-soft);
+}
+
+.calendar-mobile-hoy {
+  position: absolute;
+
+  bottom: 3px;
+  left: 50%;
+
+  transform: translateX(-50%);
+
+  color: var(--color-primary);
+
+  font-size: 7px;
+  font-weight: 800;
 }
