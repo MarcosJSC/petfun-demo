@@ -268,7 +268,7 @@ export default function PropietarioDetallePage() {
   return (
     <div>
 
-      <div className="page-header">
+     <div className="page-header owner-detail-header">
 
         <div>
 
@@ -297,7 +297,7 @@ export default function PropietarioDetallePage() {
 
         </div>
 
-      <div className="page-header-actions">
+      <div className="page-header-actions owner-detail-actions">
 
   <button
     className="danger-button"
@@ -327,12 +327,12 @@ export default function PropietarioDetallePage() {
         </div>
       )}
 
-      <div
-        className="dashboard-grid"
-        style={{
-          marginBottom: "24px",
-        }}
-      >
+  <div
+  className="dashboard-grid owner-info-grid"
+  style={{
+    marginBottom: "24px",
+  }}
+>
 
       <div className="card">
   <div className="card-label">
@@ -469,59 +469,127 @@ export default function PropietarioDetallePage() {
           </div>
         ) : (
 
-          <table className="data-table">
+        <>
+  {/* ESCRITORIO */}
+  <div className="desktop-only">
+    <table className="data-table">
 
-            <thead>
-              <tr>
-                <th>Nombre</th>
-                <th>Raza</th>
-                <th>Sexo</th>
-                <th>Peso</th>
-              </tr>
-            </thead>
+      <thead>
+        <tr>
+          <th>Nombre</th>
+          <th>Raza</th>
+          <th>Sexo</th>
+          <th>Peso</th>
+        </tr>
+      </thead>
 
-            <tbody>
+      <tbody>
+        {perritos.map((perrito) => (
 
-              {perritos.map((perrito) => (
+          <tr
+            key={perrito.id}
+            className="clickable-row"
+            onClick={() =>
+              router.push(
+                `/perritos/${perrito.id}`
+              )
+            }
+          >
 
-                <tr
-                  key={perrito.id}
-                  className="clickable-row"
-                  onClick={() =>
-                    router.push(
-                      `/perritos/${perrito.id}`
-                    )
-                  }
-                >
+            <td>
+              <strong>
+                🐾 {perrito.nombre}
+              </strong>
+            </td>
 
-                  <td>
-                    <strong>
-                      🐾 {perrito.nombre}
-                    </strong>
-                  </td>
+            <td>
+              {perrito.razas?.nombre || "—"}
+            </td>
 
-                  <td>
-                    {perrito.razas?.nombre ||
-                      "—"}
-                  </td>
+            <td>
+              {perrito.sexo || "—"}
+            </td>
 
-                  <td>
-                    {perrito.sexo || "—"}
-                  </td>
+            <td>
+              {perrito.peso_kg
+                ? `${perrito.peso_kg} kg`
+                : "—"}
+            </td>
 
-                  <td>
-                    {perrito.peso_kg
-                      ? `${perrito.peso_kg} kg`
-                      : "—"}
-                  </td>
+          </tr>
 
-                </tr>
+        ))}
+      </tbody>
 
-              ))}
+    </table>
+  </div>
 
-            </tbody>
 
-          </table>
+  {/* MÓVIL */}
+  <div className="mobile-only owner-dogs-mobile">
+
+    {perritos.map((perrito) => (
+
+      <div
+        key={perrito.id}
+        className="mobile-list-item"
+        onClick={() =>
+          router.push(
+            `/perritos/${perrito.id}`
+          )
+        }
+      >
+
+        <div className="mobile-list-title">
+          🐾 {perrito.nombre}
+        </div>
+
+        <div className="mobile-list-grid">
+
+          <div>
+            <span className="mobile-list-label">
+              Raza
+            </span>
+
+            <strong>
+              {perrito.razas?.nombre || "—"}
+            </strong>
+          </div>
+
+          <div>
+            <span className="mobile-list-label">
+              Sexo
+            </span>
+
+            <strong>
+              {perrito.sexo || "—"}
+            </strong>
+          </div>
+
+          <div>
+            <span className="mobile-list-label">
+              Peso
+            </span>
+
+            <strong>
+              {perrito.peso_kg
+                ? `${perrito.peso_kg} kg`
+                : "—"}
+            </strong>
+          </div>
+
+        </div>
+
+        <div className="mobile-list-link">
+          Ver perrito →
+        </div>
+
+      </div>
+
+    ))}
+
+  </div>
+</>
 
         )}
 

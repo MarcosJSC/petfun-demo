@@ -429,6 +429,21 @@ function crearEstadiaDesdeDia(
 
 <div className="desktop-only">
 
+<div
+  style={{
+    display: "flex",
+    justifyContent: "flex-end",
+    marginBottom: "16px",
+  }}
+>
+  <Link
+    href="/estadias"
+    className="secondary-button"
+  >
+    ← Lista de estadías
+  </Link>
+</div>
+
         <div
           style={{
             display: "grid",
@@ -627,9 +642,15 @@ onClick={(e) => {
 )}
             </div>
           ))}
+          
         </div>
+
          </div>
         
+{/* ACA TERMINA EL CALENDARIO DESKTOP */}
+
+{/* ACA COMIENZA EL CALENDARIO MOBILE */}
+
 <div className="mobile-only">
 
   <div className="calendar-mobile">
@@ -715,9 +736,7 @@ onClick={(e) => {
 
     </div>
 
-  </div>
-
-</div>
+{/* ACA TERMINAN LOS CALENDARIOS */}
 
 <div
   style={{
@@ -731,6 +750,12 @@ onClick={(e) => {
     ← Lista de estadías
   </Link>
 </div>
+
+  </div>
+
+</div>
+
+
 
       </section>
 

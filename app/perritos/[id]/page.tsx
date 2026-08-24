@@ -1103,7 +1103,7 @@ async function eliminarDesparasitacion(
   return (
     <div>
 
-      <div className="page-header">
+   <div className="page-header dog-detail-header">
 
         <div>
 
@@ -1130,7 +1130,7 @@ async function eliminarDesparasitacion(
 
         </div>
 
-<div className="page-header-actions">
+<div className="page-header-actions dog-detail-actions">
 
   <button
    className="danger-button"
@@ -1160,12 +1160,12 @@ async function eliminarDesparasitacion(
         </div>
       )}
 
-      <div
-        className="dashboard-grid"
-        style={{
-          marginBottom: "24px",
-        }}
-      >
+<div
+  className="dashboard-grid dog-info-grid"
+  style={{
+    marginBottom: "24px",
+  }}
+>
 
 <div className="card">
   <div className="card-label">
@@ -1271,37 +1271,51 @@ async function eliminarDesparasitacion(
 
       </div>
 
-      <section
-        className="card"
-        style={{ marginBottom: "24px" }}
-      >
-        <h2 style={{ marginTop: 0 }}>
-          Cuidados
-        </h2>
+    <section
+  className="card"
+  style={{ marginBottom: "24px" }}
+>
+  <h2 style={{ marginTop: 0 }}>
+    Cuidados
+  </h2>
 
-        <p>
-          <strong>Alimentación:</strong>
-          <br />
-          {perrito.instrucciones_alimentacion ||
-            "Sin información registrada."}
-        </p>
+  <div className="care-list">
 
-        <p>
-          <strong>Comportamiento:</strong>
-          <br />
-          {perrito.observaciones_comportamiento ||
-            "Sin observaciones registradas."}
-        </p>
+    <div className="care-item">
+      <div className="care-label">
+        Alimentación
+      </div>
 
-        <p style={{ marginBottom: 0 }}>
-          <strong>
-            Observaciones médicas:
-          </strong>
-          <br />
-          {perrito.observaciones_medicas ||
-            "Sin observaciones registradas."}
-        </p>
-      </section>
+      <div className="care-value">
+        {perrito.instrucciones_alimentacion ||
+          "Sin información registrada."}
+      </div>
+    </div>
+
+    <div className="care-item">
+      <div className="care-label">
+        Comportamiento
+      </div>
+
+      <div className="care-value">
+        {perrito.observaciones_comportamiento ||
+          "Sin observaciones registradas."}
+      </div>
+    </div>
+
+    <div className="care-item">
+      <div className="care-label">
+        Observaciones médicas
+      </div>
+
+      <div className="care-value">
+        {perrito.observaciones_medicas ||
+          "Sin observaciones registradas."}
+      </div>
+    </div>
+
+  </div>
+</section>
 
 <section
   className="list-card"
@@ -1330,14 +1344,18 @@ async function eliminarDesparasitacion(
       No hay vacunas registradas.
     </div>
   ) : (
+   
+<>
+  {/* ESCRITORIO */}
+  <div className="desktop-only">
     <table className="data-table">
       <thead>
-<tr>
-  <th>Vacuna</th>
-  <th>Aplicación</th>
-  <th>Vencimiento</th>
-  <th>Observaciones</th>
-</tr>
+        <tr>
+          <th>Vacuna</th>
+          <th>Aplicación</th>
+          <th>Vencimiento</th>
+          <th>Observaciones</th>
+        </tr>
       </thead>
 
       <tbody>
@@ -1356,30 +1374,106 @@ async function eliminarDesparasitacion(
 
               <td>
                 {formatearFecha(
-    vacuna.fecha_aplicacion
-  )}
+                  vacuna.fecha_aplicacion
+                )}
               </td>
 
               <td>
-                 {formatearFecha(
-    vacuna.fecha_vencimiento
-  )}
+                {formatearFecha(
+                  vacuna.fecha_vencimiento
+                )}
               </td>
 
               <td>
-                  <span
-    className={`estado-badge ${estado.estado}`}
-  >
-    <span className="estado-dot" />
-
-    {estado.texto}
-  </span>
+                <span
+                  className={`estado-badge ${estado.estado}`}
+                >
+                  <span className="estado-dot" />
+                  {estado.texto}
+                </span>
               </td>
             </tr>
           );
         })}
       </tbody>
     </table>
+  </div>
+
+
+  {/* MÓVIL */}
+  <div className="mobile-only vaccine-status-mobile">
+
+    {vacunasActuales.map((vacuna) => {
+      const estado = obtenerEstadoFecha(
+        vacuna.fecha_vencimiento
+      );
+
+      return (
+        <div
+          key={vacuna.id}
+          className="mobile-list-item"
+        >
+          <div className="mobile-list-title">
+            💉 {vacuna.tipos_vacuna?.nombre || "—"}
+          </div>
+
+          <div className="mobile-list-grid">
+
+            <div>
+              <span className="mobile-list-label">
+                Aplicación
+              </span>
+
+              <strong>
+                {formatearFecha(
+                  vacuna.fecha_aplicacion
+                )}
+              </strong>
+            </div>
+
+            <div>
+              <span className="mobile-list-label">
+                Vencimiento
+              </span>
+
+              <strong>
+                {formatearFecha(
+                  vacuna.fecha_vencimiento
+                )}
+              </strong>
+            </div>
+
+            <div
+              style={{
+                gridColumn: "1 / -1",
+              }}
+            >
+              <span className="mobile-list-label">
+                Estado
+              </span>
+
+              <div
+                style={{
+                  marginTop: "4px",
+                }}
+              >
+                <span
+                  className={`estado-badge ${estado.estado}`}
+                >
+                  <span className="estado-dot" />
+                  {estado.texto}
+                </span>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      );
+    })}
+
+  </div>
+</>
+
   )}
 </section>
 
@@ -1424,76 +1518,181 @@ async function eliminarDesparasitacion(
             No hay vacunas registradas.
           </div>
         ) : (
-          <table className="data-table">
+        
+<>
+  {/* ESCRITORIO */}
+  <div className="desktop-only">
+    <table className="data-table">
 
-            <thead>
-              <tr>
-                <th>Vacuna</th>
-                <th>Aplicación</th>
-                <th>Vencimiento</th>
-                <th>Observaciones</th>
-                <th>Acciones</th>
-              </tr>
-            </thead>
+      <thead>
+        <tr>
+          <th>Vacuna</th>
+          <th>Aplicación</th>
+          <th>Vencimiento</th>
+          <th>Observaciones</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
 
-            <tbody>
-              {vacunas.map((vacuna) => (
-                <tr key={vacuna.id}>
-                  <td>
-                    <strong>
-                      {vacuna.tipos_vacuna
-                        ?.nombre || "—"}
-                    </strong>
-                  </td>
+      <tbody>
+        {vacunas.map((vacuna) => (
+          <tr key={vacuna.id}>
 
-                  <td>
-                    {formatearFecha(
-  vacuna.fecha_aplicacion
-)}
-                  </td>
+            <td>
+              <strong>
+                {vacuna.tipos_vacuna?.nombre || "—"}
+              </strong>
+            </td>
 
-                  <td>
-                  {formatearFecha(
-  vacuna.fecha_vencimiento
-)}
-                  </td>
+            <td>
+              {formatearFecha(
+                vacuna.fecha_aplicacion
+              )}
+            </td>
 
-                  <td>
-                    {vacuna.observaciones || "—"}
-                  </td>
-<td>
-  <div
-    style={{
-      display: "flex",
-      gap: "8px",
-    }}
-  >
-    <button
-      type="button"
-      className="secondary-button"
-      onClick={() =>
-        abrirEditarVacuna(vacuna)
-      }
-    >
-      Editar
-    </button>
+            <td>
+              {formatearFecha(
+                vacuna.fecha_vencimiento
+              )}
+            </td>
 
-    <button
-      type="button"
-      className="danger-button"
-      onClick={() =>
-        eliminarVacuna(vacuna)
-      }
-    >
-      Eliminar
-    </button>
+            <td>
+              {vacuna.observaciones || "—"}
+            </td>
+
+            <td>
+              <div
+                style={{
+                  display: "flex",
+                  gap: "8px",
+                }}
+              >
+                <button
+                  type="button"
+                  className="secondary-button"
+                  onClick={() =>
+                    abrirEditarVacuna(vacuna)
+                  }
+                >
+                  Editar
+                </button>
+
+                <button
+                  type="button"
+                  className="danger-button"
+                  onClick={() =>
+                    eliminarVacuna(vacuna)
+                  }
+                >
+                  Eliminar
+                </button>
+              </div>
+            </td>
+
+          </tr>
+        ))}
+      </tbody>
+
+    </table>
   </div>
-</td>
-                </tr>
-              ))}
-            </tbody>
 
-          </table>
+
+  {/* MÓVIL */}
+  <div className="mobile-only vaccine-mobile-list">
+
+    {vacunas.map((vacuna) => (
+
+      <div
+        key={vacuna.id}
+        className="mobile-list-item"
+      >
+
+        <div className="mobile-list-title">
+          💉 {vacuna.tipos_vacuna?.nombre || "—"}
+        </div>
+
+        <div className="mobile-list-grid">
+
+          <div>
+            <span className="mobile-list-label">
+              Aplicación
+            </span>
+
+            <strong>
+              {formatearFecha(
+                vacuna.fecha_aplicacion
+              )}
+            </strong>
+          </div>
+
+          <div>
+            <span className="mobile-list-label">
+              Vencimiento
+            </span>
+
+            <strong>
+              {formatearFecha(
+                vacuna.fecha_vencimiento
+              )}
+            </strong>
+          </div>
+
+          <div
+            style={{
+              gridColumn: "1 / -1",
+            }}
+          >
+            <span className="mobile-list-label">
+              Observaciones
+            </span>
+
+            <strong
+              style={{
+                overflowWrap: "anywhere",
+              }}
+            >
+              {vacuna.observaciones || "—"}
+            </strong>
+          </div>
+
+        </div>
+
+        <div
+          style={{
+            display: "grid",
+            gridTemplateColumns: "1fr 1fr",
+            gap: "8px",
+            marginTop: "14px",
+          }}
+        >
+          <button
+            type="button"
+            className="secondary-button"
+            onClick={() =>
+              abrirEditarVacuna(vacuna)
+            }
+          >
+            Editar
+          </button>
+
+          <button
+            type="button"
+            className="danger-button"
+            onClick={() =>
+              eliminarVacuna(vacuna)
+            }
+          >
+            Eliminar
+          </button>
+        </div>
+
+      </div>
+
+    ))}
+
+  </div>
+</>
+
         )}
 
       </section>
@@ -1525,6 +1724,10 @@ async function eliminarDesparasitacion(
       No hay desparasitaciones registradas.
     </div>
   ) : (
+   
+    <>
+  {/* ESCRITORIO */}
+  <div className="desktop-only">
     <table className="data-table">
       <thead>
         <tr>
@@ -1557,26 +1760,106 @@ async function eliminarDesparasitacion(
             )}
           </td>
 
-<td>
-  {(() => {
-    const estado = obtenerEstadoFecha(
-      ultimaDesparasitacion.fecha_proxima
-    );
+          <td>
+            {(() => {
+              const estado =
+                obtenerEstadoFecha(
+                  ultimaDesparasitacion.fecha_proxima
+                );
 
-    return (
-      <span
-        className={`estado-badge ${estado.estado}`}
-      >
-        <span className="estado-dot" />
-
-        {estado.texto}
-      </span>
-    );
-  })()}
-</td>
+              return (
+                <span
+                  className={`estado-badge ${estado.estado}`}
+                >
+                  <span className="estado-dot" />
+                  {estado.texto}
+                </span>
+              );
+            })()}
+          </td>
         </tr>
       </tbody>
     </table>
+  </div>
+
+
+  {/* MÓVIL */}
+  <div className="mobile-only deworming-status-mobile">
+
+    <div className="mobile-list-item">
+
+      <div className="mobile-list-title">
+        🩺{" "}
+        {ultimaDesparasitacion
+          .tipos_desparasitacion
+          ?.nombre || "—"}
+      </div>
+
+      <div className="mobile-list-grid">
+
+        <div>
+          <span className="mobile-list-label">
+            Aplicada
+          </span>
+
+          <strong>
+            {formatearFecha(
+              ultimaDesparasitacion.fecha_aplicacion
+            )}
+          </strong>
+        </div>
+
+        <div>
+          <span className="mobile-list-label">
+            Próxima
+          </span>
+
+          <strong>
+            {formatearFecha(
+              ultimaDesparasitacion.fecha_proxima
+            )}
+          </strong>
+        </div>
+
+        <div
+          style={{
+            gridColumn: "1 / -1",
+          }}
+        >
+          <span className="mobile-list-label">
+            Estado
+          </span>
+
+          <div
+            style={{
+              marginTop: "4px",
+            }}
+          >
+            {(() => {
+              const estado =
+                obtenerEstadoFecha(
+                  ultimaDesparasitacion.fecha_proxima
+                );
+
+              return (
+                <span
+                  className={`estado-badge ${estado.estado}`}
+                >
+                  <span className="estado-dot" />
+                  {estado.texto}
+                </span>
+              );
+            })()}
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+</>
+
   )}
 </section>
 
@@ -1620,88 +1903,207 @@ async function eliminarDesparasitacion(
             No hay desparasitaciones registradas.
           </div>
         ) : (
-          <table className="data-table">
+        
+<>
+  {/* ESCRITORIO */}
+  <div className="desktop-only">
+    <table className="data-table">
 
-            <thead>
-         <tr>
-  <th>Tipo</th>
-  <th>Aplicación</th>
-  <th>Próxima</th>
-  <th>Observaciones</th>
-  <th>Acciones</th>
-</tr>
-            </thead>
+      <thead>
+        <tr>
+          <th>Tipo</th>
+          <th>Aplicación</th>
+          <th>Próxima</th>
+          <th>Observaciones</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
 
-            <tbody>
-              {desparasitaciones.map(
-                (desparasitacion) => (
-                  <tr
-                    key={
-                      desparasitacion.id
+      <tbody>
+        {desparasitaciones.map(
+          (desparasitacion) => (
+            <tr
+              key={desparasitacion.id}
+            >
+              <td>
+                <strong>
+                  {desparasitacion
+                    .tipos_desparasitacion
+                    ?.nombre || "—"}
+                </strong>
+              </td>
+
+              <td>
+                {formatearFecha(
+                  desparasitacion
+                    .fecha_aplicacion
+                )}
+              </td>
+
+              <td>
+                {desparasitacion.fecha_proxima
+                  ? formatearFecha(
+                      desparasitacion
+                        .fecha_proxima
+                    )
+                  : "—"}
+              </td>
+
+              <td>
+                {desparasitacion
+                  .observaciones || "—"}
+              </td>
+
+              <td>
+                <div
+                  style={{
+                    display: "flex",
+                    gap: "8px",
+                  }}
+                >
+                  <button
+                    type="button"
+                    className="secondary-button"
+                    onClick={() =>
+                      abrirEditarDesparasitacion(
+                        desparasitacion
+                      )
                     }
                   >
-                    <td>
-                      <strong>
-                        {desparasitacion
-                          .tipos_desparasitacion
-                          ?.nombre || "—"}
-                      </strong>
-                    </td>
+                    Editar
+                  </button>
 
-                    <td>
-                      {
+                  <button
+                    type="button"
+                    className="danger-button"
+                    onClick={() =>
+                      eliminarDesparasitacion(
                         desparasitacion
-                          .fecha_aplicacion
-                      }
-                    </td>
+                      )
+                    }
+                  >
+                    Eliminar
+                  </button>
+                </div>
+              </td>
+            </tr>
+          )
+        )}
+      </tbody>
 
-                    <td>
-                      {desparasitacion
-                        .fecha_proxima || "—"}
-                    </td>
-
-                    <td>
-                      {desparasitacion
-                        .observaciones || "—"}
-                    </td>
-                    <td>
-  <div
-    style={{
-      display: "flex",
-      gap: "8px",
-    }}
-  >
-    <button
-      type="button"
-      className="secondary-button"
-      onClick={() =>
-        abrirEditarDesparasitacion(
-          desparasitacion
-        )
-      }
-    >
-      Editar
-    </button>
-
-    <button
-      type="button"
-      className="danger-button"
-      onClick={() =>
-        eliminarDesparasitacion(
-          desparasitacion
-        )
-      }
-    >
-      Eliminar
-    </button>
+    </table>
   </div>
-</td>
-                  </tr>
-                )
-              )}
-            </tbody>
 
-          </table>
+
+  {/* MÓVIL */}
+  <div className="mobile-only deworming-mobile-list">
+
+    {desparasitaciones.map(
+      (desparasitacion) => (
+        <div
+          key={desparasitacion.id}
+          className="mobile-list-item"
+        >
+
+          <div className="mobile-list-title">
+            🩺{" "}
+            {desparasitacion
+              .tipos_desparasitacion
+              ?.nombre || "—"}
+          </div>
+
+          <div className="mobile-list-grid">
+
+            <div>
+              <span className="mobile-list-label">
+                Aplicación
+              </span>
+
+              <strong>
+                {formatearFecha(
+                  desparasitacion
+                    .fecha_aplicacion
+                )}
+              </strong>
+            </div>
+
+            <div>
+              <span className="mobile-list-label">
+                Próxima
+              </span>
+
+              <strong>
+                {desparasitacion.fecha_proxima
+                  ? formatearFecha(
+                      desparasitacion
+                        .fecha_proxima
+                    )
+                  : "—"}
+              </strong>
+            </div>
+
+            <div
+              style={{
+                gridColumn: "1 / -1",
+              }}
+            >
+              <span className="mobile-list-label">
+                Observaciones
+              </span>
+
+              <strong
+                style={{
+                  overflowWrap: "anywhere",
+                }}
+              >
+                {desparasitacion
+                  .observaciones || "—"}
+              </strong>
+            </div>
+
+          </div>
+
+          <div
+            style={{
+              display: "grid",
+              gridTemplateColumns:
+                "1fr 1fr",
+              gap: "8px",
+              marginTop: "14px",
+            }}
+          >
+            <button
+              type="button"
+              className="secondary-button"
+              onClick={() =>
+                abrirEditarDesparasitacion(
+                  desparasitacion
+                )
+              }
+            >
+              Editar
+            </button>
+
+            <button
+              type="button"
+              className="danger-button"
+              onClick={() =>
+                eliminarDesparasitacion(
+                  desparasitacion
+                )
+              }
+            >
+              Eliminar
+            </button>
+          </div>
+
+        </div>
+      )
+    )}
+
+  </div>
+</>
+
         )}
 
       </section>

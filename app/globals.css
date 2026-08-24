@@ -630,6 +630,10 @@ textarea {
     display: block;
   }
 
+  .page-header {
+  margin-bottom: 2px;
+}
+
   .app-content {
     width: 100%;
     padding: 16px;
@@ -864,7 +868,7 @@ textarea {
 .calendar-mobile-day,
 .calendar-mobile-empty {
   min-width: 0;
-  min-height: 82px;
+  min-height: 86px;
 }
 
 .calendar-mobile-day {
@@ -994,4 +998,256 @@ padding: 6px;
   font-size: 8px;
   font-weight: 700;
   color: var(--color-primary);
+}
+
+@media (max-width: 768px) {
+  .owner-detail-header {
+    align-items: stretch;
+  }
+
+  .owner-detail-actions {
+    width: 100%;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+
+  .owner-detail-actions .danger-button,
+  .owner-detail-actions .primary-button {
+    width: 100%;
+  }
+}
+
+@media (max-width: 768px) {
+  .owner-info-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .owner-info-grid .card {
+    min-width: 0;
+  }
+
+  .owner-info-grid .card:nth-child(1),
+  .owner-info-grid .card:nth-child(4),
+  .owner-info-grid .card:nth-child(5) {
+    grid-column: 1 / -1;
+  }
+
+  .owner-info-grid .card {
+    overflow-wrap: anywhere;
+  }
+}
+
+@media (max-width: 768px) {
+  .card {
+    overflow-wrap: anywhere;
+  }
+}
+
+@media (max-width: 768px) {
+  .owner-dogs-mobile {
+    padding: 12px;
+  }
+
+  .owner-dogs-mobile .mobile-list-item {
+    cursor: pointer;
+  }
+}
+
+
+.mobile-list-item {
+  padding: 14px;
+
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+
+  background: var(--color-surface);
+
+  color: var(--color-text);
+
+  cursor: pointer;
+}
+
+.mobile-list-title {
+  margin-bottom: 12px;
+
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.mobile-list-grid {
+  display: grid;
+  grid-template-columns:
+    repeat(2, minmax(0, 1fr));
+
+  gap: 12px;
+}
+
+.mobile-list-grid > div {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+
+  min-width: 0;
+}
+
+.mobile-list-label {
+  font-size: 12px;
+
+  color: var(--color-text-secondary);
+}
+
+.mobile-list-link {
+  margin-top: 14px;
+
+  font-size: 13px;
+  font-weight: 600;
+
+  color: var(--color-primary);
+}
+
+@media (max-width: 768px) {
+  .owner-dogs-mobile {
+    display: grid;
+    gap: 12px;
+    padding: 12px;
+  }
+}
+
+@media (max-width: 768px) {
+  .dog-detail-header {
+    align-items: stretch;
+  }
+
+  .dog-detail-actions {
+    width: 100%;
+
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+
+    gap: 10px;
+  }
+
+  .dog-detail-actions .danger-button,
+  .dog-detail-actions .primary-button {
+    width: 100%;
+  }
+
+ .dog-info-grid {
+  display: grid !important;
+  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  gap: 12px;
+}
+
+.dog-info-grid .card {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+/* Fecha de nacimiento */
+.dog-info-grid .card:nth-child(5) {
+  grid-column: 1 / -1;
+}
+
+/* Propietario */
+.dog-info-grid .card:nth-child(6) {
+  grid-column: 1 / -1;
+}
+
+  .dog-info-grid .card {
+    min-width: 0;
+    overflow-wrap: anywhere;
+  }
+
+  /* Datos que conviene dejar a todo el ancho */
+  .dog-info-grid .card:nth-child(5),
+  .dog-info-grid .card:nth-child(6) {
+    grid-column: 1 / -1;
+  }
+}
+
+@media (max-width: 768px) {
+  .dashboard-grid.dog-info-grid {
+    display: grid !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 12px !important;
+  }
+
+  .dashboard-grid.dog-info-grid > .card {
+    width: auto !important;
+    min-width: 0 !important;
+  }
+
+  /* Fecha de nacimiento */
+  .dashboard-grid.dog-info-grid > .card:nth-child(5) {
+    grid-column: 1 / -1 !important;
+  }
+
+  /* Propietario */
+  .dashboard-grid.dog-info-grid > .card:nth-child(6) {
+    grid-column: 1 / -1 !important;
+  }
+
+  /* Precio Hotel y Precio Guardería */
+  .dashboard-grid.dog-info-grid > .card:nth-child(7),
+  .dashboard-grid.dog-info-grid > .card:nth-child(8) {
+    grid-column: auto !important;
+  }
+}
+
+.care-list {
+  display: grid;
+  gap: 14px;
+}
+
+.care-item {
+  padding: 12px 0;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.care-item:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.care-label {
+  margin-bottom: 5px;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--color-text-secondary);
+}
+
+.care-value {
+  line-height: 1.45;
+  overflow-wrap: anywhere;
+}
+
+@media (max-width: 768px) {
+  .vaccine-mobile-list {
+    display: grid;
+    gap: 12px;
+    padding: 12px;
+  }
+}
+
+@media (max-width: 768px) {
+  .vaccine-status-mobile {
+    display: grid;
+    gap: 12px;
+    padding: 12px;
+  }
+}
+
+@media (max-width: 768px) {
+  .deworming-status-mobile {
+    padding: 12px;
+  }
+}
+
+@media (max-width: 768px) {
+  .deworming-mobile-list {
+    display: grid;
+    gap: 12px;
+    padding: 12px;
+  }
 }
