@@ -304,12 +304,7 @@ function crearEstadiaDesdeDia(
           </p>
         </div>
 
-        <Link
-          href="/estadias"
-          className="secondary-button"
-        >
-          ← Lista de estadías
-        </Link>
+    
       </div>
 
       <section className="card">
@@ -365,7 +360,7 @@ function crearEstadiaDesdeDia(
             {tituloMes}
           </h2>
         </div>
-
+ 
 
 <div
   style={{
@@ -675,24 +670,48 @@ onClick={(e) => {
               abrirDetalleDia(dia)
             }
           >
-            <span className="calendar-mobile-number">
-              {dia}
-            </span>
 
-            {cantidad > 0 && (
-              <span className="calendar-mobile-count">
-                {cantidad}
-              </span>
-            )}
 
-            {esHoy(dia) && (
-              <span className="calendar-mobile-hoy">
-                HOY
-              </span>
-            )}
-          </button>
+     <div className="calendar-mobile-top">
+    <span className="calendar-mobile-number">
+      {dia}
+    </span>
+
+    {cantidad > 0 && (
+      <span className="calendar-mobile-count">
+        {cantidad}
+      </span>
+    )}
+  </div>
+
+  <div className="calendar-mobile-dogs">
+    {estadiasDelDia(dia)
+      .slice(0, 3)
+      .map((estadia) => (
+        <div
+          key={estadia.id}
+          className="calendar-mobile-dog"
+        >
+          {estadia.perritos?.nombre || "—"}
+        </div>
+      ))}
+
+    {estadiasDelDia(dia).length > 3 && (
+      <div className="calendar-mobile-more">
+        +{estadiasDelDia(dia).length - 3} más
+      </div>
+    )}
+  </div>
+
+  {esHoy(dia) && (
+    <span className="calendar-mobile-hoy">
+      HOY
+    </span>
+  )}
+</button>
         );
       })}
+
 
     </div>
 
@@ -700,7 +719,23 @@ onClick={(e) => {
 
 </div>
 
+<div
+  style={{
+    marginTop: "18px",
+  }}
+>
+  <Link
+    href="/estadias"
+    className="secondary-button"
+  >
+    ← Lista de estadías
+  </Link>
+</div>
+
       </section>
+
+ 
+        
 
 {mostrarDetalleDia && (
   <div
@@ -738,6 +773,17 @@ onClick={(e) => {
               "var(--color-text-secondary)",
           }}
         >
+          <section className="card">
+
+  {/* controles: ← Hoy → + mes */}
+
+ 
+
+  {/* leyenda */}
+
+  {/* calendario */}
+</section>
+
           {fechaDetalle
             ? new Intl.DateTimeFormat(
                 "es-CR",
@@ -773,24 +819,7 @@ onClick={(e) => {
   </button>
 </div>
 
-<div
-  style={{
-    display: "flex",
-    justifyContent: "flex-end",
-    marginBottom: "14px",
-  }}
->
-  <button
-    type="button"
-    className="primary-button"
-    onClick={() => {
-      window.location.href =
-        `/estadias?nueva=${fechaDetalle}`;
-    }}
-  >
-    + Nueva estadía este día
-  </button>
-</div>
+
 
 
         {estadiasDetalle.length === 0 ? (

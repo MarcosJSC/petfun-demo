@@ -1337,7 +1337,6 @@ async function eliminarDesparasitacion(
   <th>Aplicación</th>
   <th>Vencimiento</th>
   <th>Observaciones</th>
-  <th>Acciones</th>
 </tr>
       </thead>
 
@@ -1433,6 +1432,7 @@ async function eliminarDesparasitacion(
                 <th>Aplicación</th>
                 <th>Vencimiento</th>
                 <th>Observaciones</th>
+                <th>Acciones</th>
               </tr>
             </thead>
 

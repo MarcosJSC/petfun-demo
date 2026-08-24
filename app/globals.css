@@ -863,17 +863,18 @@ textarea {
 
 .calendar-mobile-day,
 .calendar-mobile-empty {
-  aspect-ratio: 1 / 1;
-
   min-width: 0;
+  min-height: 82px;
 }
 
 .calendar-mobile-day {
   position: relative;
 
   display: flex;
-  align-items: center;
-  justify-content: center;
+ align-items: stretch;
+justify-content: flex-start;
+flex-direction: column;
+padding: 6px;
 
   border: 1px solid var(--color-border);
   border-radius: 9px;
@@ -886,6 +887,7 @@ textarea {
 }
 
 .calendar-mobile-number {
+  align-self: flex-start;
   font-size: 14px;
   font-weight: 700;
 }
@@ -934,4 +936,62 @@ textarea {
 
   font-size: 7px;
   font-weight: 800;
+}
+
+.calendar-mobile-dogs {
+  margin-top: 6px;
+
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+
+  overflow: hidden;
+}
+
+.calendar-mobile-dog {
+  font-size: 8px;
+  line-height: 1.15;
+
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+
+  color: var(--color-text-secondary);
+}
+
+.calendar-mobile-more {
+  font-size: 8px;
+  font-weight: 700;
+
+  color: var(--color-primary);
+}
+
+.calendar-mobile-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  width: 100%;
+}
+
+.calendar-mobile-dogs {
+  margin-top: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  width: 100%;
+}
+
+.calendar-mobile-dog {
+  font-size: 8px;
+  line-height: 1.15;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--color-text-secondary);
+}
+
+.calendar-mobile-more {
+  font-size: 8px;
+  font-weight: 700;
+  color: var(--color-primary);
 }
