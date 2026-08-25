@@ -1228,15 +1228,25 @@ const estadiasFiltradas =
           );
 
         return (
-          <button
-            key={estadia.id}
-            type="button"
-            className="mobile-record-card"
-            onClick={() => {
-              window.location.href =
-                `/estadias/${estadia.id}`;
-            }}
-          >
+  <div
+  key={estadia.id}
+  className="mobile-record-card"
+  role="button"
+  tabIndex={0}
+  onClick={() => {
+    window.location.href =
+      `/estadias/${estadia.id}`;
+  }}
+  onKeyDown={(e) => {
+    if (
+      e.key === "Enter" ||
+      e.key === " "
+    ) {
+      window.location.href =
+        `/estadias/${estadia.id}`;
+    }
+  }}
+>
             <div
               style={{
                 display: "flex",
@@ -1359,10 +1369,30 @@ const estadiasFiltradas =
 
             </div>
 
-            <div className="mobile-record-action">
-              Ver estadía →
-            </div>
-          </button>
+         <div className="mobile-record-action">
+  Ver estadía →
+</div>
+
+<div
+  style={{
+    marginTop: "12px",
+  }}
+>
+  <button
+    type="button"
+    className="danger-button"
+    style={{
+      width: "100%",
+    }}
+    onClick={(e) => {
+      e.stopPropagation();
+      eliminarEstadia(estadia);
+    }}
+  >
+    Eliminar estadía
+  </button>
+</div>
+          </div>
         );
       })}
 

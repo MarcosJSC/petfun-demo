@@ -24,7 +24,7 @@ const opciones = [
   },
   {
     nombre: "Estadías",
-    ruta: "/estadias",
+    ruta: "/estadias/calendario",
     icono: "🏨",
   },
   {
@@ -105,12 +105,12 @@ export default function Sidebar() {
 
         <nav>
           {opciones.map((opcion) => {
-            const activo =
-              opcion.ruta === "/"
-                ? pathname === "/"
-                : pathname.startsWith(
-                    opcion.ruta
-                  );
+           const activo =
+  opcion.nombre === "Dashboard"
+    ? pathname === "/"
+    : opcion.nombre === "Estadías"
+      ? pathname.startsWith("/estadias")
+      : pathname.startsWith(opcion.ruta);
 
             return (
               <Link

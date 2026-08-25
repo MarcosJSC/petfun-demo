@@ -215,58 +215,55 @@ export default function EstadiaDetallePage() {
   return (
     <div>
 
-      <div className="page-header">
+  <div className="page-header stay-detail-header">
 
-        <div>
-          <h1 className="page-title">
-            🐶{" "}
-            {estadia.perritos?.nombre ||
-              "Estadía"}
-          </h1>
+  <div>
+    <h1 className="page-title">
+      🐶{" "}
+      {estadia.perritos?.nombre || "Estadía"}
+    </h1>
 
-          <p className="page-description">
-            {estadia.tipos_estadia
-              ?.nombre || "—"}
-            {" · "}
-            {estadia.estados_estadia
-              ?.nombre || "—"}
-          </p>
-        </div>
+    <p className="page-description">
+      {estadia.tipos_estadia?.nombre || "—"}
+      {" · "}
+      {estadia.estados_estadia?.nombre || "—"}
+    </p>
+  </div>
 
-        <div
-          className="page-header-actions"
-        >
-          <Link
-            href="/estadias"
-            className="secondary-button"
-          >
-            ← Estadías
-          </Link>
+  <div className="page-header-actions stay-detail-actions">
 
-<Link
-  href={`/estadias?editar=${estadia.id}`}
-  className="primary-button"
+    <Link
+      href="/estadias"
+      className="secondary-button"
+    >
+      ← Estadías
+    </Link>
+
+    <Link
+      href={`/estadias?editar=${estadia.id}`}
+      className="primary-button"
+    >
+      Editar estadía
+    </Link>
+
+    <Link
+      href={`/perritos/${estadia.perrito_id}`}
+      className="secondary-button"
+    >
+      Ver perrito
+    </Link>
+
+  </div>
+
+</div>
+
+
+    <div
+  className="dashboard-grid stay-info-grid"
+  style={{
+    marginBottom: "24px",
+  }}
 >
-  Editar estadía
-</Link>         
-
-          <Link
-            href={`/perritos/${estadia.perrito_id}`}
-            className="secondary-button"
-          >
-            Ver perrito
-          </Link>
-        </div>
-
-      </div>
-
-
-      <div
-        className="dashboard-grid"
-        style={{
-          marginBottom: "24px",
-        }}
-      >
 
         <div className="card">
           <div className="card-label">
@@ -350,12 +347,12 @@ export default function EstadiaDetallePage() {
       </div>
 
 
-      <section
-        className="list-card"
-        style={{
-          marginBottom: "24px",
-        }}
-      >
+   <section
+  className="list-card stay-economic-summary"
+  style={{
+    marginBottom: "24px",
+  }}
+>
 
         <div className="list-toolbar">
           <strong>
@@ -363,13 +360,7 @@ export default function EstadiaDetallePage() {
           </strong>
         </div>
 
-        <div
-          style={{
-            padding: "20px",
-            display: "grid",
-            gap: "12px",
-          }}
-        >
+   <div className="stay-economic-body">
 
           <div
             style={{
@@ -511,7 +502,7 @@ export default function EstadiaDetallePage() {
       </section>
 
 
-      <section className="list-card">
+    <section className="list-card stay-info-section">
 
         <div className="list-toolbar">
           <strong>
@@ -519,13 +510,7 @@ export default function EstadiaDetallePage() {
           </strong>
         </div>
 
-        <div
-          style={{
-            padding: "20px",
-            display: "grid",
-            gap: "18px",
-          }}
-        >
+  <div className="stay-info-body">
 
           <div>
             <div className="card-label">
