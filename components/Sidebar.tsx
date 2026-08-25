@@ -3,6 +3,8 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import { supabase } from "@/lib/supabase";
 
 import ThemeToggle from "@/components/ThemeToggle";
 
@@ -28,6 +30,11 @@ const opciones = [
     icono: "🏨",
   },
   {
+  nombre: "Reportes",
+  ruta: "/reportes",
+  icono: "📊",
+},
+  {
     nombre: "Configuración",
     ruta: "/configuracion",
     icono: "⚙️",
@@ -37,12 +44,80 @@ const opciones = [
 export default function Sidebar() {
   const pathname = usePathname();
 
+  const router = useRouter();
+
+const [nombreUsuario, setNombreUsuario] =
+  useState("");
+
+const [rolUsuario, setRolUsuario] =
+  useState("");
+
   const [menuAbierto, setMenuAbierto] =
     useState(false);
 
   useEffect(() => {
     setMenuAbierto(false);
   }, [pathname]);
+
+useEffect(() => {
+  async function cargarPerfil() {
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+
+
+
+    if (!user) {
+      return;
+    }
+
+    const { data, error } =
+      await supabase
+        .from("perfiles_usuario")
+        .select(`
+          nombre,
+          rol
+        `)
+        .eq(
+          "usuario_id",
+          user.id
+        )
+        .single();
+
+
+
+if (error) {
+  console.error(
+    "Error cargando perfil:",
+    {
+      message: error.message,
+      code: error.code,
+      details: error.details,
+      hint: error.hint,
+    }
+  );
+
+  return;
+}
+
+    setNombreUsuario(
+      data?.nombre || ""
+    );
+
+    setRolUsuario(
+      data?.rol || ""
+    );
+  }
+
+  cargarPerfil();
+}, []);
+
+async function cerrarSesion() {
+  await supabase.auth.signOut();
+
+  router.replace("/login");
+  router.refresh();
+}
 
   return (
     <>
@@ -134,7 +209,34 @@ export default function Sidebar() {
           })}
         </nav>
 
-        <ThemeToggle />
+        <div className="sidebar-user">
+  <div className="sidebar-user-name">
+    👤 {nombreUsuario || "Usuario"}
+  </div>
+
+  <div className="sidebar-user-role">
+    {rolUsuario === "superadmin"
+      ? "Superadministrador"
+      : rolUsuario === "administrador"
+        ? "Administrador"
+        : rolUsuario === "operador"
+          ? "Operador"
+          : rolUsuario === "consulta"
+            ? "Consulta"
+            : ""}
+  </div>
+</div>
+
+<button
+  type="button"
+  className="secondary-button sidebar-logout"
+  onClick={cerrarSesion}
+>
+  Cerrar sesión
+</button>
+
+<ThemeToggle />
+
       </aside>
     </>
   );

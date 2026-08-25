@@ -138,6 +138,28 @@ const [
   setMostrarSalidasHoy,
 ] = useState(false);
 
+// CUMPLEAÑOS
+
+const [
+  cumpleanerosHoy,
+  setCumpleanerosHoy,
+] = useState<any[]>([]);
+
+const [
+  proximosCumpleaneros,
+  setProximosCumpleaneros,
+] = useState<any[]>([]);
+
+const [
+  mostrarCumpleanerosHoy,
+  setMostrarCumpleanerosHoy,
+] = useState(false);
+
+const [
+  mostrarProximosCumpleaneros,
+  setMostrarProximosCumpleaneros,
+] = useState(false);
+
 // FECHA ACTUAL
 
  const hoy = new Date();
@@ -212,6 +234,153 @@ const estadiasHoy =
       nombre: string;
     } | null;
   }[];    
+
+const { data: perritosCumplesData } =
+  await supabase
+    .from("perritos")
+    .select(`
+      id,
+      nombre,
+      fecha_nacimiento,
+      activo
+    `)
+    .eq("activo", true);
+
+
+    const perritosCumples =
+  (perritosCumplesData ?? []) as {
+    id: number;
+    nombre: string;
+    fecha_nacimiento: string | null;
+    activo: boolean;
+  }[];
+
+const hoyCumple = new Date();
+
+const hoyMes =
+  hoyCumple.getMonth();
+
+const hoyDia =
+  hoyCumple.getDate();
+
+const hoyCumples =
+  perritosCumples
+    .filter((perrito) => {
+      if (!perrito.fecha_nacimiento) {
+        return false;
+      }
+
+      const nacimiento =
+        new Date(
+          `${perrito.fecha_nacimiento}T00:00:00`
+        );
+
+      return (
+        nacimiento.getMonth() === hoyMes &&
+        nacimiento.getDate() === hoyDia
+      );
+    })
+    .map((perrito) => {
+      const nacimiento =
+        new Date(
+          `${perrito.fecha_nacimiento}T00:00:00`
+        );
+
+      const edad =
+        hoyCumple.getFullYear() -
+        nacimiento.getFullYear();
+
+      return {
+        ...perrito,
+        edad,
+      };
+    });
+
+setCumpleanerosHoy(
+  hoyCumples
+);
+
+const proximos =
+  perritosCumples
+    .filter((perrito) => {
+      if (!perrito.fecha_nacimiento) {
+        return false;
+      }
+
+      const nacimiento =
+        new Date(
+          `${perrito.fecha_nacimiento}T00:00:00`
+        );
+
+      const cumpleañosEsteAño =
+        new Date(
+          hoyCumple.getFullYear(),
+          nacimiento.getMonth(),
+          nacimiento.getDate()
+        );
+
+      if (
+        cumpleañosEsteAño < hoyCumple
+      ) {
+        cumpleañosEsteAño.setFullYear(
+          hoyCumple.getFullYear() + 1
+        );
+      }
+
+      const diferenciaMs =
+        cumpleañosEsteAño.getTime() -
+        hoyCumple.getTime();
+
+      const diferenciaDias =
+        Math.ceil(
+          diferenciaMs /
+            (1000 * 60 * 60 * 24)
+        );
+
+      return (
+        diferenciaDias >= 1 &&
+        diferenciaDias <= 7
+      );
+    })
+    .map((perrito) => {
+      const nacimiento =
+        new Date(
+          `${perrito.fecha_nacimiento}T00:00:00`
+        );
+
+      const cumpleaños =
+        new Date(
+          hoyCumple.getFullYear(),
+          nacimiento.getMonth(),
+          nacimiento.getDate()
+        );
+
+      if (cumpleaños < hoyCumple) {
+        cumpleaños.setFullYear(
+          hoyCumple.getFullYear() + 1
+        );
+      }
+
+      const edad =
+        cumpleaños.getFullYear() -
+        nacimiento.getFullYear();
+
+      return {
+        ...perrito,
+        edad,
+        fecha_cumple: cumpleaños,
+      };
+    })
+    .sort(
+      (a, b) =>
+        a.fecha_cumple.getTime() -
+        b.fecha_cumple.getTime()
+    );
+
+setProximosCumpleaneros(
+  proximos
+);
+
 
 const { data: vacunasData } =
   await supabase
@@ -615,27 +784,9 @@ if (desparasitacionesData) {
     </p>
   </div>
 
-  <div className="dashboard-grid">
+ <div className="dashboard-grid dashboard-summary-grid">
 
-    <div className="card">
-      <div className="card-label">
-        Propietarios
-      </div>
-
-      <div className="card-value">
-        {totalPropietarios}
-      </div>
-    </div>
-
-    <div className="card">
-      <div className="card-label">
-        Perritos
-      </div>
-
-      <div className="card-value">
-        {totalPerritos}
-      </div>
-    </div>
+   
 
    <button
   type="button"
@@ -649,7 +800,7 @@ if (desparasitacionesData) {
     border: "none",
   }}
 >
-  <div className="card-label">
+  <div className="dashboard-grid dashboard-summary-grid">
     Hospedados hoy
   </div>
 
@@ -672,6 +823,7 @@ if (desparasitacionesData) {
     Ver detalles →
   </div>
 </button>
+
 
 <button
   type="button"
@@ -712,6 +864,7 @@ if (desparasitacionesData) {
 </button>
 
 
+
 <button
   type="button"
   className="card"
@@ -750,8 +903,110 @@ if (desparasitacionesData) {
   </div>
 </button>
 
+
+<button
+  type="button"
+  className="card"
+  onClick={() =>
+    setMostrarCumpleanerosHoy(true)
+  }
+  style={{
+    textAlign: "left",
+    cursor: "pointer",
+    border: "none",
+    color: "inherit",
+  }}
+>
+  <div className="card-label">
+    🎂 Cumpleañeros hoy
   </div>
+
+  <div
+    className="card-value"
+    style={{
+      color: "var(--color-text)",
+    }}
+  >
+    {cumpleanerosHoy.length}
+  </div>
+
+  <div
+    style={{
+      marginTop: "8px",
+      fontSize: "13px",
+      color:
+        "var(--color-text-secondary)",
+    }}
+  >
+    Ver detalles →
+  </div>
+</button>
+
+<button
+  type="button"
+  className="card"
+  onClick={() =>
+    setMostrarProximosCumpleaneros(true)
+  }
+  style={{
+    textAlign: "left",
+    cursor: "pointer",
+    border: "none",
+    color: "inherit",
+  }}
+>
+  <div className="card-label">
+    🎈 Próximos Cumples
+  </div>
+
+  <div
+    className="card-value"
+    style={{
+      color: "var(--color-text)",
+    }}
+  >
+    {proximosCumpleaneros.length}
+  </div>
+
+  <div
+    style={{
+      marginTop: "8px",
+      fontSize: "13px",
+      color:
+        "var(--color-text-secondary)",
+    }}
+  >
+    Próximos 7 días →
+  </div>
+</button>
+
+ <div className="card">
+      <div className="card-label">
+        Propietarios
+      </div>
+
+      <div className="card-value">
+        {totalPropietarios}
+      </div>
+    </div>
+
+    <div className="card">
+      <div className="card-label">
+        Perritos
+      </div>
+
+      <div className="card-value">
+        {totalPerritos}
+      </div>
+    </div>
+
+  </div>
+
+
+  
 </section>
+
+
 
 {/* MODAL VACUNAS VENCIDAS */}
 {mostrarVacunasVencidas && (
@@ -1077,6 +1332,222 @@ if (desparasitacionesData) {
 
 
 {/* FIN MODAL ENTRADAS HOY */}
+
+{/* MODAL CUMPLEAÑEROS HOY */}
+
+{mostrarCumpleanerosHoy && (
+  <div
+    className="modal-backdrop"
+    onMouseDown={(e) => {
+      if (e.target === e.currentTarget) {
+        setMostrarCumpleanerosHoy(false);
+      }
+    }}
+  >
+    <div className="modal">
+
+      <div className="modal-header">
+        <h2>
+          🎂 Cumpleañeros hoy
+        </h2>
+
+        <button
+          type="button"
+          className="icon-button"
+          onClick={() =>
+            setMostrarCumpleanerosHoy(false)
+          }
+          aria-label="Cerrar"
+        >
+          ×
+        </button>
+      </div>
+
+      <div className="modal-body">
+
+        {cumpleanerosHoy.length === 0 ? (
+          <div className="empty-state">
+            No hay cumpleañeros hoy.
+          </div>
+        ) : (
+          <div
+            style={{
+              display: "grid",
+              gap: "10px",
+            }}
+          >
+            {cumpleanerosHoy.map(
+              (perrito) => (
+                <button
+                  key={perrito.id}
+                  type="button"
+                  className="mobile-record-card"
+                  onClick={() => {
+                    window.location.href =
+                      `/perritos/${perrito.id}`;
+                  }}
+                >
+                  <div className="mobile-record-title">
+                    🐶 {perrito.nombre}
+                  </div>
+
+                  <div>
+                    <span className="mobile-record-label">
+                      Hoy cumple
+                    </span>
+
+                    <div
+                      style={{
+                        marginTop: "3px",
+                        fontWeight: 700,
+                      }}
+                    >
+                      {perrito.edad}{" "}
+                      {perrito.edad === 1
+                        ? "año"
+                        : "años"} 🎉
+                    </div>
+                  </div>
+
+                  <div className="mobile-record-action">
+                    Ver perrito →
+                  </div>
+                </button>
+              )
+            )}
+          </div>
+        )}
+
+      </div>
+
+    </div>
+  </div>
+)}
+
+{/* FIN MODAL CUMPLEAÑEROS HOY */}
+
+{/* MODAL CUMPLEAÑOS PRÓXIMOS */}
+
+{mostrarProximosCumpleaneros && (
+  <div
+    className="modal-backdrop"
+    onMouseDown={(e) => {
+      if (e.target === e.currentTarget) {
+        setMostrarProximosCumpleaneros(false);
+      }
+    }}
+  >
+    <div className="modal">
+
+      <div className="modal-header">
+        <h2>
+          🎈 Próximos cumpleaños
+        </h2>
+
+        <button
+          type="button"
+          className="icon-button"
+          onClick={() =>
+            setMostrarProximosCumpleaneros(false)
+          }
+          aria-label="Cerrar"
+        >
+          ×
+        </button>
+      </div>
+
+      <div className="modal-body">
+
+        {proximosCumpleaneros.length === 0 ? (
+          <div className="empty-state">
+            No hay cumpleaños en los próximos 7 días.
+          </div>
+        ) : (
+          <div
+            style={{
+              display: "grid",
+              gap: "10px",
+            }}
+          >
+            {proximosCumpleaneros.map(
+              (perrito) => (
+                <button
+                  key={perrito.id}
+                  type="button"
+                  className="mobile-record-card"
+                  onClick={() => {
+                    window.location.href =
+                      `/perritos/${perrito.id}`;
+                  }}
+                >
+                  <div className="mobile-record-title">
+                    🐶 {perrito.nombre}
+                  </div>
+
+                  <div
+                    style={{
+                      display: "grid",
+                      gap: "8px",
+                    }}
+                  >
+                    <div>
+                      <span className="mobile-record-label">
+                        Fecha
+                      </span>
+
+                      <div
+                        style={{
+                          marginTop: "3px",
+                          fontWeight: 700,
+                        }}
+                      >
+                {new Intl.DateTimeFormat(
+  "es-CR",
+  {
+    day: "numeric",
+    month: "long",
+  }
+)
+  .format(perrito.fecha_cumple)
+  .replace(" de ", " de ")}
+                      </div>
+                    </div>
+
+                    <div>
+                      <span className="mobile-record-label">
+                        Cumplirá
+                      </span>
+
+                      <div
+                        style={{
+                          marginTop: "3px",
+                          fontWeight: 700,
+                        }}
+                      >
+                        {perrito.edad}{" "}
+                        {perrito.edad === 1
+                          ? "año"
+                          : "años"} 🎉
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="mobile-record-action">
+                    Ver perrito →
+                  </div>
+                </button>
+              )
+            )}
+          </div>
+        )}
+
+      </div>
+
+    </div>
+  </div>
+)}
+
+{/* FIN MODAL CUMPLEAÑOS PRÓXIMOS */}
 
 {/* MODAL VACUNAS PRÓXIMAS */}
 {mostrarVacunasProximas && (

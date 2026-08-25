@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
-
-import Sidebar from "@/components/Sidebar";
+import AppShell from "@/components/AppShell";
 
 export const metadata: Metadata = {
   title: "PetFunCR",
@@ -15,15 +14,11 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="es" suppressHydrationWarning>
-      <body>
-        <div className="app-container">
-          <Sidebar />
-
-          <main className="app-content">
-            {children}
-          </main>
-        </div>
-      </body>
+<body>
+  <AppShell>
+    {children}
+  </AppShell>
+</body>
     </html>
   );
 }
