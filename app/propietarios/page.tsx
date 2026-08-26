@@ -115,7 +115,9 @@ const [
       return;
     }
 
-    setPropietarios(data ?? []);
+    setPropietarios(
+  (data ?? []) as unknown as Propietario[]
+);
   }
 
   useEffect(() => {

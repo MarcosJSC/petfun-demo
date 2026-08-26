@@ -33,6 +33,8 @@ type Perrito = {
   propietario_id: number;
   raza_id: number | null;
 
+sucursal_id: number;
+
   propietarios: {
     nombre: string;
     apellidos: string | null;
@@ -216,7 +218,9 @@ async function cargarPropietarios() {
     return;
   }
 
-  setPropietarios(data ?? []);
+ setPropietarios(
+  (data ?? []) as unknown as Propietario[]
+);
 }
 
   async function cargarRazas() {
