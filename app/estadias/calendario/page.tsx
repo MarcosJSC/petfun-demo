@@ -37,6 +37,12 @@ type EstadiaCalendario = {
   estados_estadia: {
     nombre: string;
   } | null;
+
+ sucursales: {
+    id: number;
+    nombre: string;
+  } | null;
+
 };
 
 function obtenerDiasMes(fecha: Date) {
@@ -67,7 +73,27 @@ function obtenerDiasMes(fecha: Date) {
 }
 
 export default function CalendarioEstadiasPage() {
-const { puede } = usePermisos();
+
+
+const [
+  sucursalFiltro,
+  setSucursalFiltro,
+] = useState("");
+
+const [
+  sucursalesFiltro,
+  setSucursalesFiltro,
+] = useState<
+  {
+    id: number;
+    nombre: string;
+  }[]
+>([]);
+
+const {
+  puede,
+  esSuperadmin,
+} = usePermisos();
 
 const [
   mostrarDetalleDia,
@@ -125,6 +151,33 @@ const [cargando, setCargando] =
     setMesActual(new Date());
   }
 
+
+  async function cargarSucursalesFiltro() {
+  const { data, error } =
+    await supabase
+      .from("sucursales")
+      .select(`
+        id,
+        nombre
+      `)
+      .eq("activa", true)
+      .order("nombre");
+
+  if (error) {
+    console.error(
+      "Error cargando sucursales:",
+      error
+    );
+
+    return;
+  }
+
+  setSucursalesFiltro(
+    data ?? []
+  );
+}
+  
+
   /*CARGAR ESTADIAS*/
 
   async function cargarEstadiasCalendario() {
@@ -148,7 +201,11 @@ const [cargando, setCargando] =
 
       estados_estadia (
         nombre
-      )
+      ),
+      sucursales (
+        id,
+        nombre
+      )   
     `)
     .neq(
       "estados_estadia.nombre",
@@ -160,6 +217,8 @@ const [cargando, setCargando] =
     setCargando(false);
     return;
   }
+
+
 
 setEstadias(
   (data ?? []) as unknown as EstadiaCalendario[]
@@ -174,6 +233,7 @@ setEstadias(
 
 useEffect(() => {
   cargarEstadiasCalendario();
+  cargarSucursalesFiltro();
 }, []);
 
 /*FIN USEEFFECTS*/
@@ -195,12 +255,26 @@ function obtenerFechaCelda(dia: number) {
   return `${año}-${mes}-${diaTexto}`;
 }
 
+const estadiasVisibles =
+  estadias.filter((estadia) => {
+    if (!sucursalFiltro) {
+      return true;
+    }
+
+    return (
+      Number(estadia.sucursales?.id) ===
+      Number(sucursalFiltro)
+    );
+  });
+
+
+
 
 function estadiasDelDia(dia: number) {
   const fecha =
     obtenerFechaCelda(dia);
 
-  return estadias.filter(
+  return estadiasVisibles.filter(
     (estadia) =>
       estadia.fecha_entrada <= fecha &&
       estadia.fecha_salida >= fecha &&
@@ -351,7 +425,36 @@ function crearEstadiaDesdeDia(
             >
               →
             </button>
+
+
           </div>
+
+          {esSuperadmin && (
+  <select
+    className="search-input"
+    value={sucursalFiltro}
+    onChange={(e) =>
+      setSucursalFiltro(
+        e.target.value
+      )
+    }
+  >
+    <option value="">
+      Todas las sucursales
+    </option>
+
+    {sucursalesFiltro.map(
+      (sucursal) => (
+        <option
+          key={sucursal.id}
+          value={sucursal.id}
+        >
+          {sucursal.nombre}
+        </option>
+      )
+    )}
+  </select>
+)}
 
           <h2
             style={{
@@ -800,7 +903,7 @@ onClick={(e) => {
               "var(--color-text-secondary)",
           }}
         >
-          <section className="card">
+     
 
   {/* controles: ← Hoy → + mes */}
 
@@ -809,7 +912,7 @@ onClick={(e) => {
   {/* leyenda */}
 
   {/* calendario */}
-</section>
+
 
           {fechaDetalle
             ? new Intl.DateTimeFormat(
@@ -865,6 +968,7 @@ onClick={(e) => {
                 <th>Tipo</th>
                 <th>Entrada</th>
                 <th>Salida</th>
+                <th>Sucursal</th>
               </tr>
             </thead>
 
@@ -941,6 +1045,20 @@ onClick={(e) => {
                           `${estadia.fecha_salida}T00:00:00`
                         )
                       )}
+                    </td>
+                    <td>
+                      {esSuperadmin && !sucursalFiltro && (
+    <div
+      style={{
+        marginTop: "6px",
+      }}
+    >
+
+  <span className="branch-status active">
+  {estadia.sucursales?.nombre || "—"}
+</span>
+       </div>
+       )}
                     </td>
                   </tr>
                 )

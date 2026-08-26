@@ -1831,3 +1831,22 @@ padding: 6px;
     width: auto !important;
   }
 }
+
+
+.table-scroll-x {
+  width: 100%;
+  overflow-x: auto;
+  overflow-y: hidden;
+  -webkit-overflow-scrolling: touch;
+}
+
+.table-scroll-x .data-table {
+  min-width: 1200px;
+}
+
+.table-scroll-x {
+  scrollbar-width: thin;
+  scrollbar-color:
+    var(--color-border)
+    transparent;
+}

@@ -70,6 +70,13 @@ estados_estadia: {
 estados_pago: {
   nombre: string;
 } | null;
+
+sucursal_id: number;
+
+sucursales: {
+  id: number;
+  nombre: string;
+} | null;
 };
 
 
@@ -119,7 +126,25 @@ const router = useRouter();
 
 const searchParams = useSearchParams();
 
-  const { puede } = usePermisos();
+const {
+  puede,
+  esSuperadmin,
+} = usePermisos();
+
+const [
+  sucursalFiltro,
+  setSucursalFiltro,
+] = useState("");
+
+const [
+  sucursalesFiltro,
+  setSucursalesFiltro,
+] = useState<
+  {
+    id: number;
+    nombre: string;
+  }[]
+>([]);
 
 const estadiaEditarDesdeUrl =
   searchParams.get("editar");
@@ -235,6 +260,7 @@ const [observaciones, setObservaciones] =
       .from("estadias")
       .select(`
     id,
+    sucursal_id,
 perrito_id,
 tipo_estadia_id,
 estado_estadia_id,
@@ -283,7 +309,13 @@ observaciones,
 
         estados_pago (
           nombre
-        )
+        ),
+
+          sucursales (
+        id,
+        nombre
+      )
+
       `)
       .order("fecha_entrada", {
         ascending: false,
@@ -306,6 +338,31 @@ observaciones,
 
     setCargando(false);
   }
+
+async function cargarSucursalesFiltro() {
+  const { data, error } =
+    await supabase
+      .from("sucursales")
+      .select(`
+        id,
+        nombre
+      `)
+      .eq("activa", true)
+      .order("nombre");
+
+  if (error) {
+    console.error(
+      "Error cargando sucursales:",
+      error
+    );
+    return;
+  }
+
+  setSucursalesFiltro(
+    data ?? []
+  );
+}
+
 
   async function cargarCatalogos() {
 const [
@@ -800,6 +857,7 @@ await cargarEstadias();
 useEffect(() => {
   cargarEstadias();
   cargarCatalogos();
+  cargarSucursalesFiltro();
 }, []);
 
 
@@ -871,8 +929,7 @@ useEffect(() => {
 useEffect(() => {
 if (
   estadiaEditando &&
-  !permitirRecalculoEdicion
-) {
+  !permitirRecalculoEdicion) {
   return;
 }
   if (
@@ -1051,6 +1108,12 @@ const perritosFiltrados =
 
 const estadiasFiltradas =
   estadias.filter((estadia) => {
+   
+   const coincideSucursal =
+  !sucursalFiltro ||
+  String(estadia.sucursal_id) ===
+    sucursalFiltro;
+   
     const texto =
       [
         estadia.perritos?.nombre,
@@ -1071,9 +1134,15 @@ const estadiasFiltradas =
         .join(" ")
         .toLowerCase();
 
-    return texto.includes(
-      busqueda.trim().toLowerCase()
-    );
+ const coincideBusqueda =
+  texto.includes(
+    busqueda.trim().toLowerCase()
+  );
+
+return (
+  coincideBusqueda &&
+  coincideSucursal
+);
   });
 
 
@@ -1149,6 +1218,34 @@ const estadiasFiltradas =
       setBusqueda(e.target.value)
     }
   />
+
+{esSuperadmin && (
+  <select
+    className="search-input"
+    value={sucursalFiltro}
+    onChange={(e) =>
+      setSucursalFiltro(
+        e.target.value
+      )
+    }
+  >
+    <option value="">
+      Todas las sucursales
+    </option>
+
+    {sucursalesFiltro.map(
+      (sucursal) => (
+        <option
+          key={sucursal.id}
+          value={sucursal.id}
+        >
+          {sucursal.nombre}
+        </option>
+      )
+    )}
+  </select>
+)}
+
 </div>
 
         {cargando ? (
@@ -1169,7 +1266,8 @@ const estadiasFiltradas =
 
  <>
   {/* Vista escritorio */}
-  <div className="desktop-only">
+<div className="desktop-only">
+  <div className="table-scroll-x">
     <table className="data-table">
       <thead>
         <tr>
@@ -1184,6 +1282,7 @@ const estadiasFiltradas =
           <th>Total</th>
           <th>Saldo</th>
           <th>Acciones</th>
+          <th>Sucursal</th>
         </tr>
       </thead>
 
@@ -1281,12 +1380,20 @@ const estadiasFiltradas =
 
                 </div>
               </td>
+
+<td>
+  <span className="branch-status active">
+    {estadia.sucursales?.nombre || "—"}
+  </span>
+</td>
+
             </tr>
           );
         })}
       </tbody>
     </table>
   </div>
+</div>
 
   {/* Vista móvil */}
   <div className="mobile-only">
@@ -1441,10 +1548,25 @@ const estadiasFiltradas =
               </div>
 
             </div>
+<p></p>
+           <div
+  style={{
+    gridColumn: "1 / -1",
+  }}
+>
+  <span className="mobile-list-label">
+    Sucursal
+  </span>
+
+  <strong>
+    {estadia.sucursales?.nombre || "—"}
+  </strong>
+</div> 
 
          <div className="mobile-record-action">
   Ver estadía →
 </div>
+
 
 <div
   style={{

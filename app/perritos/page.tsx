@@ -41,6 +41,12 @@ type Perrito = {
   razas: {
     nombre: string;
   } | null;
+
+sucursales: {
+    id: number;
+    nombre: string;
+  } | null;
+
 };
 
 function PerritosContent() {
@@ -57,6 +63,21 @@ function PerritosContent() {
 
   const [razas, setRazas] =
     useState<Raza[]>([]);
+
+   const [
+  sucursalFiltro,
+  setSucursalFiltro,
+] = useState("");
+
+const [
+  sucursalesFiltro,
+  setSucursalesFiltro,
+] = useState<
+  {
+    id: number;
+    nombre: string;
+  }[]
+>([]); 
 
   const [modalAbierto, setModalAbierto] =
     useState(false);
@@ -87,42 +108,80 @@ const [precioGuarderia, setPrecioGuarderia] =
   const [guardando, setGuardando] =
     useState(false);
 
-const { puede } = usePermisos(); 
+const {
+  puede,
+  esSuperadmin,
+} = usePermisos();
 
-  async function cargarPerritos() {
-    const { data, error } = await supabase
-      .from("perritos")
+ async function cargarPerritos() {
+  const { data, error } = await supabase
+    .from("perritos")
+    .select(`
+      id,
+      nombre,
+      sexo,
+      peso_kg,
+      fecha_nacimiento,
+      propietario_id,
+      raza_id,
+      sucursal_id,
+
+      propietarios (
+        nombre,
+        apellidos
+      ),
+
+      razas (
+        nombre
+      ),
+
+      sucursales (
+        id,
+        nombre
+      )
+    `)
+    .eq("activo", true)
+    .order("nombre");
+
+  if (error) {
+    console.error(error);
+
+    setMensaje(
+      "No se pudieron cargar los perritos."
+    );
+
+    return;
+  }
+
+  setPerritos(
+    (data ?? []) as unknown as Perrito[]
+  );
+}
+
+async function cargarSucursalesFiltro() {
+  const { data, error } =
+    await supabase
+      .from("sucursales")
       .select(`
         id,
-        nombre,
-        sexo,
-        peso_kg,
-        fecha_nacimiento,
-        propietario_id,
-        raza_id,
-        propietarios (
-          nombre,
-          apellidos
-        ),
-        razas (
-          nombre
-        )
+        nombre
       `)
-      .eq("activo", true)
+      .eq("activa", true)
       .order("nombre");
 
-    if (error) {
-      console.error(error);
-      setMensaje(
-        "No se pudieron cargar los perritos."
-      );
-      return;
-    }
+  if (error) {
+    console.error(
+      "Error cargando sucursales:",
+      error
+    );
 
-    setPerritos(
-  (data ?? []) as unknown as Perrito[]
-);
+    return;
   }
+
+  setSucursalesFiltro(
+    data ?? []
+  );
+}
 
 async function cargarPropietarios() {
   const contextoSucursal =
@@ -179,6 +238,7 @@ async function cargarPropietarios() {
     cargarPerritos();
     cargarPropietarios();
     cargarRazas();
+    cargarSucursalesFiltro();
   }, []);
 
   useEffect(() => {
@@ -300,30 +360,44 @@ sucursal_id:
     await cargarPerritos();
   }
 
-  const perritosFiltrados =
-    useMemo(() => {
-      const texto =
-        busqueda.trim().toLowerCase();
+const perritosFiltrados =
+  useMemo(() => {
+    const texto =
+      busqueda
+        .trim()
+        .toLowerCase();
 
-      if (!texto) {
-        return perritos;
+    return perritos.filter(
+      (perrito) => {
+        const contenido = `
+          ${perrito.nombre}
+          ${perrito.razas?.nombre ?? ""}
+          ${perrito.sexo ?? ""}
+          ${perrito.propietarios?.nombre ?? ""}
+          ${perrito.propietarios?.apellidos ?? ""}
+        `.toLowerCase();
+
+        const coincideTexto =
+          !texto ||
+          contenido.includes(texto);
+
+        const coincideSucursal =
+          !sucursalFiltro ||
+          String(
+            perrito.sucursal_id
+          ) === sucursalFiltro;
+
+        return (
+          coincideTexto &&
+          coincideSucursal
+        );
       }
-
-      return perritos.filter(
-        (perrito) => {
-
-          const contenido = `
-            ${perrito.nombre}
-            ${perrito.razas?.nombre ?? ""}
-            ${perrito.sexo ?? ""}
-            ${perrito.propietarios?.nombre ?? ""}
-            ${perrito.propietarios?.apellidos ?? ""}
-          `.toLowerCase();
-
-          return contenido.includes(texto);
-        }
-      );
-    }, [busqueda, perritos]);
+    );
+  }, [
+    busqueda,
+    perritos,
+    sucursalFiltro,
+  ]);
 
   return (
     <div>
@@ -393,6 +467,33 @@ sucursal_id:
             }
           />
 
+          {esSuperadmin && (
+  <select
+    className="search-input"
+    value={sucursalFiltro}
+    onChange={(e) =>
+      setSucursalFiltro(
+        e.target.value
+      )
+    }
+  >
+    <option value="">
+      Todas las sucursales
+    </option>
+
+    {sucursalesFiltro.map(
+      (sucursal) => (
+        <option
+          key={sucursal.id}
+          value={sucursal.id}
+        >
+          {sucursal.nombre}
+        </option>
+      )
+    )}
+  </select>
+)}
+
         </div>
 
 {perritosFiltrados.length === 0 ? (
@@ -453,6 +554,13 @@ sucursal_id:
                       }`
                     : "—"}
                 </td>
+
+<td>
+  <span className="branch-status active">
+    {perrito.sucursales?.nombre || "—"}
+  </span>
+</td>
+
               </tr>
             )
           )}
@@ -527,6 +635,20 @@ sucursal_id:
                       : "—"}
                   </strong>
                 </div>
+
+                <div
+  style={{
+    gridColumn: "1 / -1",
+  }}
+>
+  <span className="mobile-list-label">
+    Sucursal
+  </span>
+
+  <strong>
+    {perrito.sucursales?.nombre || "—"}
+  </strong>
+</div>
 
               </div>
 

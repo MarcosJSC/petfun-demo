@@ -22,6 +22,11 @@ type Propietario = {
   contacto_emergencia_nombre: string | null;
   contacto_emergencia_telefono: string | null;
   observaciones: string | null;
+   sucursal_id: number;
+  sucursales: {
+    id: number;
+    nombre: string;
+  } | null;
 };
 
 export default function PropietariosPage() {
@@ -53,8 +58,25 @@ export default function PropietariosPage() {
   const [observaciones, setObservaciones] =
     useState("");
 
-    const { puede } =
-  usePermisos();
+  const {
+  puede,
+  esSuperadmin,
+} = usePermisos();
+
+const [
+  sucursalFiltro,
+  setSucursalFiltro,
+] = useState("");
+
+const [
+  sucursalesFiltro,
+  setSucursalesFiltro,
+] = useState<
+  {
+    id: number;
+    nombre: string;
+  }[]
+>([]);
 
   const [busqueda, setBusqueda] = useState("");
   const [mensaje, setMensaje] = useState("");
@@ -74,7 +96,12 @@ export default function PropietariosPage() {
         correo,
         contacto_emergencia_nombre,
         contacto_emergencia_telefono,
-        observaciones
+        observaciones,
+         sucursal_id,
+      sucursales (
+        id,
+        nombre
+      )
       `)
       .order("nombre");
 
@@ -93,6 +120,7 @@ export default function PropietariosPage() {
 
   useEffect(() => {
     cargarPropietarios();
+    cargarSucursalesFiltro();
   }, []);
 
   function limpiarFormulario() {
@@ -121,6 +149,30 @@ export default function PropietariosPage() {
 
     setModalAbierto(false);
   }
+
+  async function cargarSucursalesFiltro() {
+  const { data, error } =
+    await supabase
+      .from("sucursales")
+      .select(`
+        id,
+        nombre
+      `)
+      .eq("activa", true)
+      .order("nombre");
+
+  if (error) {
+    console.error(
+      "Error cargando sucursales:",
+      error
+    );
+    return;
+  }
+
+  setSucursalesFiltro(
+    data ?? []
+  );
+}
 
   async function guardarPropietario(
     e: FormEvent
@@ -194,9 +246,7 @@ if (!contextoSucursal.sucursalActivaId) {
         .trim()
         .toLowerCase();
 
-      if (!texto) {
-        return propietarios;
-      }
+
 
       return propietarios.filter(
         (propietario) => {
@@ -209,10 +259,27 @@ if (!contextoSucursal.sucursalActivaId) {
             ${propietario.correo ?? ""}
           `.toLowerCase();
 
-          return contenido.includes(texto);
+const coincideTexto =
+  !texto ||
+  contenido.includes(texto);
+
+const coincideSucursal =
+  !sucursalFiltro ||
+  String(
+    propietario.sucursal_id
+  ) === sucursalFiltro;
+
+return (
+  coincideTexto &&
+  coincideSucursal
+);
         }
       );
-    }, [busqueda, propietarios]);
+    },  [
+  busqueda,
+  propietarios,
+  sucursalFiltro,
+]);
 
   return (
     <div>
@@ -282,6 +349,33 @@ if (!contextoSucursal.sucursalActivaId) {
             }
           />
 
+       {esSuperadmin && (
+  <select
+    className="search-input"
+    value={sucursalFiltro}
+    onChange={(e) =>
+      setSucursalFiltro(
+        e.target.value
+      )
+    }
+  >
+    <option value="">
+      Todas las sucursales
+    </option>
+
+    {sucursalesFiltro.map(
+      (sucursal) => (
+        <option
+          key={sucursal.id}
+          value={sucursal.id}
+        >
+          {sucursal.nombre}
+        </option>
+      )
+    )}
+  </select>
+)}   
+
         </div>
 
       
@@ -301,6 +395,7 @@ if (!contextoSucursal.sucursalActivaId) {
             <th>Teléfono</th>
             <th>WhatsApp</th>
             <th>Correo</th>
+            <th>Sucursal</th>
           </tr>
         </thead>
 
@@ -333,6 +428,11 @@ if (!contextoSucursal.sucursalActivaId) {
                 <td>
                   {propietario.correo || "—"}
                 </td>
+<td>
+  <span className="branch-status active">
+    {propietario.sucursales?.nombre || "—"}
+  </span>
+</td>
               </tr>
             )
           )}
@@ -391,7 +491,22 @@ if (!contextoSucursal.sucursalActivaId) {
                   <strong>
                     {propietario.correo || "—"}
                   </strong>
+                  
                 </div>
+
+                <div
+  style={{
+    gridColumn: "1 / -1",
+  }}
+>
+  <span className="mobile-list-label">
+    Sucursal
+  </span>
+
+  <strong>
+    {propietario.sucursales?.nombre || "—"}
+  </strong>
+</div>
 
               </div>
 
