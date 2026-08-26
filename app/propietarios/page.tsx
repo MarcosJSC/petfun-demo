@@ -8,6 +8,8 @@ import {
 } from "react";
 
 import { supabase } from "@/lib/supabase";
+import { obtenerContextoSucursal } from "@/lib/sucursalActiva";
+import { usePermisos } from "@/hooks/usePermisos";
 
 type Propietario = {
   id: number;
@@ -50,6 +52,9 @@ export default function PropietariosPage() {
 
   const [observaciones, setObservaciones] =
     useState("");
+
+    const { puede } =
+  usePermisos();
 
   const [busqueda, setBusqueda] = useState("");
   const [mensaje, setMensaje] = useState("");
@@ -125,6 +130,19 @@ export default function PropietariosPage() {
     setGuardando(true);
     setMensaje("");
 
+    const contextoSucursal =
+  await obtenerContextoSucursal();
+
+if (!contextoSucursal.sucursalActivaId) {
+  setGuardando(false);
+
+  setMensaje(
+    "No hay una sucursal activa disponible para guardar el propietario."
+  );
+
+  return;
+}
+
     const { error } = await supabase
       .from("propietarios")
       .insert({
@@ -142,16 +160,19 @@ export default function PropietariosPage() {
 
         observaciones:
           observaciones || null,
+
+          sucursal_id: contextoSucursal.sucursalActivaId,
       });
 
     setGuardando(false);
 
-    if (error) {
-      console.error(error);
-
-      setMensaje(
-        "Ocurrió un error al guardar el propietario."
-      );
+  if (error) {
+  console.error("Error guardando propietario:", {
+    message: error.message,
+    code: error.code,
+    details: error.details,
+    hint: error.hint,
+  });
 
       return;
     }
@@ -210,7 +231,8 @@ export default function PropietariosPage() {
         </div>
 
         <div className="page-header-actions">
-
+        
+{puede("propietarios.crear") && (
           <button
             className="primary-button"
             type="button"
@@ -218,6 +240,7 @@ export default function PropietariosPage() {
           >
             + Nuevo propietario
           </button>
+)}
 
         </div>
 

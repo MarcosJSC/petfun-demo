@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
-
+import { usePermisos } from "@/hooks/usePermisos";
 import { supabase } from "@/lib/supabase";
 
 type EstadiaDetalle = {
@@ -86,6 +86,8 @@ function formatearColones(valor: number) {
 }
 
 export default function EstadiaDetallePage() {
+const { puede } = usePermisos();
+
   const params = useParams();
 
   const estadiaId =
@@ -239,12 +241,14 @@ export default function EstadiaDetallePage() {
       ← Estadías
     </Link>
 
+{puede("estadias.editar") && (
     <Link
       href={`/estadias?editar=${estadia.id}`}
       className="primary-button"
     >
       Editar estadía
     </Link>
+    )}
 
     <Link
       href={`/perritos/${estadia.perrito_id}`}

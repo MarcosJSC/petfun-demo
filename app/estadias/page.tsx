@@ -7,13 +7,15 @@ FormEvent,
   useState,
 } from "react";
 import { supabase } from "@/lib/supabase";
-
+import { usePermisos } from "@/hooks/usePermisos";
 import Link from "next/link";
+import { obtenerContextoSucursal } from "@/lib/sucursalActiva";
 
 import {
   useRouter,
   useSearchParams,
 } from "next/navigation";
+
 
 type Estadia = {
    id: number;
@@ -88,6 +90,8 @@ type TipoEstadia = {
   nombre: string;
 };
 
+
+
 function formatearFecha(fecha: string) {
   return new Intl.DateTimeFormat("es-CR", {
     day: "2-digit",
@@ -114,6 +118,8 @@ function EstadiasContent() {
 const router = useRouter();  
 
 const searchParams = useSearchParams();
+
+  const { puede } = usePermisos();
 
 const estadiaEditarDesdeUrl =
   searchParams.get("editar");
@@ -348,7 +354,7 @@ supabase
 
   ]);
 
-  
+
 
   if (perritosResult.error) {
     console.error(
@@ -610,6 +616,62 @@ async function guardarEstadia(
   setGuardando(true);
   setMensaje("");
 
+
+  const contextoSucursal =
+  await obtenerContextoSucursal();
+
+if (!contextoSucursal.sucursalActivaId) {
+  setGuardando(false);
+
+  setMensaje(
+    "No hay una sucursal activa disponible para guardar la estadía."
+  );
+
+  return;
+}
+
+
+const { data: perritoSeleccionado, error: errorPerrito } =
+  await supabase
+    .from("perritos")
+    .select(`
+      id,
+      sucursal_id
+    `)
+    .eq(
+      "id",
+      Number(perritoId)
+    )
+    .single();
+
+if (
+  errorPerrito ||
+  !perritoSeleccionado
+) {
+  setGuardando(false);
+
+  setMensaje(
+    "No se pudo validar la sucursal del perrito."
+  );
+
+  return;
+}
+
+
+if (
+  perritoSeleccionado.sucursal_id !==
+  contextoSucursal.sucursalActivaId
+) {
+  setGuardando(false);
+
+  setMensaje(
+    "El perrito seleccionado pertenece a otra sucursal."
+  );
+
+  return;
+}
+
+
   const datosEstadia = {
     perrito_id:
       Number(perritoId),
@@ -678,6 +740,10 @@ async function guardarEstadia(
 
     observaciones:
       observaciones || null,
+
+ sucursal_id:
+    perritoSeleccionado.sucursal_id,
+
   };
 
   let error;
@@ -1037,7 +1103,7 @@ const estadiasFiltradas =
   >
     📅 Calendario
   </Link>
-
+{puede("estadias.crear") && (
   <button
     type="button"
     className="primary-button"
@@ -1045,6 +1111,7 @@ const estadiasFiltradas =
   >
     + Nueva estadía
   </button>
+)}
 </div>
       </div>
 
@@ -1187,6 +1254,8 @@ const estadiasFiltradas =
                     alignItems: "center",
                   }}
                 >
+
+                {puede("estadias.editar") && (
                   <button
                     type="button"
                     className="secondary-button"
@@ -1196,7 +1265,9 @@ const estadiasFiltradas =
                   >
                     Editar
                   </button>
+                  )}
 
+{puede("estadias.eliminar") && (
                   <button
                     type="button"
                     className="danger-button"
@@ -1206,6 +1277,8 @@ const estadiasFiltradas =
                   >
                     Eliminar
                   </button>
+)}
+
                 </div>
               </td>
             </tr>
@@ -1378,6 +1451,7 @@ const estadiasFiltradas =
     marginTop: "12px",
   }}
 >
+  {puede("estadias.eliminar") && (
   <button
     type="button"
     className="danger-button"
@@ -1391,6 +1465,7 @@ const estadiasFiltradas =
   >
     Eliminar estadía
   </button>
+  )}
 </div>
           </div>
         );

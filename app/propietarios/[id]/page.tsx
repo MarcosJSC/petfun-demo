@@ -3,6 +3,7 @@
 import { FormEvent, useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase";
+import { usePermisos } from "@/hooks/usePermisos";
 
 type Propietario = {
   id: number;
@@ -72,6 +73,9 @@ export default function PropietarioDetallePage() {
 
  const [cedula, setCedula] =
   useState("");   
+
+  const { puede } =
+  usePermisos();
 
   async function cargarPropietario() {
     const { data, error } = await supabase
@@ -299,6 +303,7 @@ export default function PropietarioDetallePage() {
 
       <div className="page-header-actions owner-detail-actions">
 
+{puede("propietarios.eliminar") && (
   <button
     className="danger-button"
     type="button"
@@ -306,7 +311,9 @@ export default function PropietarioDetallePage() {
   >
     Eliminar propietario
   </button>
+)}
 
+{puede("propietarios.editar") && (
   <button
     className="primary-button"
     type="button"
@@ -316,6 +323,7 @@ export default function PropietarioDetallePage() {
   >
     Editar propietario
   </button>
+)}
 
 </div>
 

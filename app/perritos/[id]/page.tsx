@@ -12,6 +12,7 @@ import {
 } from "next/navigation";
 
 import { supabase } from "@/lib/supabase";
+import { usePermisos } from "@/hooks/usePermisos";
 
 type Propietario = {
   id: number;
@@ -84,6 +85,7 @@ function calcularEdad(fechaNacimiento: string | null) {
   if (!fechaNacimiento) {
     return "—";
   }
+  
 
 function obtenerEstadoFecha(fecha: string | null) {
   if (!fecha) {
@@ -391,7 +393,7 @@ const [precioGuarderia, setPrecioGuarderia] =
     setObservacionesDesparasitacion,
   ] = useState("");
 
-
+  const { puede } = usePermisos();
 
 const vacunasActuales = Object.values(
   vacunas.reduce(
@@ -1132,14 +1134,17 @@ async function eliminarDesparasitacion(
 
 <div className="page-header-actions dog-detail-actions">
 
+{puede("perritos.eliminar") && (
   <button
-   className="danger-button"
+    className="danger-button"
     type="button"
     onClick={eliminarPerrito}
   >
     Eliminar perrito
   </button>
+)}
 
+{puede("perritos.editar") && (
   <button
     className="primary-button"
     type="button"
@@ -1149,6 +1154,7 @@ async function eliminarDesparasitacion(
   >
     Editar información
   </button>
+)}
 
 </div>
 
@@ -1499,6 +1505,7 @@ async function eliminarDesparasitacion(
             </div>
           </div>
 
+{puede("vacunas.crear") && (
 <button
   className="primary-button"
   type="button"
@@ -1510,6 +1517,7 @@ async function eliminarDesparasitacion(
     ? "Guardar cambios"
     : "Registrar vacuna"}
 </button>
+)}
 
         </div>
 
@@ -1567,6 +1575,8 @@ async function eliminarDesparasitacion(
                   gap: "8px",
                 }}
               >
+
+              {puede("vacunas.editar") && (
                 <button
                   type="button"
                   className="secondary-button"
@@ -1576,7 +1586,9 @@ async function eliminarDesparasitacion(
                 >
                   Editar
                 </button>
+                )}
 
+{puede("vacunas.eliminar") && (
                 <button
                   type="button"
                   className="danger-button"
@@ -1586,6 +1598,8 @@ async function eliminarDesparasitacion(
                 >
                   Eliminar
                 </button>
+)}
+
               </div>
             </td>
 
@@ -1665,6 +1679,8 @@ async function eliminarDesparasitacion(
             marginTop: "14px",
           }}
         >
+
+{puede("vacunas.editar") && (
           <button
             type="button"
             className="secondary-button"
@@ -1674,7 +1690,9 @@ async function eliminarDesparasitacion(
           >
             Editar
           </button>
+)}
 
+{puede("vacunas.eliminar") && (
           <button
             type="button"
             className="danger-button"
@@ -1684,6 +1702,8 @@ async function eliminarDesparasitacion(
           >
             Eliminar
           </button>
+)}
+
         </div>
 
       </div>
@@ -1884,6 +1904,7 @@ async function eliminarDesparasitacion(
             </div>
           </div>
 
+{puede("desparasitaciones.crear") && (
 <button
   className="primary-button"
   type="button"
@@ -1895,6 +1916,7 @@ async function eliminarDesparasitacion(
     ? "Guardar cambios"
     : "Registrar desparasitación"}
 </button>
+)}
 
         </div>
 
@@ -1961,6 +1983,8 @@ async function eliminarDesparasitacion(
                     gap: "8px",
                   }}
                 >
+
+                  {puede("desparasitaciones.editar") && (
                   <button
                     type="button"
                     className="secondary-button"
@@ -1972,7 +1996,9 @@ async function eliminarDesparasitacion(
                   >
                     Editar
                   </button>
+                  )}
 
+{puede("desparasitaciones.eliminar") && (
                   <button
                     type="button"
                     className="danger-button"
@@ -1984,6 +2010,8 @@ async function eliminarDesparasitacion(
                   >
                     Eliminar
                   </button>
+)}
+
                 </div>
               </td>
             </tr>
@@ -2072,6 +2100,8 @@ async function eliminarDesparasitacion(
               marginTop: "14px",
             }}
           >
+
+            {puede("desparasitaciones.editar") && (
             <button
               type="button"
               className="secondary-button"
@@ -2083,7 +2113,9 @@ async function eliminarDesparasitacion(
             >
               Editar
             </button>
+            )}
 
+{puede("desparasitaciones.eliminar") && (
             <button
               type="button"
               className="danger-button"
@@ -2095,6 +2127,8 @@ async function eliminarDesparasitacion(
             >
               Eliminar
             </button>
+)}
+
           </div>
 
         </div>

@@ -7,6 +7,7 @@ import {
 } from "react";
 
 import { supabase } from "@/lib/supabase";
+import { usePermisos } from "@/hooks/usePermisos";
 
 const diasSemana = [
   "Lun",
@@ -66,6 +67,7 @@ function obtenerDiasMes(fecha: Date) {
 }
 
 export default function CalendarioEstadiasPage() {
+const { puede } = usePermisos();
 
 const [
   mostrarDetalleDia,
@@ -832,6 +834,8 @@ onClick={(e) => {
     marginBottom: "14px",
   }}
 >
+
+{puede("estadias.crear") && (
   <button
     type="button"
     className="primary-button"
@@ -842,6 +846,7 @@ onClick={(e) => {
   >
     + Nueva estadía este día
   </button>
+  )}
 </div>
 
 

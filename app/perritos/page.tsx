@@ -10,6 +10,8 @@ import {
 
 import { useSearchParams } from "next/navigation";
 import { supabase } from "@/lib/supabase";
+import { obtenerContextoSucursal } from "@/lib/sucursalActiva";
+import { usePermisos } from "@/hooks/usePermisos";
 
 type Propietario = {
   id: number;
@@ -85,6 +87,8 @@ const [precioGuarderia, setPrecioGuarderia] =
   const [guardando, setGuardando] =
     useState(false);
 
+const { puede } = usePermisos(); 
+
   async function cargarPerritos() {
     const { data, error } = await supabase
       .from("perritos")
@@ -120,19 +124,41 @@ const [precioGuarderia, setPrecioGuarderia] =
 );
   }
 
-  async function cargarPropietarios() {
-    const { data, error } = await supabase
-      .from("propietarios")
-      .select("id, nombre, apellidos")
-      .order("nombre");
+async function cargarPropietarios() {
+  const contextoSucursal =
+    await obtenerContextoSucursal();
 
-    if (error) {
-      console.error(error);
-      return;
-    }
-
-    setPropietarios(data ?? []);
+  if (!contextoSucursal.sucursalActivaId) {
+    setPropietarios([]);
+    return;
   }
+
+  const { data, error } = await supabase
+    .from("propietarios")
+    .select("id, nombre, apellidos")
+    .eq(
+      "sucursal_id",
+      contextoSucursal.sucursalActivaId
+    )
+    .order("nombre");
+
+  if (error) {
+    console.error(
+      "Error cargando propietarios:",
+      {
+        message: error.message,
+        code: error.code,
+        details: error.details,
+        hint: error.hint,
+      }
+    );
+
+    setPropietarios([]);
+    return;
+  }
+
+  setPropietarios(data ?? []);
+}
 
   async function cargarRazas() {
     const { data, error } = await supabase
@@ -200,6 +226,19 @@ setPrecioGuarderia("");
     setGuardando(true);
     setMensaje("");
 
+    const contextoSucursal =
+  await obtenerContextoSucursal();
+
+if (!contextoSucursal.sucursalActivaId) {
+  setGuardando(false);
+
+  setMensaje(
+    "No hay una sucursal activa disponible para guardar el perrito."
+  );
+
+  return;
+}
+
     const { error } = await supabase
       .from("perritos")
       .insert({
@@ -232,6 +271,9 @@ precio_guarderia:
   precioGuarderia
     ? Number(precioGuarderia)
     : null,
+    
+sucursal_id:
+  contextoSucursal.sucursalActivaId,    
 
       });
 
@@ -301,13 +343,15 @@ precio_guarderia:
 
         <div className="page-header-actions">
 
-          <button
-            type="button"
-            className="primary-button"
-            onClick={abrirModal}
-          >
-            + Nuevo perrito
-          </button>
+{puede("perritos.crear") && (
+  <button
+    className="primary-button"
+    type="button"
+    onClick={abrirModal}
+  >
+    + Nuevo perrito
+  </button>
+)}
 
         </div>
 
