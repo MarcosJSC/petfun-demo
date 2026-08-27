@@ -1850,3 +1850,99 @@ padding: 6px;
     var(--color-border)
     transparent;
 }
+
+.pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  padding: 18px;
+  border-top: 1px solid var(--color-border);
+}
+
+.pagination-info {
+  color: var(--color-text-secondary);
+  font-size: 14px;
+  white-space: nowrap;
+}
+
+@media (max-width: 768px) {
+  .pagination {
+    gap: 8px;
+    padding: 14px 10px;
+  }
+
+  .pagination .secondary-button {
+    flex: 1;
+  }
+
+  .pagination-info {
+    font-size: 12px;
+  }
+}
+
+
+.dog-profile-photo {
+  width: 110px;
+  height: 110px;
+  flex-shrink: 0;
+}
+
+.dog-profile-photo-img,
+.dog-profile-photo-placeholder {
+  width: 100%;
+  height: 100%;
+
+  border-radius: 50%;
+  border: 2px solid var(--color-border);
+
+  object-fit: cover;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  background: var(--color-surface);
+}
+
+.dog-profile-photo-placeholder {
+  font-size: 46px;
+}
+
+@media (max-width: 768px) {
+  .dog-profile-photo {
+    width: 90px;
+    height: 90px;
+  }
+}
+
+.dog-profile-photo-editable {
+  position: relative;
+  display: block;
+  cursor: pointer;
+}
+
+.dog-profile-camera {
+  position: absolute;
+  right: -2px;
+  bottom: 2px;
+
+  width: 32px;
+  height: 32px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 50%;
+
+  background: var(--color-surface);
+  border: 2px solid var(--color-border);
+
+  font-size: 15px;
+}
+
+.dog-profile-photo-editable:hover
+.dog-profile-photo-img {
+  opacity: 0.85;
+}

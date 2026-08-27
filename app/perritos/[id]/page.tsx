@@ -38,6 +38,10 @@ type TipoDesparasitacion = {
 type Perrito = {
   id: number;
   nombre: string;
+
+    sucursal_id: number;
+foto_path: string | null;
+
   fecha_nacimiento: string | null;
   sexo: string | null;
   peso_kg: number | null;
@@ -79,6 +83,8 @@ type Desparasitacion = {
   tipos_desparasitacion: {
     nombre: string;
   } | null;
+
+
 };
 
 function calcularEdad(fechaNacimiento: string | null) {
@@ -393,6 +399,29 @@ const [precioGuarderia, setPrecioGuarderia] =
     setObservacionesDesparasitacion,
   ] = useState("");
 
+  const [fotoUrl, setFotoUrl] =
+  useState<string | null>(null);
+
+  const [subiendoFoto, setSubiendoFoto] =
+  useState(false);
+
+const [mensajeFoto, setMensajeFoto] =
+  useState("");
+
+  useEffect(() => {
+  if (!mensajeFoto) {
+    return;
+  }
+
+  const timer = setTimeout(() => {
+    setMensajeFoto("");
+  }, 3000);
+
+  return () => {
+    clearTimeout(timer);
+  };
+}, [mensajeFoto]);
+
   const { puede } = usePermisos();
 
 const vacunasActuales = Object.values(
@@ -456,7 +485,9 @@ const ultimaDesparasitacion =
         ),
         razas (
           nombre
-        )
+        ),
+         sucursal_id,
+      foto_path
       `)
       .eq("id", perritoId)
       .single();
@@ -468,6 +499,10 @@ const ultimaDesparasitacion =
 
    setPerrito(
   data as unknown as Perrito
+);
+
+await cargarFotoPerfil(
+  data.foto_path ?? null
 );
 
     setNombre(data.nombre ?? "");
@@ -517,6 +552,208 @@ setPrecioGuarderia(
       data.observaciones_medicas ?? ""
     );
   }
+
+  async function cargarFotoPerfil(
+  fotoPath: string | null
+) {
+  if (!fotoPath) {
+    setFotoUrl(null);
+    return;
+  }
+
+  const { data, error } =
+    await supabase.storage
+      .from("perritos")
+      .createSignedUrl(
+        fotoPath,
+        60 * 60
+      );
+
+  if (error) {
+    console.error(
+      "Error cargando foto del perrito:",
+      error
+    );
+
+    setFotoUrl(null);
+    return;
+  }
+
+  setFotoUrl(
+    data.signedUrl
+  );
+}
+
+async function comprimirFoto(
+  archivo: File
+): Promise<Blob> {
+  return new Promise((resolve, reject) => {
+    const imagen = new Image();
+
+    const url =
+      URL.createObjectURL(archivo);
+
+    imagen.onload = () => {
+      const maximo = 1200;
+
+      let ancho = imagen.width;
+      let alto = imagen.height;
+
+      if (ancho > alto && ancho > maximo) {
+        alto = Math.round(
+          alto * (maximo / ancho)
+        );
+
+        ancho = maximo;
+      } else if (
+        alto >= ancho &&
+        alto > maximo
+      ) {
+        ancho = Math.round(
+          ancho * (maximo / alto)
+        );
+
+        alto = maximo;
+      }
+
+      const canvas =
+        document.createElement("canvas");
+
+      canvas.width = ancho;
+      canvas.height = alto;
+
+      const contexto =
+        canvas.getContext("2d");
+
+      if (!contexto) {
+        URL.revokeObjectURL(url);
+
+        reject(
+          new Error(
+            "No se pudo procesar la imagen."
+          )
+        );
+
+        return;
+      }
+
+      contexto.drawImage(
+        imagen,
+        0,
+        0,
+        ancho,
+        alto
+      );
+
+      canvas.toBlob(
+        (blob) => {
+          URL.revokeObjectURL(url);
+
+          if (!blob) {
+            reject(
+              new Error(
+                "No se pudo comprimir la imagen."
+              )
+            );
+
+            return;
+          }
+
+          resolve(blob);
+        },
+        "image/webp",
+        0.82
+      );
+    };
+
+    imagen.onerror = () => {
+      URL.revokeObjectURL(url);
+
+      reject(
+        new Error(
+          "No se pudo leer la imagen."
+        )
+      );
+    };
+
+    imagen.src = url;
+  });
+}
+
+async function subirFotoPerfil(
+  archivo: File
+) {
+  if (!perrito) {
+    return;
+  }
+
+  setSubiendoFoto(true);
+  setMensajeFoto("");
+
+  try {
+    const fotoComprimida =
+      await comprimirFoto(archivo);
+
+    const fotoPath =
+      `${perrito.sucursal_id}/${perrito.id}/perfil.webp`;
+
+    const { error: errorStorage } =
+      await supabase.storage
+        .from("perritos")
+        .upload(
+          fotoPath,
+          fotoComprimida,
+          {
+            contentType: "image/webp",
+            upsert: true,
+          }
+        );
+
+    if (errorStorage) {
+      throw errorStorage;
+    }
+
+    const { error: errorTabla } =
+      await supabase
+        .from("perritos")
+        .update({
+          foto_path: fotoPath,
+        })
+        .eq(
+          "id",
+          perrito.id
+        );
+
+    if (errorTabla) {
+      throw errorTabla;
+    }
+
+    setPerrito({
+      ...perrito,
+      foto_path: fotoPath,
+    });
+
+    await cargarFotoPerfil(
+      fotoPath
+    );
+
+    setMensajeFoto(
+      "Foto actualizada correctamente 📷"
+    );
+
+  } catch (error) {
+    console.error(
+      "Error subiendo foto:",
+      error
+    );
+
+    setMensajeFoto(
+      "No se pudo subir la foto."
+    );
+  } finally {
+    setSubiendoFoto(false);
+  }
+}
 
   async function cargarCatalogos() {
     const [
@@ -1121,6 +1358,59 @@ async function eliminarDesparasitacion(
           >
             ← Volver a perritos
           </button>
+
+<label
+  className="dog-profile-photo dog-profile-photo-editable"
+  title="Cambiar foto"
+>
+  {fotoUrl ? (
+    <img
+      src={fotoUrl}
+      alt={`Foto de ${perrito.nombre}`}
+      className="dog-profile-photo-img"
+    />
+  ) : (
+    <div className="dog-profile-photo-placeholder">
+      🐶
+    </div>
+  )}
+
+  <span className="dog-profile-camera">
+    📷
+  </span>
+
+  <input
+    type="file"
+    accept="image/jpeg,image/png,image/webp"
+    style={{
+      display: "none",
+    }}
+    disabled={subiendoFoto}
+    onChange={(e) => {
+      const archivo =
+        e.target.files?.[0];
+
+      if (archivo) {
+        subirFotoPerfil(archivo);
+      }
+
+      e.target.value = "";
+    }}
+  />
+</label>
+
+{mensajeFoto && (
+  <div
+    style={{
+      marginTop: "8px",
+      fontSize: "13px",
+      color:
+        "var(--color-text-secondary)",
+    }}
+  >
+    {mensajeFoto}
+  </div>
+)}
 
           <h1 className="page-title">
             🐶 {perrito.nombre}

@@ -110,6 +110,11 @@ const [precioGuarderia, setPrecioGuarderia] =
   const [guardando, setGuardando] =
     useState(false);
 
+   const [paginaActual, setPaginaActual] =
+  useState(1);
+
+const registrosPorPagina = 8;
+
 const {
   puede,
   esSuperadmin,
@@ -251,6 +256,13 @@ async function cargarPropietarios() {
       setModalAbierto(true);
     }
   }, [propietarioDesdeUrl]);
+
+  useEffect(() => {
+  setPaginaActual(1);
+}, [
+  busqueda,
+  sucursalFiltro,
+]);
 
   function limpiarFormulario() {
     setNombre("");
@@ -403,6 +415,26 @@ const perritosFiltrados =
     sucursalFiltro,
   ]);
 
+  const totalPaginas =
+  Math.max(
+    1,
+    Math.ceil(
+      perritosFiltrados.length /
+        registrosPorPagina
+    )
+  );
+
+const indiceInicio =
+  (paginaActual - 1) *
+  registrosPorPagina;
+
+const perritosPaginados =
+  perritosFiltrados.slice(
+    indiceInicio,
+    indiceInicio +
+      registrosPorPagina
+  );
+
   return (
     <div>
 
@@ -521,7 +553,7 @@ const perritosFiltrados =
         </thead>
 
         <tbody>
-          {perritosFiltrados.map(
+          {perritosPaginados.map(
             (perrito) => (
               <tr
                 key={perrito.id}
@@ -577,7 +609,7 @@ const perritosFiltrados =
     {/* Vista móvil */}
     <div className="mobile-only">
       <div className="mobile-list">
-        {perritosFiltrados.map(
+        {perritosPaginados.map(
           (perrito) => (
             <button
               key={perrito.id}
@@ -664,6 +696,55 @@ const perritosFiltrados =
         )}
       </div>
     </div>
+
+{perritosFiltrados.length > 0 && (
+  <div className="pagination">
+
+    <button
+      type="button"
+      className="secondary-button"
+      disabled={paginaActual === 1}
+      onClick={() =>
+        setPaginaActual(
+          (pagina) =>
+            Math.max(
+              1,
+              pagina - 1
+            )
+        )
+      }
+    >
+      ← Anterior
+    </button>
+
+    <span className="pagination-info">
+      Página {paginaActual} de{" "}
+      {totalPaginas}
+    </span>
+
+    <button
+      type="button"
+      className="secondary-button"
+      disabled={
+        paginaActual ===
+        totalPaginas
+      }
+      onClick={() =>
+        setPaginaActual(
+          (pagina) =>
+            Math.min(
+              totalPaginas,
+              pagina + 1
+            )
+        )
+      }
+    >
+      Siguiente →
+    </button>
+
+  </div>
+)}
+
   </>
 )}
 

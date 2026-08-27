@@ -192,19 +192,19 @@ const [horaSalida, setHoraSalida] =
   useState("");
 
 const [diasHotel, setDiasHotel] =
-  useState(0);
+   useState<number | "">(0);
 
 const [diasGuarderia, setDiasGuarderia] =
-  useState(0);
+  useState<number | "">(0);
 
   const [precioHotel, setPrecioHotel] =
-  useState(0);
+   useState<number | "">(0);
 
 const [precioGuarderia, setPrecioGuarderia] =
-  useState(0);
+  useState<number | "">(0);
 
 const [descuento, setDescuento] =
-  useState(0);
+  useState<number | "">(0);
 
  const [estadosPago, setEstadosPago] =
   useState<{ id: number; nombre: string }[]>([]);
@@ -219,7 +219,7 @@ const [formaPagoId, setFormaPagoId] =
   useState("");
 
 const [montoPagado, setMontoPagado] =
-  useState(0); 
+   useState<number | "">(0);
 
 const [estadosEstadia, setEstadosEstadia] =
   useState<{ id: number; nombre: string }[]>([]);
@@ -247,6 +247,11 @@ const [observaciones, setObservaciones] =
 
   const [busqueda, setBusqueda] =
   useState("");
+
+  const [paginaActual, setPaginaActual] =
+  useState(1);
+
+const registrosPorPagina = 8;
 
   const [
   permitirRecalculoEdicion,
@@ -759,17 +764,17 @@ if (
     hora_salida:
       horaSalida || null,
 
-    dias_hotel:
-      diasHotel,
+ dias_hotel:
+  Number(diasHotel || 0),
 
-    dias_guarderia:
-      diasGuarderia,
+dias_guarderia:
+  Number(diasGuarderia || 0),
 
-    precio_hotel_aplicado:
-      precioHotel,
+precio_hotel_aplicado:
+  Number(precioHotel || 0),
 
-    precio_guarderia_aplicado:
-      precioGuarderia,
+precio_guarderia_aplicado:
+  Number(precioGuarderia || 0),
 
     subtotal_hotel:
       subtotalHotel,
@@ -777,14 +782,14 @@ if (
     subtotal_guarderia:
       subtotalGuarderia,
 
-    descuento:
-      descuento,
+  descuento:
+  Number(descuento || 0),
 
     total:
       total,
 
-    monto_pagado:
-      montoPagado,
+   monto_pagado:
+  Number(montoPagado || 0),
 
     entregado_por:
       entregadoPor || null,
@@ -859,6 +864,8 @@ useEffect(() => {
   cargarCatalogos();
   cargarSucursalesFiltro();
 }, []);
+
+
 
 
 useEffect(() => {
@@ -952,13 +959,13 @@ if (
     salida.getTime() -
     entrada.getTime();
 
-  const dias = Math.max(
-    0,
-    Math.round(
-      diferencia /
-        (1000 * 60 * 60 * 24)
-    )
-  );
+const dias = Math.max(
+  1,
+  Math.round(
+    diferencia /
+      (1000 * 60 * 60 * 24)
+  ) + 1
+);
 
   const tipoSeleccionado =
     tiposEstadia.find(
@@ -970,31 +977,29 @@ if (
     return;
   }
 
-  if (
-    tipoSeleccionado.nombre === "Hotel"
-  ) {
-    setDiasHotel(dias);
-    setDiasGuarderia(0);
-  }
+if (
+  tipoSeleccionado.nombre === "Hotel"
+) {
+  setDiasHotel(dias);
+  setDiasGuarderia(0);
+}
 
-  if (
-    tipoSeleccionado.nombre === "Guardería"
-  ) {
-    setDiasHotel(0);
-    setDiasGuarderia(
-      Math.max(1, dias)
-    );
-  }
+if (
+  tipoSeleccionado.nombre === "Guardería"
+) {
+  setDiasHotel(0);
+  setDiasGuarderia(dias);
+}
 
-  if (
-    tipoSeleccionado.nombre === "Mixta"
-  ) {
-    setDiasHotel(
-      Math.max(0, dias - 1)
-    );
+if (
+  tipoSeleccionado.nombre === "Mixta"
+) {
+  setDiasHotel(
+    Math.max(0, dias - 1)
+  );
 
-    setDiasGuarderia(1);
-  }
+  setDiasGuarderia(1);
+}
 }, [
   fechaEntrada,
   fechaSalida,
@@ -1061,13 +1066,15 @@ useEffect(() => {
 ]);
 
 
+
+
 const subtotalHotel =
-  diasHotel * precioHotel;
+  Number(diasHotel || 0) * Number(precioHotel || 0)
 
 
 
 const subtotalGuarderia =
-  diasGuarderia * precioGuarderia;
+  Number(diasGuarderia || 0) * Number(precioGuarderia || 0)
 
 const subtotal =
   subtotalHotel +
@@ -1076,14 +1083,15 @@ const subtotal =
 const total =
   Math.max(
     0,
-    subtotal - descuento
+    subtotal - Number(descuento || 0)
   );
 
 const saldoPendiente =
   Math.max(
     0,
-    total - montoPagado
-  );  
+    Number(total || 0) -
+      Number(montoPagado || 0)
+  );
 
 const perritosFiltrados =
   perritos.filter((perrito) => {
@@ -1106,8 +1114,11 @@ const perritosFiltrados =
   }
 ); 
 
+
+
 const estadiasFiltradas =
   estadias.filter((estadia) => {
+   
    
    const coincideSucursal =
   !sucursalFiltro ||
@@ -1145,6 +1156,55 @@ return (
 );
   });
 
+const totalPaginas =
+  Math.max(
+    1,
+    Math.ceil(
+      estadiasFiltradas.length /
+        registrosPorPagina
+    )
+  );
+
+const indiceInicio =
+  (paginaActual - 1) *
+  registrosPorPagina;
+
+const indiceFin =
+  indiceInicio +
+  registrosPorPagina;
+
+const estadiasPaginadas =
+  estadiasFiltradas.slice(
+    indiceInicio,
+    indiceFin
+  );
+
+  useEffect(() => {
+  const estadoSeleccionado =
+    estadosPago.find(
+      (estado) =>
+        estado.id === Number(estadoPagoId)
+    );
+
+  if (
+    estadoSeleccionado?.nombre === "Pagado"
+  ) {
+    setMontoPagado(
+      Number(total || 0)
+    );
+  }
+}, [
+  estadoPagoId,
+  total,
+  estadosPago,
+]);
+
+useEffect(() => {
+  setPaginaActual(1);
+}, [
+  busqueda,
+  sucursalFiltro,
+]);
 
   return (
     <div>
@@ -1287,7 +1347,7 @@ return (
       </thead>
 
       <tbody>
-        {estadiasFiltradas.map((estadia) => {
+       {estadiasPaginadas.map((estadia) => {
           const saldo =
             estadia.total -
             estadia.monto_pagado;
@@ -1399,7 +1459,7 @@ return (
   <div className="mobile-only">
     <div className="mobile-list">
 
-      {estadiasFiltradas.map((estadia) => {
+      {estadiasPaginadas.map((estadia) => {
         const saldo =
           Math.max(
             0,
@@ -1595,6 +1655,50 @@ return (
 
     </div>
   </div>
+{estadiasFiltradas.length > 0 && (
+  <div className="pagination">
+
+    <button
+      type="button"
+      className="secondary-button"
+      disabled={paginaActual === 1}
+      onClick={() =>
+        setPaginaActual(
+          (pagina) =>
+            Math.max(1, pagina - 1)
+        )
+      }
+    >
+      ← Anterior
+    </button>
+
+    <span className="pagination-info">
+      Página {paginaActual} de{" "}
+      {totalPaginas}
+    </span>
+
+    <button
+      type="button"
+      className="secondary-button"
+      disabled={
+        paginaActual === totalPaginas
+      }
+      onClick={() =>
+        setPaginaActual(
+          (pagina) =>
+            Math.min(
+              totalPaginas,
+              pagina + 1
+            )
+        )
+      }
+    >
+      Siguiente →
+    </button>
+
+  </div>
+)}
+
 </>
 
 
@@ -1809,20 +1913,21 @@ onChange={(e) => {
     Días de hotel
   </label>
 
-  <input
-    type="number"
-    min="0"
-    className="form-input"
-    value={diasHotel}
-    onChange={(e) =>
-      setDiasHotel(
-        Math.max(
-          0,
-          Number(e.target.value)
-        )
-      )
-    }
-  />
+<input
+  type="number"
+  min="0"
+  className="form-input"
+  value={diasHotel}
+  onChange={(e) => {
+    const valor = e.target.value;
+
+    setDiasHotel(
+      valor === ""
+        ? ""
+        : Math.max(0, Number(valor))
+    );
+  }}
+/>
 </div>
 
 <div className="form-group">
@@ -1830,20 +1935,21 @@ onChange={(e) => {
     Días de guardería
   </label>
 
-  <input
-    type="number"
-    min="0"
-    className="form-input"
-    value={diasGuarderia}
-    onChange={(e) =>
-      setDiasGuarderia(
-        Math.max(
-          0,
-          Number(e.target.value)
-        )
-      )
-    }
-  />
+<input
+  type="number"
+  min="0"
+  className="form-input"
+  value={diasGuarderia}
+  onChange={(e) => {
+    const valor = e.target.value;
+
+    setDiasGuarderia(
+      valor === ""
+        ? ""
+        : Math.max(0, Number(valor))
+    );
+  }}
+/>
 </div>
 
 <div className="form-group">
@@ -1851,20 +1957,21 @@ onChange={(e) => {
     Precio hotel
   </label>
 
-  <input
-    type="number"
-    min="0"
-    className="form-input"
-    value={precioHotel}
-    onChange={(e) =>
-      setPrecioHotel(
-        Math.max(
-          0,
-          Number(e.target.value)
-        )
-      )
-    }
-  />
+<input
+  type="number"
+  min="0"
+  className="form-input"
+  value={precioHotel}
+  onChange={(e) => {
+    const valor = e.target.value;
+
+    setPrecioHotel(
+      valor === ""
+        ? ""
+        : Math.max(0, Number(valor))
+    );
+  }}
+/>
 </div>
 
 <div className="form-group">
@@ -1872,20 +1979,21 @@ onChange={(e) => {
     Precio guardería
   </label>
 
-  <input
-    type="number"
-    min="0"
-    className="form-input"
-    value={precioGuarderia}
-    onChange={(e) =>
-      setPrecioGuarderia(
-        Math.max(
-          0,
-          Number(e.target.value)
-        )
-      )
-    }
-  />
+<input
+  type="number"
+  min="0"
+  className="form-input"
+  value={precioGuarderia}
+  onChange={(e) => {
+    const valor = e.target.value;
+
+    setPrecioGuarderia(
+      valor === ""
+        ? ""
+        : Math.max(0, Number(valor))
+    );
+  }}
+/>
 </div>
 
 <div className="form-group full">
@@ -1893,20 +2001,21 @@ onChange={(e) => {
     Descuento
   </label>
 
-  <input
-    type="number"
-    min="0"
-    className="form-input"
-    value={descuento}
-    onChange={(e) =>
-      setDescuento(
-        Math.max(
-          0,
-          Number(e.target.value)
-        )
-      )
-    }
-  />
+<input
+  type="number"
+  min="0"
+  className="form-input"
+  value={descuento}
+  onChange={(e) => {
+    const valor = e.target.value;
+
+    setDescuento(
+      valor === ""
+        ? ""
+        : Math.max(0, Number(valor))
+    );
+  }}
+/>
 </div>
 
 <div className="form-group">
@@ -1968,20 +2077,21 @@ onChange={(e) => {
     Monto pagado
   </label>
 
-  <input
-    className="form-input"
-    type="number"
-    min="0"
-    value={montoPagado}
-    onChange={(e) =>
-      setMontoPagado(
-        Math.max(
-          0,
-          Number(e.target.value)
-        )
-      )
-    }
-  />
+ <input
+  type="number"
+  min="0"
+  className="form-input"
+  value={montoPagado}
+  onChange={(e) => {
+    const valor = e.target.value;
+
+    setMontoPagado(
+      valor === ""
+        ? ""
+        : Math.max(0, Number(valor))
+    );
+  }}
+/>
 </div>
 
 <div
@@ -2056,9 +2166,9 @@ onChange={(e) => {
     </span>
 
     <strong>
-      - {formatearColones(
-        descuento
-      )}
+    {formatearColones(
+  Number(descuento || 0)
+)}
     </strong>
   </div>
 
@@ -2087,9 +2197,9 @@ onChange={(e) => {
         fontSize: "24px",
       }}
     >
-      {formatearColones(
-        total
-      )}
+   {formatearColones(
+  Number(descuento || 0)
+)}
     </strong>
   </div>
 </div>
@@ -2115,9 +2225,9 @@ onChange={(e) => {
   </span>
 
   <strong>
-    {formatearColones(
-      montoPagado
-    )}
+ {formatearColones(
+  Number(montoPagado || 0)
+)}
   </strong>
 </div>
 

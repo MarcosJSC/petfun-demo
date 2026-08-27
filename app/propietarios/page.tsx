@@ -125,6 +125,13 @@ const [
     cargarSucursalesFiltro();
   }, []);
 
+  useEffect(() => {
+  setPaginaActual(1);
+}, [
+  busqueda,
+  sucursalFiltro,
+]);
+
   function limpiarFormulario() {
     setNombre("");
     setApellidos("");
@@ -283,6 +290,31 @@ return (
   sucursalFiltro,
 ]);
 
+const [paginaActual, setPaginaActual] =
+  useState(1);
+
+const registrosPorPagina = 8;
+
+const totalPaginas =
+  Math.max(
+    1,
+    Math.ceil(
+      propietariosFiltrados.length /
+        registrosPorPagina
+    )
+  );
+
+const indiceInicio =
+  (paginaActual - 1) *
+  registrosPorPagina;
+
+const propietariosPaginados =
+  propietariosFiltrados.slice(
+    indiceInicio,
+    indiceInicio +
+      registrosPorPagina
+  );
+
   return (
     <div>
 
@@ -402,7 +434,7 @@ return (
         </thead>
 
         <tbody>
-          {propietariosFiltrados.map(
+          {propietariosPaginados.map(
             (propietario) => (
               <tr
                 key={propietario.id}
@@ -447,7 +479,7 @@ return (
     {/* Vista móvil */}
     <div className="mobile-only">
       <div className="mobile-list">
-        {propietariosFiltrados.map(
+        {propietariosPaginados.map(
           (propietario) => (
             <button
               key={propietario.id}
@@ -519,7 +551,46 @@ return (
           )
         )}
       </div>
+
+      
     </div>
+
+    {propietariosFiltrados.length > 0 && (
+  <div className="pagination">
+    <button
+      type="button"
+      className="secondary-button"
+      disabled={paginaActual === 1}
+      onClick={() =>
+        setPaginaActual((pagina) =>
+          Math.max(1, pagina - 1)
+        )
+      }
+    >
+      ← Anterior
+    </button>
+
+    <span className="pagination-info">
+      Página {paginaActual} de {totalPaginas}
+    </span>
+
+    <button
+      type="button"
+      className="secondary-button"
+      disabled={paginaActual === totalPaginas}
+      onClick={() =>
+        setPaginaActual((pagina) =>
+          Math.min(
+            totalPaginas,
+            pagina + 1
+          )
+        )
+      }
+    >
+      Siguiente →
+    </button>
+  </div>
+)}
   </>
 )}
 
