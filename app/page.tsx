@@ -800,7 +800,7 @@ if (desparasitacionesData) {
     border: "none",
   }}
 >
-  <div className="dashboard-grid dashboard-summary-grid">
+ <div className="card-label">
     Hospedados hoy
   </div>
 

@@ -41,7 +41,15 @@ const opciones = [
   },
 ];
 
+
+
 export default function Sidebar() {
+
+const [
+  mostrarConfirmacionCerrarSesion,
+  setMostrarConfirmacionCerrarSesion,
+] = useState(false);
+
   const pathname = usePathname();
 
   const router = useRouter();
@@ -118,6 +126,8 @@ async function cerrarSesion() {
   router.replace("/login");
   router.refresh();
 }
+
+
 
   return (
     <>
@@ -230,7 +240,9 @@ async function cerrarSesion() {
 <button
   type="button"
   className="secondary-button sidebar-logout"
-  onClick={cerrarSesion}
+  onClick={() =>
+    setMostrarConfirmacionCerrarSesion(true)
+  }
 >
   Cerrar sesión
 </button>
@@ -238,6 +250,69 @@ async function cerrarSesion() {
 <ThemeToggle />
 
       </aside>
+
+{mostrarConfirmacionCerrarSesion && (
+  <div
+    className="modal-backdrop"
+    onMouseDown={(e) => {
+      if (e.target === e.currentTarget) {
+        setMostrarConfirmacionCerrarSesion(false);
+      }
+    }}
+  >
+    <div className="modal">
+      <div className="modal-header">
+        <h2>
+          Cerrar sesión
+        </h2>
+
+        <button
+          type="button"
+          className="icon-button"
+          onClick={() =>
+            setMostrarConfirmacionCerrarSesion(false)
+          }
+        >
+          ×
+        </button>
+      </div>
+
+      <div className="modal-body">
+        <p>
+          ¿Seguro que deseas cerrar sesión?
+        </p>
+
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "flex-end",
+            gap: "10px",
+            marginTop: "20px",
+          }}
+        >
+          <button
+            type="button"
+            className="secondary-button"
+            onClick={() =>
+              setMostrarConfirmacionCerrarSesion(false)
+            }
+          >
+            Cancelar
+          </button>
+
+          <button
+            type="button"
+            className="danger-button"
+            onClick={cerrarSesion}
+          >
+            Cerrar sesión
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+)}
+
     </>
   );
 }

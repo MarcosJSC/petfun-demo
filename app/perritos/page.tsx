@@ -124,17 +124,24 @@ const {
   esSuperadmin,
 } = usePermisos();
 
+
 async function cargarFotosPerritos(
   lista: Perrito[]
 ) {
-  const entradas =
-    await Promise.all(
-      lista.map(async (perrito) => {
+  const nuevasFotos: Record<
+    number,
+    string
+  > = {};
+
+  await Promise.all(
+    lista.map(
+      async (perrito) => {
         if (!perrito.foto_path) {
-          return [
-            perrito.id,
-            "",
-          ] as const;
+          nuevasFotos[
+            perrito.id
+          ] = "";
+
+          return;
         }
 
         const { data, error } =
@@ -151,23 +158,26 @@ async function cargarFotosPerritos(
             error
           );
 
-          return [
-            perrito.id,
-            "",
-          ] as const;
+          nuevasFotos[
+            perrito.id
+          ] = "";
+
+          return;
         }
 
-        return [
-          perrito.id,
-          data.signedUrl,
-        ] as const;
-      })
-    );
+        nuevasFotos[
+          perrito.id
+        ] =
+          data.signedUrl;
+      }
+    )
+  );
 
   setFotosPerritos(
-    Object.fromEntries(entradas)
+    nuevasFotos
   );
 }
+
 
  async function cargarPerritos() {
   const { data, error } = await supabase
@@ -215,7 +225,7 @@ const lista =
 
 setPerritos(lista);
 
-await cargarFotosPerritos(lista);
+/*await cargarFotosPerritos(lista);*/
 }
 
 async function cargarSucursalesFiltro() {
@@ -488,6 +498,24 @@ const perritosPaginados =
       registrosPorPagina
   );
 
+  useEffect(() => {
+  if (
+    perritosPaginados.length === 0
+  ) {
+    setFotosPerritos({});
+    return;
+  }
+
+  cargarFotosPerritos(
+    perritosPaginados
+  );
+}, [
+  paginaActual,
+  busqueda,
+  sucursalFiltro,
+  perritos,
+]);
+
   return (
     <div>
 
@@ -632,7 +660,7 @@ const perritosPaginados =
 </td>
                 <td>
                   <strong>
-                    🐾 {perrito.nombre}
+                  {perrito.nombre}
                   </strong>
                 </td>
 
@@ -701,7 +729,7 @@ const perritosPaginados =
   )}
 
   <div className="mobile-record-title">
-    🐾 {perrito.nombre}
+    {perrito.nombre}
   </div>
 </div>
 

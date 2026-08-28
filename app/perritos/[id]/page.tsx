@@ -3,6 +3,7 @@
 import {
   FormEvent,
   useEffect,
+  useRef,
   useState,
 } from "react";
 
@@ -13,6 +14,11 @@ import {
 
 import { supabase } from "@/lib/supabase";
 import { usePermisos } from "@/hooks/usePermisos";
+
+
+import {
+  toBlob,
+} from "html-to-image";
 
 type Propietario = {
   id: number;
@@ -93,59 +99,7 @@ function calcularEdad(fechaNacimiento: string | null) {
   }
   
 
-function obtenerEstadoFecha(fecha: string | null) {
-  if (!fecha) {
-    return {
-      estado: "sin-fecha",
-      texto: "Sin fecha",
-    };
-  }
 
-  const hoy = new Date();
-  hoy.setHours(0, 0, 0, 0);
-
-  const fechaObjetivo = new Date(
-    `${fecha}T00:00:00`
-  );
-
-  const diferencia =
-    fechaObjetivo.getTime() -
-    hoy.getTime();
-
-  const dias = Math.ceil(
-    diferencia / (1000 * 60 * 60 * 24)
-  );
-
-  if (dias < 0) {
-    return {
-      estado: "vencida",
-      texto: `Vencida hace ${Math.abs(dias)} ${
-        Math.abs(dias) === 1 ? "día" : "días"
-      }`,
-    };
-  }
-
-  if (dias === 0) {
-    return {
-      estado: "proxima",
-      texto: "Vence hoy",
-    };
-  }
-
-  if (dias <= 30) {
-    return {
-      estado: "proxima",
-      texto: `Vence en ${dias} ${
-        dias === 1 ? "día" : "días"
-      }`,
-    };
-  }
-
-  return {
-    estado: "vigente",
-    texto: `Vigente · ${dias} días`,
-  };
-}
 
   const nacimiento = new Date(
     `${fechaNacimiento}T00:00:00`
@@ -408,6 +362,14 @@ const [precioGuarderia, setPrecioGuarderia] =
 const [mensajeFoto, setMensajeFoto] =
   useState("");
 
+  const fichaSaludRef =
+  useRef<HTMLDivElement | null>(null);
+
+  const [
+  modalFichaSalud,
+  setModalFichaSalud,
+] = useState(false);
+
   useEffect(() => {
   if (!mensajeFoto) {
     return;
@@ -423,6 +385,7 @@ const [mensajeFoto, setMensajeFoto] =
 }, [mensajeFoto]);
 
   const { puede } = usePermisos();
+
 
 const vacunasActuales = Object.values(
   vacunas.reduce(
@@ -457,10 +420,313 @@ const vacunasActuales = Object.values(
   )
 );
 
+
+const tiposVacunaFicha = [
+  "Múltiple",
+  "Rabia",
+  "Bordetella",
+  "Giardia",
+];
+
+const vacunasFicha =
+  tiposVacunaFicha.map((tipo) => {
+    const vacuna =
+      vacunasActuales.find(
+        (item) =>
+          item.tipos_vacuna?.nombre ===
+          tipo
+      );
+
+    if (!vacuna) {
+      return {
+        tipo,
+        estado: "sin-registro",
+        textoEstado: "Sin registro",
+        fechaAplicacion: null,
+        fechaVencimiento: null,
+      };
+    }
+
+    const estado =
+      obtenerEstadoFecha(
+        vacuna.fecha_vencimiento
+      );
+
+    return {
+      tipo,
+      estado:
+        estado.estado,
+      textoEstado:
+        estado.estado === "vigente"
+          ? "Vigente"
+          : estado.estado === "proxima"
+            ? "Por vencer"
+            : estado.estado === "vencida"
+              ? "Vencida"
+              : "Sin fecha",
+
+      fechaAplicacion:
+        vacuna.fecha_aplicacion,
+
+      fechaVencimiento:
+        vacuna.fecha_vencimiento,
+    };
+  });
+
 const ultimaDesparasitacion =
   desparasitaciones.length > 0
     ? desparasitaciones[0]
     : null;
+
+
+    function obtenerUltimaDesparasitacionPorTipo(
+  tipoBuscado: "Interna" | "Externa"
+) {
+  return desparasitaciones.find(
+    (item) => {
+      const tipo =
+        item.tipos_desparasitacion
+          ?.nombre;
+
+      return (
+        tipo === tipoBuscado ||
+        tipo === "Ambas"
+      );
+    }
+  ) ?? null;
+}
+
+const desparasitacionesFicha = [
+  "Interna",
+  "Externa",
+].map((tipo) => {
+  const registro =
+    obtenerUltimaDesparasitacionPorTipo(
+      tipo as "Interna" | "Externa"
+    );
+
+  if (!registro) {
+    return {
+      tipo,
+      estado: "sin-registro",
+      textoEstado: "Sin registro",
+      fechaAplicacion: null,
+      fechaProxima: null,
+    };
+  }
+
+  const estado =
+    obtenerEstadoFecha(
+      registro.fecha_proxima
+    );
+
+  return {
+    tipo,
+    estado:
+      estado.estado,
+    textoEstado:
+      estado.estado === "vigente"
+        ? "Al día"
+        : estado.estado === "proxima"
+          ? "Próxima"
+          : estado.estado === "vencida"
+            ? "Vencida"
+            : "Sin fecha",
+
+    fechaAplicacion:
+      registro.fecha_aplicacion,
+
+    fechaProxima:
+      registro.fecha_proxima,
+  };
+});
+
+const alertasSalud = [
+  ...vacunasFicha
+    .filter(
+      (item) =>
+        item.estado === "vencida" ||
+        item.estado === "proxima" ||
+        item.estado === "sin-registro"
+    )
+    .map((item) => ({
+      tipo: "vacuna",
+      nombre: item.tipo,
+      estado: item.estado,
+    })),
+
+  ...desparasitacionesFicha
+    .filter(
+      (item) =>
+        item.estado === "vencida" ||
+        item.estado === "proxima" ||
+        item.estado === "sin-registro"
+    )
+    .map((item) => ({
+      tipo: "desparasitacion",
+      nombre: item.tipo,
+      estado: item.estado,
+    })),
+];
+
+
+function generarMensajeSalud() {
+
+   if (!perrito) {
+    return "";
+  }
+
+  const alertasVacunas =
+    vacunasFicha.filter(
+      (item) =>
+        item.estado === "vencida" ||
+        item.estado === "proxima" ||
+        item.estado === "sin-registro"
+    );
+
+  const alertasDesparasitacion =
+    desparasitacionesFicha.filter(
+      (item) =>
+        item.estado === "vencida" ||
+        item.estado === "proxima" ||
+        item.estado === "sin-registro"
+    );
+
+  const partes: string[] = [];
+
+  alertasVacunas.forEach((item) => {
+    if (item.estado === "vencida") {
+      partes.push(
+        `la vacuna ${item.tipo} está vencida`
+      );
+    }
+
+    if (item.estado === "proxima") {
+      partes.push(
+        `la vacuna ${item.tipo} está próxima a vencer`
+      );
+    }
+
+    if (item.estado === "sin-registro") {
+      partes.push(
+        `no tenemos registro de la vacuna ${item.tipo}`
+      );
+    }
+  });
+
+  alertasDesparasitacion.forEach(
+    (item) => {
+      if (item.estado === "vencida") {
+        partes.push(
+          `la desparasitación ${item.tipo.toLowerCase()} está vencida`
+        );
+      }
+
+      if (item.estado === "proxima") {
+        partes.push(
+          `la desparasitación ${item.tipo.toLowerCase()} está próxima`
+        );
+      }
+
+      if (item.estado === "sin-registro") {
+        partes.push(
+          `no tenemos registro de desparasitación ${item.tipo.toLowerCase()}`
+        );
+      }
+    }
+  );
+
+  if (partes.length === 0) {
+    return (
+      `Hola 😊 Te compartimos la ficha de salud de ${perrito.nombre}. ` +
+      `Sus vacunas y desparasitaciones registradas se encuentran al día. 🐶💜`
+    );
+  }
+
+  return (
+    `Hola 😊 Te compartimos la ficha de salud de ${perrito.nombre}. ` +
+    `Actualmente observamos que ${partes.join(
+      ", "
+    )}. ` +
+    `Te agradecemos actualizar la información correspondiente cuando sea posible. 🐶💜`
+  );
+}
+
+
+async function compartirFichaSalud() {
+  if (
+    !fichaSaludRef.current ||
+    !perrito
+  ) {
+    return;
+  }
+
+  try {
+    const blob = await toBlob(
+      fichaSaludRef.current,
+      {
+        pixelRatio: 2,
+        cacheBust: true,
+      }
+    );
+
+    if (!blob) {
+      throw new Error(
+        "No se pudo generar la imagen."
+      );
+    }
+
+    const archivo = new File(
+      [blob],
+      `ficha-salud-${perrito.nombre
+        .toLowerCase()
+        .replace(/\s+/g, "-")}.png`,
+      {
+        type: "image/png",
+      }
+    );
+
+    const mensaje =
+      generarMensajeSalud();
+
+    if (
+      navigator.share &&
+      navigator.canShare?.({
+        files: [archivo],
+      })
+    ) {
+      await navigator.share({
+        title:
+          `Ficha de salud de ${perrito.nombre}`,
+        text: mensaje,
+        files: [archivo],
+      });
+
+      return;
+    }
+
+    // Fallback si el dispositivo
+    // no permite compartir archivos
+    const url =
+      URL.createObjectURL(blob);
+
+    const enlace =
+      document.createElement("a");
+
+    enlace.href = url;
+    enlace.download =
+      archivo.name;
+
+    enlace.click();
+
+    URL.revokeObjectURL(url);
+  } catch (error) {
+    console.error(
+      "Error compartiendo ficha:",
+      error
+    );
+  }
+}
 
 
   async function cargarPerrito() {
@@ -873,6 +1139,8 @@ async function subirFotoPerfil(
 
     cargarTodo();
   }, [perritoId]);
+
+
 
   async function guardarCambios(
     e: FormEvent
@@ -1337,10 +1605,14 @@ async function eliminarDesparasitacion(
         </button>
       </div>
     );
+
+    
+
   }
 
   return (
     <div>
+    
 
    <div className="page-header dog-detail-header">
 
@@ -1454,7 +1726,53 @@ async function eliminarDesparasitacion(
         <div className="status-message">
           {mensaje}
         </div>
-      )}
+      )
+        }
+
+
+<button
+  type="button"
+  className="health-summary-card"
+  onClick={() =>
+    setModalFichaSalud(true)
+  }
+>
+  <div className="health-summary-left">
+    <div className="health-summary-icon">
+      💉
+    </div>
+
+    <div>
+      <strong className="health-summary-title">
+        Ficha de salud
+      </strong>
+
+      <div className="health-summary-subtitle">
+        Vacunas y desparasitación
+      </div>
+
+      <div className="health-summary-status">
+        {alertasSalud.length === 0 ? (
+          <span className="health-ok">
+            🟢 Todo al día
+          </span>
+        ) : (
+          <span className="health-warning">
+            ⚠️ {alertasSalud.length}{" "}
+            {alertasSalud.length === 1
+              ? "aspecto requiere"
+              : "aspectos requieren"}{" "}
+            atención
+          </span>
+        )}
+      </div>
+    </div>
+  </div>
+
+  <span className="health-summary-arrow">
+    →
+  </span>
+</button>
 
 <div
   className="dashboard-grid dog-info-grid"
@@ -2151,6 +2469,8 @@ async function eliminarDesparasitacion(
                   ultimaDesparasitacion.fecha_proxima
                 );
 
+
+
               return (
                 <span
                   className={`estado-badge ${estado.estado}`}
@@ -2431,6 +2751,316 @@ async function eliminarDesparasitacion(
         )}
 
       </section>
+
+
+{modalFichaSalud && (
+  <div
+    className="modal-backdrop"
+    onMouseDown={(e) => {
+      if (
+        e.target === e.currentTarget
+      ) {
+        setModalFichaSalud(false);
+      }
+    }}
+  >
+    <div className="modal health-modal">
+
+      <div className="modal-header">
+        <div>
+          <h2>
+            💉 Ficha de salud
+          </h2>
+
+          <div
+            style={{
+              color:
+                "var(--color-text-secondary)",
+              marginTop: "4px",
+            }}
+          >
+            Resumen actual de vacunas y
+            desparasitación
+          </div>
+        </div>
+
+        <button
+          type="button"
+          className="icon-button"
+          onClick={() =>
+            setModalFichaSalud(false)
+          }
+        >
+          ×
+        </button>
+      </div>
+
+      <div className="modal-body">
+
+        <div
+  ref={fichaSaludRef}
+  className="health-share-card"
+>
+
+        {/* DATOS DEL PERRITO */}
+        <div className="health-profile-header">
+
+          <div className="health-profile-photo">
+            {fotoUrl ? (
+              <img
+                src={fotoUrl}
+                alt={`Foto de ${perrito.nombre}`}
+              />
+            ) : (
+              <span>🐶</span>
+            )}
+          </div>
+
+          <div>
+            <h2
+              style={{
+                margin:
+                  "0 0 5px 0",
+              }}
+            >
+              {perrito.nombre}
+            </h2>
+
+            <div className="health-owner">
+              {perrito.propietarios
+                ? `${perrito.propietarios.nombre} ${
+                    perrito.propietarios
+                      .apellidos ?? ""
+                  }`
+                : "Sin propietario"}
+            </div>
+
+            <div className="health-basic-data">
+              {calcularEdad(
+                perrito.fecha_nacimiento
+              )}
+              {" · "}
+              {perrito.sexo || "—"}
+              {" · "}
+              {perrito.peso_kg
+                ? `${perrito.peso_kg} kg`
+                : "—"}
+            </div>
+          </div>
+        </div>
+
+
+        {/* VACUNAS */}
+        <section className="health-section">
+
+          <h3>
+            💉 Vacunas
+          </h3>
+
+          <div className="health-items">
+
+            {vacunasFicha.map(
+              (vacuna) => (
+                <div
+                  key={vacuna.tipo}
+                  className="health-item"
+                >
+                  <div className="health-item-top">
+
+                    <strong>
+                      {vacuna.tipo}
+                    </strong>
+
+                    <span
+                      className={`estado-badge ${
+                        vacuna.estado ===
+                        "sin-registro"
+                          ? "sin-registro"
+                          : vacuna.estado
+                      }`}
+                    >
+                      <span className="estado-dot" />
+
+                      {vacuna.textoEstado}
+                    </span>
+
+                  </div>
+
+                  {vacuna.estado !==
+                    "sin-registro" && (
+                    <div className="health-dates">
+
+                      <span>
+                        Aplicada:{" "}
+                        <strong>
+                          {formatearFecha(
+                            vacuna.fechaAplicacion
+                          )}
+                        </strong>
+                      </span>
+
+                      <span>
+                        {vacuna.estado ===
+                        "vencida"
+                          ? "Venció:"
+                          : "Vence:"}{" "}
+                        <strong>
+                          {formatearFecha(
+                            vacuna.fechaVencimiento
+                          )}
+                        </strong>
+                      </span>
+
+                    </div>
+                  )}
+                </div>
+              )
+            )}
+
+          </div>
+        </section>
+
+
+        {/* DESPARASITACIÓN */}
+        <section className="health-section">
+
+          <h3>
+            🛡️ Desparasitación
+          </h3>
+
+          <div className="health-items">
+
+            {desparasitacionesFicha.map(
+              (item) => (
+                <div
+                  key={item.tipo}
+                  className="health-item"
+                >
+                  <div className="health-item-top">
+
+                    <strong>
+                      {item.tipo}
+                    </strong>
+
+                    <span
+                      className={`estado-badge ${
+                        item.estado ===
+                        "sin-registro"
+                          ? "sin-registro"
+                          : item.estado
+                      }`}
+                    >
+                      <span className="estado-dot" />
+
+                      {item.textoEstado}
+                    </span>
+
+                  </div>
+
+                  {item.estado !==
+                    "sin-registro" && (
+                    <div className="health-dates">
+
+                      <span>
+                        Última:{" "}
+                        <strong>
+                          {formatearFecha(
+                            item.fechaAplicacion
+                          )}
+                        </strong>
+                      </span>
+
+                      <span>
+                        Próxima:{" "}
+                        <strong>
+                          {formatearFecha(
+                            item.fechaProxima
+                          )}
+                        </strong>
+                      </span>
+
+                    </div>
+                  )}
+                </div>
+              )
+            )}
+
+          </div>
+        </section>
+
+
+        {/* RESUMEN DE ATENCIÓN */}
+        <section className="health-section health-attention">
+
+          <h3>
+            {alertasSalud.length === 0
+              ? "✅ Salud al día"
+              : "⚠️ Requiere atención"}
+          </h3>
+
+          {alertasSalud.length === 0 ? (
+            <p>
+              Las vacunas y
+              desparasitaciones registradas
+              se encuentran al día.
+            </p>
+          ) : (
+            <div className="health-alert-list">
+
+              {alertasSalud.map(
+                (alerta, index) => (
+                  <div
+                    key={`${alerta.tipo}-${alerta.nombre}-${index}`}
+                    className="health-alert-item"
+                  >
+                    {alerta.estado ===
+                    "vencida"
+                      ? "🔴"
+                      : alerta.estado ===
+                        "proxima"
+                        ? "🟠"
+                        : "⚪"}{" "}
+
+                    <strong>
+                      {alerta.nombre}
+                    </strong>
+
+                    {" — "}
+
+                    {alerta.estado ===
+                    "vencida"
+                      ? "Vencida"
+                      : alerta.estado ===
+                        "proxima"
+                        ? "Próxima a vencer"
+                        : "Sin registro"}
+                  </div>
+                )
+              )}
+
+            </div>
+          )}
+        </section>
+
+  </div>
+        {/* COMPARTIR - POR AHORA SOLO VISUAL */}
+        <div className="health-share-area">
+
+<button
+  type="button"
+  className="primary-button"
+  onClick={compartirFichaSalud}
+>
+  📤 Compartir ficha
+</button>
+
+        </div>
+
+      </div>
+    </div>
+  </div>
+)}
+
 
       {modalEditar && (
         <div className="modal-backdrop">
