@@ -34,6 +34,7 @@ type Perrito = {
   raza_id: number | null;
 
 sucursal_id: number;
+foto_path: string | null;
 
   propietarios: {
     nombre: string;
@@ -113,12 +114,60 @@ const [precioGuarderia, setPrecioGuarderia] =
    const [paginaActual, setPaginaActual] =
   useState(1);
 
+  const [fotosPerritos, setFotosPerritos] =
+  useState<Record<number, string>>({});
+
 const registrosPorPagina = 8;
 
 const {
   puede,
   esSuperadmin,
 } = usePermisos();
+
+async function cargarFotosPerritos(
+  lista: Perrito[]
+) {
+  const entradas =
+    await Promise.all(
+      lista.map(async (perrito) => {
+        if (!perrito.foto_path) {
+          return [
+            perrito.id,
+            "",
+          ] as const;
+        }
+
+        const { data, error } =
+          await supabase.storage
+            .from("perritos")
+            .createSignedUrl(
+              perrito.foto_path,
+              60 * 60
+            );
+
+        if (error) {
+          console.error(
+            "Error cargando foto:",
+            error
+          );
+
+          return [
+            perrito.id,
+            "",
+          ] as const;
+        }
+
+        return [
+          perrito.id,
+          data.signedUrl,
+        ] as const;
+      })
+    );
+
+  setFotosPerritos(
+    Object.fromEntries(entradas)
+  );
+}
 
  async function cargarPerritos() {
   const { data, error } = await supabase
@@ -132,6 +181,7 @@ const {
       propietario_id,
       raza_id,
       sucursal_id,
+       foto_path,
 
       propietarios (
         nombre,
@@ -160,9 +210,12 @@ const {
     return;
   }
 
-  setPerritos(
-    (data ?? []) as unknown as Perrito[]
-  );
+const lista =
+  (data ?? []) as unknown as Perrito[];
+
+setPerritos(lista);
+
+await cargarFotosPerritos(lista);
 }
 
 async function cargarSucursalesFiltro() {
@@ -544,6 +597,7 @@ const perritosPaginados =
 
         <thead>
           <tr>
+          <th>Foto</th>
             <th>Nombre</th>
             <th>Raza</th>
             <th>Sexo</th>
@@ -563,6 +617,19 @@ const perritosPaginados =
                     `/perritos/${perrito.id}`;
                 }}
               >
+              <td>
+  {fotosPerritos[perrito.id] ? (
+    <img
+      src={fotosPerritos[perrito.id]}
+      alt={`Foto de ${perrito.nombre}`}
+      className="dog-list-photo-desktop"
+    />
+  ) : (
+    <div className="dog-list-photo-desktop dog-list-photo-placeholder">
+      🐶
+    </div>
+  )}
+</td>
                 <td>
                   <strong>
                     🐾 {perrito.nombre}
@@ -620,9 +687,23 @@ const perritosPaginados =
                   `/perritos/${perrito.id}`;
               }}
             >
-              <div className="mobile-record-title">
-                🐾 {perrito.nombre}
-              </div>
+          <div className="mobile-dog-header">
+  {fotosPerritos[perrito.id] ? (
+    <img
+      src={fotosPerritos[perrito.id]}
+      alt={`Foto de ${perrito.nombre}`}
+      className="dog-list-photo-mobile"
+    />
+  ) : (
+    <div className="dog-list-photo-mobile dog-list-photo-placeholder">
+      🐶
+    </div>
+  )}
+
+  <div className="mobile-record-title">
+    🐾 {perrito.nombre}
+  </div>
+</div>
 
               <div className="mobile-record-grid">
 

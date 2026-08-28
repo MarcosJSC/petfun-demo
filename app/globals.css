@@ -1946,3 +1946,43 @@ padding: 6px;
 .dog-profile-photo-img {
   opacity: 0.85;
 }
+
+.dog-list-photo-desktop {
+  width: 46px;
+  height: 46px;
+
+  border-radius: 50%;
+  object-fit: cover;
+
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
+}
+
+.dog-list-photo-mobile {
+  width: 68px;
+  height: 68px;
+
+  border-radius: 14px;
+  object-fit: cover;
+
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
+
+  flex-shrink: 0;
+}
+
+.dog-list-photo-placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  font-size: 22px;
+}
+
+.mobile-dog-header {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+
+  margin-bottom: 14px;
+}
