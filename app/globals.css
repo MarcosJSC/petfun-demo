@@ -2150,9 +2150,15 @@ padding: 6px;
 
 .health-item-top {
   display: flex;
-  align-items: center;
-  justify-content: space-between;
+  align-items: flex-start;
+  justify-content: space-between;  
   gap: 12px;
+
+    .estado-badge {
+    flex-shrink: 0;
+    white-space: nowrap;
+  }
+
 }
 
 .health-dates {
@@ -2224,7 +2230,13 @@ padding: 6px;
   .health-modal {
     width: 100%;
     max-width: none;
-    max-height: 94vh;
+    padding: 0;
+
+      .health-modal .modal-body {
+    padding-left: 0;
+    padding-right: 0;
+  }
+
   }
 
   .health-profile-photo {
@@ -2357,7 +2369,9 @@ padding: 6px;
 
 @media (max-width: 768px) {
   .health-share-card {
-    padding: 20px;
+      width: calc(100vw - 24px);
+    max-width: none;
+    padding: 18px 16px;
   }
 
   .health-v2-header {
@@ -2476,4 +2490,100 @@ padding: 6px;
   color: #9ca3af;
 }
 
+}
+
+/* ========================================
+   FICHA SALUD V2 - FOOTER
+======================================== */
+
+.health-v2-footer {
+  margin-top: 26px;
+  padding-top: 16px;
+
+  border-top: 1px solid #e5e7eb;
+
+  color: #6b7280;
+  font-size: 13px;
+}
+
+.health-v2-footer-row {
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: center !important;
+
+  gap: 28px !important;
+
+  width: 100% !important;
+}
+
+.health-v2-footer-item {
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: center !important;
+
+  gap: 7px !important;
+
+  width: auto !important;
+
+  white-space: nowrap;
+}
+
+.health-v2-footer-item strong {
+  color: #6d4aff;
+}
+
+.health-v2-social-icons {
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: center !important;
+
+  gap: 5px !important;
+}
+
+.health-v2-social-icons img {
+  width: 23px !important;
+  height: 23px !important;
+
+  min-width: 23px !important;
+  max-width: 23px !important;
+
+  min-height: 23px !important;
+  max-height: 23px !important;
+
+  object-fit: contain !important;
+  display: block !important;
+}
+
+.health-v2-footer-date {
+  margin-top: 10px !important;
+
+  text-align: right !important;
+
+  font-size: 12px;
+  color: #9ca3af;
+
+  white-space: nowrap;
+}
+
+@media (max-width: 768px) {
+  .health-v2-footer-row {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr !important;
+    gap: 10px 14px !important;
+    align-items: center !important;
+  }
+
+  .health-v2-footer-item:nth-child(3) {
+    grid-column: 1 / -1;
+  }
+
+  .health-v2-social-icons {
+    flex-shrink: 0;
+  }
+
+  .health-v2-footer-date {
+    margin-top: 8px !important;
+    text-align: left !important;
+    white-space: normal;
+  }
 }

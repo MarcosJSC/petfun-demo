@@ -3061,79 +3061,73 @@ async function eliminarDesparasitacion(
    
 <div className="health-v2-footer">
 
-  <div className="health-v2-footer-main">
+  <div className="health-v2-footer-row">
 
-    <div className="health-v2-footer-brand">
+    {/* PetFunCR */}
+    <div className="health-v2-footer-item">
       <img
         src={LOGO_PETFUNCR_URL}
         alt="PetFunCR"
         style={{
           width: "34px",
           height: "34px",
+          maxWidth: "34px",
+          maxHeight: "34px",
           objectFit: "contain",
+          display: "block",
         }}
       />
 
       <strong>PetFunCR</strong>
     </div>
 
-    <div className="health-v2-contact-item">
+    {/* WhatsApp */}
+    <div className="health-v2-footer-item">
       <img
         src={WHATSAPP_ICON_URL}
         alt="WhatsApp"
         style={{
-          width: "26px",
-          height: "26px",
+          width: "24px",
+          height: "24px",
+          maxWidth: "24px",
+          maxHeight: "24px",
           objectFit: "contain",
+          display: "block",
         }}
       />
 
-      <span>
-        8568-9575
-      </span>
+      <span>8568-9575</span>
     </div>
 
-    <div className="health-v2-socials">
-      <img
-        src={FACEBOOK_ICON_URL}
-        alt="Facebook"
-        style={{
-          width: "24px",
-          height: "24px",
-          objectFit: "contain",
-        }}
-      />
+    {/* Redes */}
+    <div className="health-v2-footer-item">
+      <div className="health-v2-social-icons">
+        <img
+          src={FACEBOOK_ICON_URL}
+          alt="Facebook"
+        />
 
-      <img
-        src={INSTAGRAM_ICON_URL}
-        alt="Instagram"
-        style={{
-          width: "24px",
-          height: "24px",
-          objectFit: "contain",
-        }}
-      />
+        <img
+          src={INSTAGRAM_ICON_URL}
+          alt="Instagram"
+        />
 
-      <img
-        src={TIKTOK_ICON_URL}
-        alt="TikTok"
-        style={{
-          width: "24px",
-          height: "24px",
-          objectFit: "contain",
-        }}
-      />
+        <img
+          src={TIKTOK_ICON_URL}
+          alt="TikTok"
+        />
+      </div>
 
       <span>PetFunCR</span>
     </div>
 
-    <div className="health-v2-footer-date">
-      Información registrada al{" "}
-      {new Intl.DateTimeFormat(
-        "es-CR"
-      ).format(new Date())}
-    </div>
+  </div>
 
+  <div className="health-v2-footer-date">
+    Información registrada al{" "}
+    {new Intl.DateTimeFormat(
+      "es-CR"
+    ).format(new Date())}
   </div>
 
 </div>
