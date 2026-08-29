@@ -2587,3 +2587,146 @@ padding: 6px;
     white-space: normal;
   }
 }
+
+/* =====================================
+   FICHA SALUD - FORMATO EXPORTACIÓN RESOLUCION
+===================================== */
+
+.health-share-card-export {
+  width: 570px !important;
+  max-width: 570px !important;
+  min-width: 570px !important;
+
+  padding: 24px !important;
+
+  background: #ffffff !important;
+  color: #111827 !important;
+
+  overflow: visible !important;
+}
+
+
+/* VACUNAS SIEMPRE 2 x 2 */
+
+.health-share-card-export
+.health-items-vaccines {
+  grid-template-columns:
+    repeat(2, minmax(0, 1fr))
+    !important;
+}
+
+
+/* DESPARASITACIÓN SIEMPRE 2 x 1 */
+
+.health-share-card-export
+.health-items-deworming {
+  grid-template-columns:
+    repeat(2, minmax(0, 1fr))
+    !important;
+}
+
+
+/* BADGES */
+
+.health-share-card-export
+.estado-badge {
+  flex-shrink: 0 !important;
+  white-space: nowrap !important;
+}
+
+
+/* FOOTER */
+
+.health-share-card-export
+.health-v2-footer-row {
+  display: grid !important;
+
+  grid-template-columns:
+    auto auto 1fr !important;
+
+  align-items: center !important;
+
+  gap: 18px !important;
+}
+
+
+/* Redes en segunda línea */
+
+.health-share-card-export
+.health-v2-footer-item:nth-child(3) {
+  grid-column: 1 / 3;
+
+  justify-self: start;
+}
+
+
+/* Fecha abajo a la derecha */
+
+.health-share-card-export
+.health-v2-footer-date {
+  margin-top: 8px !important;
+
+  text-align: right !important;
+
+  white-space: nowrap !important;
+}
+
+.health-share-card-export
+.health-item {
+  padding: 16px !important;
+}
+
+.health-share-card-export
+.health-item-top {
+  gap: 14px !important;
+}
+
+.health-share-card-export
+.health-dates {
+  gap: 8px 18px !important;
+}
+
+.health-share-card-export
+.health-profile-header,
+.health-share-card-export
+.health-v2-header {
+  gap: 18px !important;
+}
+
+.health-share-card-export
+.health-section {
+  margin-top: 24px !important;
+}
+
+.health-share-card-export
+.health-attention {
+  margin-top: 22px !important;
+}
+
+.health-share-card-export
+.health-v2-footer {
+  margin-top: 26px !important;
+}
+
+.login-forgot-password {
+  margin-top: 4px;
+  padding: 0;
+
+  border: none;
+  background: transparent;
+
+  color: var(--color-primary);
+  font-size: 14px;
+
+  cursor: pointer;
+  text-align: left;
+}
+
+.login-forgot-password:hover {
+  text-decoration: underline;
+}
+
+.login-forgot-password:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}

@@ -20,6 +20,10 @@ export default function AppShell({
   const esLogin =
     pathname === "/login";
 
+    const rutaPublica =
+  pathname === "/login" ||
+  pathname === "/actualizar-password";
+
   useEffect(() => {
     let activo = true;
 
@@ -37,11 +41,14 @@ export default function AppShell({
        * No hay sesión y estamos intentando
        * entrar al sistema.
        */
-      if (!session && !esLogin) {
-        router.replace("/login");
-        setRevisandoSesion(false);
-        return;
-      }
+if (
+  !session &&
+  !rutaPublica
+) {
+if (!session && !rutaPublica) {
+  router.replace("/login");
+}
+}
 
       /*
        * Ya hay sesión y alguien entra
@@ -79,6 +86,7 @@ export default function AppShell({
     };
   }, [
     esLogin,
+    rutaPublica,
     router,
   ]);
 
@@ -103,13 +111,13 @@ export default function AppShell({
    * Login:
    * sin Sidebar ni contenido del sistema.
    */
-  if (esLogin) {
-    return (
-      <main>
-        {children}
-      </main>
-    );
-  }
+if (rutaPublica) {
+  return (
+    <main>
+      {children}
+    </main>
+  );
+}
 
   /*
    * Aplicación autenticada.

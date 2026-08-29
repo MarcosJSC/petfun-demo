@@ -668,12 +668,57 @@ async function compartirFichaSalud() {
     return;
   }
 
+  const elemento =
+    fichaSaludRef.current;
+
+  /*
+    Guardamos los estilos actuales
+    para restaurarlos después.
+  */
+  const estilosOriginales =
+    elemento.style.cssText;
+
   try {
+    /*
+      Aplicamos temporalmente el
+      formato fijo de exportación.
+    */
+    elemento.classList.add(
+      "health-share-card-export"
+    );
+
+      /*ACA CAMBIAR SEGUN LA RESOLUCION QUE SE QUIERA    */
+    elemento.style.width = "570px";
+    elemento.style.minWidth = "570px";
+    elemento.style.maxWidth = "570px";
+
+    /*
+      Esperamos a que el navegador
+      recalcule completamente el layout.
+    */
+    await new Promise<void>(
+      (resolve) => {
+        requestAnimationFrame(() => {
+          requestAnimationFrame(() => {
+            resolve();
+          });
+        });
+      }
+    );
+
+    /*
+      Esperamos también las fuentes.
+    */
+    if (document.fonts?.ready) {
+      await document.fonts.ready;
+    }
+
     const blob = await toBlob(
-      fichaSaludRef.current,
+      elemento,
       {
-        pixelRatio: 2,
+        pixelRatio: 3,
         cacheBust: true,
+        backgroundColor: "#ffffff",
       }
     );
 
@@ -683,15 +728,16 @@ async function compartirFichaSalud() {
       );
     }
 
-    const archivo = new File(
-      [blob],
-      `ficha-salud-${perrito.nombre
-        .toLowerCase()
-        .replace(/\s+/g, "-")}.png`,
-      {
-        type: "image/png",
-      }
-    );
+    const archivo =
+      new File(
+        [blob],
+        `ficha-salud-${perrito.nombre
+          .toLowerCase()
+          .replace(/\s+/g, "-")}.png`,
+        {
+          type: "image/png",
+        }
+      );
 
     const mensaje =
       generarMensajeSalud();
@@ -712,8 +758,6 @@ async function compartirFichaSalud() {
       return;
     }
 
-    // Fallback si el dispositivo
-    // no permite compartir archivos
     const url =
       URL.createObjectURL(blob);
 
@@ -727,11 +771,23 @@ async function compartirFichaSalud() {
     enlace.click();
 
     URL.revokeObjectURL(url);
+
   } catch (error) {
     console.error(
       "Error compartiendo ficha:",
       error
     );
+  } finally {
+    /*
+      Regresamos inmediatamente
+      la ficha a su tamaño normal.
+    */
+    elemento.classList.remove(
+      "health-share-card-export"
+    );
+
+    elemento.style.cssText =
+      estilosOriginales;
   }
 }
 

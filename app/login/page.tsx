@@ -35,21 +35,24 @@ export default function LoginPage() {
     revisarSesion();
   }, [router]);
 
-  async function iniciarSesion(
-    e: FormEvent<HTMLFormElement>
-  ) {
-    e.preventDefault();
+ 
 
-    if (!correo.trim() || !password) {
-      setMensaje(
-        "Ingresa tu correo y contraseña."
-      );
-      return;
-    }
+async function iniciarSesion(
+  e: FormEvent<HTMLFormElement>
+) {
+  e.preventDefault();
 
-    setCargando(true);
-    setMensaje("");
+  if (!correo.trim() || !password) {
+    setMensaje(
+      "Ingresa tu correo y contraseña."
+    );
+    return;
+  }
 
+  setCargando(true);
+  setMensaje("");
+
+  try {
     const { error } =
       await supabase.auth.signInWithPassword({
         email: correo.trim(),
@@ -66,13 +69,79 @@ export default function LoginPage() {
         "Correo o contraseña incorrectos."
       );
 
-      setCargando(false);
       return;
     }
 
     router.replace("/");
     router.refresh();
+
+  } catch (error) {
+    console.error(
+      "Error inesperado iniciando sesión:",
+      error
+    );
+
+    setMensaje(
+      "No se pudo iniciar sesión. Intenta nuevamente."
+    );
+
+  } finally {
+    setCargando(false);
   }
+}
+
+async function recuperarPassword() {
+  if (!correo.trim()) {
+    setMensaje(
+      "Ingresa tu correo para recuperar la contraseña."
+    );
+    return;
+  }
+
+  setCargando(true);
+  setMensaje("");
+
+  try {
+    const { error } =
+      await supabase.auth.resetPasswordForEmail(
+        correo.trim(),
+        {
+          redirectTo:
+            `${window.location.origin}/actualizar-password`,
+        }
+      );
+
+    if (error) {
+      console.error(
+        "Error recuperando contraseña:",
+        error
+      );
+
+      setMensaje(
+        "No se pudo enviar el correo de recuperación."
+      );
+
+      return;
+    }
+
+    setMensaje(
+      "Si existe una cuenta asociada a este correo, recibirás un enlace para cambiar tu contraseña."
+    );
+
+  } catch (error) {
+    console.error(
+      "Error inesperado recuperando contraseña:",
+      error
+    );
+
+    setMensaje(
+      "No se pudo procesar la solicitud."
+    );
+
+  } finally {
+    setCargando(false);
+  }
+}
 
   return (
     
@@ -144,6 +213,14 @@ export default function LoginPage() {
             />
           </div>
 
+<button
+  type="button"
+  onClick={recuperarPassword}
+  disabled={cargando}
+  className="login-forgot-password"
+>
+  ¿Olvidaste tu contraseña?
+</button>
 
           {mensaje && (
             <div className="login-message">
