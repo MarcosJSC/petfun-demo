@@ -15,6 +15,13 @@ import {
 import { supabase } from "@/lib/supabase";
 import { usePermisos } from "@/hooks/usePermisos";
 
+import {
+  LOGO_PETFUNCR_URL,
+  WHATSAPP_ICON_URL,
+  FACEBOOK_ICON_URL,
+  INSTAGRAM_ICON_URL,
+  TIKTOK_ICON_URL,
+} from "@/lib/branding";
 
 import {
   toBlob,
@@ -2803,51 +2810,57 @@ async function eliminarDesparasitacion(
 >
 
         {/* DATOS DEL PERRITO */}
-        <div className="health-profile-header">
+       <div className="health-v2-header">
+  <div className="health-v2-dog">
+    <div className="health-profile-photo">
+      {fotoUrl ? (
+        <img
+          src={fotoUrl}
+          alt={`Foto de ${perrito.nombre}`}
+        />
+      ) : (
+        <span>🐶</span>
+      )}
+    </div>
 
-          <div className="health-profile-photo">
-            {fotoUrl ? (
-              <img
-                src={fotoUrl}
-                alt={`Foto de ${perrito.nombre}`}
-              />
-            ) : (
-              <span>🐶</span>
-            )}
-          </div>
+    <div>
+      <h2 className="health-v2-name">
+        {perrito.nombre}
+      </h2>
 
-          <div>
-            <h2
-              style={{
-                margin:
-                  "0 0 5px 0",
-              }}
-            >
-              {perrito.nombre}
-            </h2>
+      <div className="health-owner">
+        {perrito.propietarios
+          ? `${perrito.propietarios.nombre} ${
+              perrito.propietarios.apellidos ?? ""
+            }`
+          : "Sin propietario"}
+      </div>
 
-            <div className="health-owner">
-              {perrito.propietarios
-                ? `${perrito.propietarios.nombre} ${
-                    perrito.propietarios
-                      .apellidos ?? ""
-                  }`
-                : "Sin propietario"}
-            </div>
+      <div className="health-basic-data">
+        {calcularEdad(
+          perrito.fecha_nacimiento
+        )}
+        {" · "}
+        {perrito.sexo || "—"}
+        {" · "}
+        {perrito.peso_kg
+          ? `${perrito.peso_kg} kg`
+          : "—"}
+      </div>
+    </div>
+  </div>
 
-            <div className="health-basic-data">
-              {calcularEdad(
-                perrito.fecha_nacimiento
-              )}
-              {" · "}
-              {perrito.sexo || "—"}
-              {" · "}
-              {perrito.peso_kg
-                ? `${perrito.peso_kg} kg`
-                : "—"}
-            </div>
-          </div>
-        </div>
+  <div className="health-v2-brand">
+    <img
+      src={LOGO_PETFUNCR_URL}
+      alt="PetFunCR"
+    />
+
+    <strong>
+      Ficha de salud
+    </strong>
+  </div>
+</div>
 
 
         {/* VACUNAS */}
@@ -2857,7 +2870,7 @@ async function eliminarDesparasitacion(
             💉 Vacunas
           </h3>
 
-          <div className="health-items">
+        <div className="health-items health-items-vaccines">
 
             {vacunasFicha.map(
               (vacuna) => (
@@ -2928,7 +2941,7 @@ async function eliminarDesparasitacion(
             🛡️ Desparasitación
           </h3>
 
-          <div className="health-items">
+       <div className="health-items health-items-deworming">
 
             {desparasitacionesFicha.map(
               (item) => (
@@ -3039,10 +3052,98 @@ async function eliminarDesparasitacion(
               )}
 
             </div>
+
+
+
           )}
         </section>
+   {/* footer redes */}
+   
+<div className="health-v2-footer">
+
+  <div className="health-v2-footer-main">
+
+    <div className="health-v2-footer-brand">
+      <img
+        src={LOGO_PETFUNCR_URL}
+        alt="PetFunCR"
+        style={{
+          width: "34px",
+          height: "34px",
+          objectFit: "contain",
+        }}
+      />
+
+      <strong>PetFunCR</strong>
+    </div>
+
+    <div className="health-v2-contact-item">
+      <img
+        src={WHATSAPP_ICON_URL}
+        alt="WhatsApp"
+        style={{
+          width: "26px",
+          height: "26px",
+          objectFit: "contain",
+        }}
+      />
+
+      <span>
+        8568-9575
+      </span>
+    </div>
+
+    <div className="health-v2-socials">
+      <img
+        src={FACEBOOK_ICON_URL}
+        alt="Facebook"
+        style={{
+          width: "24px",
+          height: "24px",
+          objectFit: "contain",
+        }}
+      />
+
+      <img
+        src={INSTAGRAM_ICON_URL}
+        alt="Instagram"
+        style={{
+          width: "24px",
+          height: "24px",
+          objectFit: "contain",
+        }}
+      />
+
+      <img
+        src={TIKTOK_ICON_URL}
+        alt="TikTok"
+        style={{
+          width: "24px",
+          height: "24px",
+          objectFit: "contain",
+        }}
+      />
+
+      <span>PetFunCR</span>
+    </div>
+
+    <div className="health-v2-footer-date">
+      Información registrada al{" "}
+      {new Intl.DateTimeFormat(
+        "es-CR"
+      ).format(new Date())}
+    </div>
 
   </div>
+
+</div>
+
+ {/* footer redes */}
+
+  </div>
+
+
+
         {/* COMPARTIR - POR AHORA SOLO VISUAL */}
         <div className="health-share-area">
 

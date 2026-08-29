@@ -2252,3 +2252,228 @@ padding: 6px;
   background: var(--color-background);
   padding: 4px;
 }
+
+.health-share-card {
+  width: 100%;
+  max-width: 920px;
+
+  margin: 0 auto;
+
+  background: #ffffff;
+  color: #111827;
+
+  padding: 28px;
+
+  border-radius: 20px;
+}
+
+.health-v2-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+
+  padding-bottom: 22px;
+  margin-bottom: 24px;
+
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.health-v2-dog {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.health-v2-name {
+  margin: 0 0 4px 0;
+  font-size: 32px;
+}
+
+.health-v2-brand {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+
+  text-align: center;
+}
+
+.health-v2-brand img {
+  width: 100px;
+  height: 100px;
+  object-fit: contain;
+}
+
+.health-v2-brand strong {
+  font-size: 14px;
+  color: #6b7280;
+}
+
+.health-items-vaccines {
+  display: grid;
+  grid-template-columns:
+    repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.health-items-deworming {
+  display: grid;
+  grid-template-columns:
+    repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.health-share-card .health-item {
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+}
+
+.health-share-card
+.health-item-top strong {
+  color: #111827;
+}
+
+.health-share-card
+.health-dates {
+  color: #6b7280;
+}
+
+.health-v2-footer {
+  margin-top: 26px;
+  padding-top: 18px;
+
+  border-top: 1px solid #e5e7eb;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+
+  color: #6b7280;
+  font-size: 13px;
+}
+
+
+@media (max-width: 768px) {
+  .health-share-card {
+    padding: 20px;
+  }
+
+  .health-v2-header {
+    align-items: flex-start;
+  }
+
+  .health-v2-brand img {
+    width: 72px;
+    height: 72px;
+  }
+
+  .health-v2-name {
+    font-size: 27px;
+  }
+
+  .health-items-vaccines,
+  .health-items-deworming {
+    grid-template-columns:
+      repeat(2, minmax(0, 1fr));
+  }
+
+  .health-v2-footer {
+  margin-top: 26px;
+  padding-top: 16px;
+  border-top: 1px solid #e5e7eb;
+
+  color: #6b7280;
+  font-size: 13px;
+}
+
+.health-v2-footer-main {
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  gap: 18px;
+
+  width: 100%;
+}
+
+.health-v2-footer-brand,
+.health-v2-contact-item,
+.health-v2-socials {
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: center !important;
+  gap: 7px;
+
+  white-space: nowrap;
+}
+
+.health-v2-footer-brand {
+  color: #6d4aff;
+}
+
+.health-v2-contact-item,
+.health-v2-socials {
+  color: #374151;
+  font-weight: 600;
+}
+
+.health-v2-footer-date {
+  margin: 0;
+  text-align: right;
+
+  color: #9ca3af;
+  font-size: 12px;
+
+  white-space: nowrap;
+}
+
+/* FICHA SALUD V2 - FOOTER FINAL */
+
+.health-v2-footer-main {
+  display: grid !important;
+
+  grid-template-columns:
+    auto
+    auto
+    1fr
+    auto !important;
+
+  align-items: center !important;
+
+  gap: 18px !important;
+
+  width: 100% !important;
+}
+
+.health-v2-footer-brand,
+.health-v2-contact-item,
+.health-v2-socials {
+  display: flex !important;
+
+  flex-direction: row !important;
+
+  align-items: center !important;
+
+  gap: 6px !important;
+
+  white-space: nowrap;
+}
+
+.health-v2-socials {
+  justify-self: start;
+}
+
+.health-v2-footer-date {
+  margin: 0 !important;
+
+  text-align: right !important;
+
+  white-space: nowrap;
+
+  font-size: 12px;
+  color: #9ca3af;
+}
+
+}
