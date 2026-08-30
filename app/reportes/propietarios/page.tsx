@@ -39,6 +39,13 @@ export default function ReportePropietariosPage() {
   const [busqueda, setBusqueda] =
     useState("");
 
+    const REGISTROS_POR_PAGINA = 20;
+
+const [
+  paginaActual,
+  setPaginaActual,
+] = useState(1);
+
   useEffect(() => {
     async function cargarPropietarios() {
       setCargando(true);
@@ -142,6 +149,48 @@ export default function ReportePropietariosPage() {
       propietarios,
       busqueda,
     ]);
+
+
+ const totalPaginas = Math.max(
+  1,
+  Math.ceil(
+    propietariosFiltrados.length /
+      REGISTROS_POR_PAGINA
+  )
+);
+
+const propietariosPaginados =
+  useMemo(() => {
+    const inicio =
+      (paginaActual - 1) *
+      REGISTROS_POR_PAGINA;
+
+    const fin =
+      inicio +
+      REGISTROS_POR_PAGINA;
+
+    return propietariosFiltrados.slice(
+      inicio,
+      fin
+    );
+  }, [
+    propietariosFiltrados,
+    paginaActual,
+  ]);
+
+useEffect(() => {
+  setPaginaActual(1);
+}, [busqueda]);
+
+useEffect(() => {
+  if (paginaActual > totalPaginas) {
+    setPaginaActual(totalPaginas);
+  }
+}, [
+  paginaActual,
+  totalPaginas,
+]);
+    
 
   const totalPerritos =
     useMemo(() => {
@@ -646,7 +695,7 @@ function exportarPDF() {
                 </thead>
 
                 <tbody>
-                  {propietariosFiltrados.map(
+                  {propietariosPaginados.map(
                     (propietario) => (
                       <tr key={propietario.id}>
                         <td>
@@ -691,7 +740,7 @@ function exportarPDF() {
 
             {/* MÓVIL */}
             <div className="mobile-only report-owners-mobile">
-              {propietariosFiltrados.map(
+              {propietariosPaginados.map(
                 (propietario) => (
                   <div
                     key={propietario.id}
@@ -795,6 +844,68 @@ function exportarPDF() {
                 )
               )}
             </div>
+
+
+{propietariosFiltrados.length >
+  REGISTROS_POR_PAGINA && (
+  <div
+    style={{
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      gap: "14px",
+      padding: "18px",
+      borderTop:
+        "1px solid var(--color-border)",
+    }}
+  >
+    <button
+      type="button"
+      className="secondary-button"
+      disabled={paginaActual === 1}
+      onClick={() =>
+        setPaginaActual(
+          (pagina) =>
+            Math.max(1, pagina - 1)
+        )
+      }
+    >
+      ← Anterior
+    </button>
+
+    <span
+      style={{
+        color:
+          "var(--color-text-secondary)",
+        fontSize: "14px",
+      }}
+    >
+      Página {paginaActual} de{" "}
+      {totalPaginas}
+    </span>
+
+    <button
+      type="button"
+      className="secondary-button"
+      disabled={
+        paginaActual === totalPaginas
+      }
+      onClick={() =>
+        setPaginaActual(
+          (pagina) =>
+            Math.min(
+              totalPaginas,
+              pagina + 1
+            )
+        )
+      }
+    >
+      Siguiente →
+    </button>
+  </div>
+)}
+
+
           </>
         )}
       </section>

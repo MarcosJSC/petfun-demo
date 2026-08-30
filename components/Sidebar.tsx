@@ -240,9 +240,10 @@ async function cerrarSesion() {
 <button
   type="button"
   className="secondary-button sidebar-logout"
-  onClick={() =>
-    setMostrarConfirmacionCerrarSesion(true)
-  }
+  onClick={() => {
+    setMenuAbierto(false);
+    setMostrarConfirmacionCerrarSesion(true);
+  }}
 >
   Cerrar sesión
 </button>

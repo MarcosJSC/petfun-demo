@@ -63,6 +63,15 @@ export default function ReportesPage() {
   const [estadoPago, setEstadoPago] =
     useState("");
 
+const REGISTROS_POR_PAGINA = 20;
+
+const [
+  paginaActual,
+  setPaginaActual,
+] = useState(1);
+
+ 
+
   useEffect(() => {
     async function cargarEstadias() {
       setCargando(true);
@@ -125,8 +134,7 @@ export default function ReportesPage() {
     cargarEstadias();
   }, []);
 
-
- const estadiasFiltradas =
+const estadiasFiltradas =
   useMemo(() => {
     const texto =
       busqueda
@@ -182,7 +190,7 @@ export default function ReportesPage() {
           estadia.estados_pago
             ?.nombre === estadoPago;
 
-        return (
+           return (
           coincideBusqueda &&
           coincideDesde &&
           coincideHasta &&
@@ -203,6 +211,59 @@ export default function ReportesPage() {
   ]); 
 
 
+       const totalPaginas = Math.max(
+  1,
+  Math.ceil(
+    estadiasFiltradas.length /
+      REGISTROS_POR_PAGINA
+  )
+);
+
+
+const estadiasPaginadas =
+  useMemo(() => {
+    const inicio =
+      (paginaActual - 1) *
+      REGISTROS_POR_PAGINA;
+
+    const fin =
+      inicio +
+      REGISTROS_POR_PAGINA;
+
+    return estadiasFiltradas.slice(
+      inicio,
+      fin
+    );
+  }, [
+    estadiasFiltradas,
+    paginaActual,
+  ]);
+
+
+
+useEffect(() => {
+  setPaginaActual(1);
+}, [
+  busqueda,
+  fechaDesde,
+  fechaHasta,
+  tipo,
+  estado,
+  estadoPago,
+]);
+
+useEffect(() => {
+  if (
+    paginaActual > totalPaginas
+  ) {
+    setPaginaActual(
+      totalPaginas
+    );
+  }
+}, [
+  paginaActual,
+  totalPaginas,
+]);
 
 const resumen = useMemo(() => {
   return estadiasFiltradas.reduce(
@@ -971,7 +1032,7 @@ return (
       </thead>
 
       <tbody>
-        {estadiasFiltradas.map(
+        {estadiasPaginadas.map(
           (estadia) => {
             const saldo =
               Number(estadia.total || 0) -
@@ -1006,10 +1067,6 @@ return (
 
                 <td>
                   {formatearFecha(estadia.fecha_entrada)}
-                </td>
-
-                <td>
-                 {formatearFecha(estadia.fecha_entrada)}
                 </td>
 
                 <td>
@@ -1051,7 +1108,7 @@ return (
   {/* MÓVIL */}
   <div className="mobile-only report-stays-mobile">
 
-    {estadiasFiltradas.map(
+    {estadiasPaginadas.map(
       (estadia) => {
         const saldo =
           Number(estadia.total || 0) -
@@ -1191,6 +1248,66 @@ return (
     )}
 
   </div>
+
+{estadiasFiltradas.length >
+  REGISTROS_POR_PAGINA && (
+  <div
+    style={{
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      gap: "14px",
+      padding: "18px",
+      borderTop:
+        "1px solid var(--color-border)",
+    }}
+  >
+    <button
+      type="button"
+      className="secondary-button"
+      disabled={paginaActual === 1}
+      onClick={() =>
+        setPaginaActual(
+          (pagina) =>
+            Math.max(1, pagina - 1)
+        )
+      }
+    >
+      ← Anterior
+    </button>
+
+    <span
+      style={{
+        color:
+          "var(--color-text-secondary)",
+        fontSize: "14px",
+      }}
+    >
+      Página {paginaActual} de{" "}
+      {totalPaginas}
+    </span>
+
+    <button
+      type="button"
+      className="secondary-button"
+      disabled={
+        paginaActual === totalPaginas
+      }
+      onClick={() =>
+        setPaginaActual(
+          (pagina) =>
+            Math.min(
+              totalPaginas,
+              pagina + 1
+            )
+        )
+      }
+    >
+      Siguiente →
+    </button>
+  </div>
+)}
+
 </>
 
 

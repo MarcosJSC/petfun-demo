@@ -1677,38 +1677,55 @@ async function eliminarDesparasitacion(
     <div>
     
 
-   <div className="page-header dog-detail-header">
+<div className="page-header dog-detail-header">
 
-        <div>
+  <div className="dog-detail-main">
 
-          <button
-            className="secondary-button"
-            type="button"
-            onClick={() =>
-              router.push("/perritos")
-            }
-            style={{
-              marginBottom: "18px",
-            }}
-          >
-            ← Volver a perritos
-          </button>
+    <button
+      className="secondary-button"
+      type="button"
+      onClick={() =>
+        router.push("/perritos")
+      }
+      style={{
+        marginBottom: "18px",
+      }}
+    >
+      ← Volver a perritos
+    </button>
 
-<label
-  className="dog-profile-photo dog-profile-photo-editable"
+    <div className="dog-profile-hero">
+
+      <div className="dog-profile-hero-info">
+
+        <h1 className="page-title">
+          🐶 {perrito.nombre}
+        </h1>
+
+        <p className="page-description">
+          Expediente general del perrito.
+        </p>
+
+      </div>
+
+      <div className="dog-profile-photo-wrap">
+
+    <label
+  className="dog-profile-hero-photo"
   title="Cambiar foto"
 >
-  {fotoUrl ? (
-    <img
-      src={fotoUrl}
-      alt={`Foto de ${perrito.nombre}`}
-      className="dog-profile-photo-img"
-    />
-  ) : (
-    <div className="dog-profile-photo-placeholder">
-      🐶
-    </div>
-  )}
+  <div className="dog-profile-hero-photo-inner">
+    {fotoUrl ? (
+      <img
+        src={fotoUrl}
+        alt={`Foto de ${perrito.nombre}`}
+      />
+    ) : (
+      <div className="dog-profile-hero-placeholder">
+        🐶
+      </div>
+    )}
+  </div>
 
   <span className="dog-profile-camera">
     📷
@@ -1734,56 +1751,54 @@ async function eliminarDesparasitacion(
   />
 </label>
 
-{mensajeFoto && (
-  <div
-    style={{
-      marginTop: "8px",
-      fontSize: "13px",
-      color:
-        "var(--color-text-secondary)",
-    }}
-  >
-    {mensajeFoto}
-  </div>
-)}
-
-          <h1 className="page-title">
-            🐶 {perrito.nombre}
-          </h1>
-
-          <p className="page-description">
-            Expediente general del perrito.
-          </p>
-
-        </div>
-
-<div className="page-header-actions dog-detail-actions">
-
-{puede("perritos.eliminar") && (
-  <button
-    className="danger-button"
-    type="button"
-    onClick={eliminarPerrito}
-  >
-    Eliminar perrito
-  </button>
-)}
-
-{puede("perritos.editar") && (
-  <button
-    className="primary-button"
-    type="button"
-    onClick={() =>
-      setModalEditar(true)
-    }
-  >
-    Editar información
-  </button>
-)}
-
-</div>
+        {mensajeFoto && (
+          <div
+            style={{
+              marginTop: "8px",
+              fontSize: "13px",
+              textAlign: "center",
+              color:
+                "var(--color-text-secondary)",
+            }}
+          >
+            {mensajeFoto}
+          </div>
+        )}
 
       </div>
+
+    </div>
+
+  </div>
+
+
+  <div className="page-header-actions dog-detail-actions">
+
+    {puede("perritos.eliminar") && (
+      <button
+        className="danger-button"
+        type="button"
+        onClick={eliminarPerrito}
+      >
+        Eliminar perrito
+      </button>
+    )}
+
+    {puede("perritos.editar") && (
+      <button
+        className="primary-button"
+        type="button"
+        onClick={() =>
+          setModalEditar(true)
+        }
+      >
+        Editar información
+      </button>
+    )}
+
+  </div>
+
+</div>
 
       {mensaje && (
         <div className="status-message">

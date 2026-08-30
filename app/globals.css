@@ -2730,3 +2730,203 @@ padding: 6px;
   opacity: 0.6;
   cursor: not-allowed;
 }
+
+.dog-profile-hero {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+
+  margin-bottom: 22px;
+}
+
+.dog-profile-hero-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.dog-profile-hero-photo {
+  position: relative;
+  display: block;
+
+  width: 190px;
+  height: 190px;
+
+  flex-shrink: 0;
+
+  cursor: pointer;
+
+  .dog-profile-hero-photo-inner {
+  width: 100%;
+  height: 100%;
+
+  border-radius: 50%;
+  overflow: hidden;
+
+  border: 2px solid var(--color-border);
+
+  background:
+    var(--color-surface);
+}
+
+}
+
+.dog-profile-hero-photo img {
+  width: 100%;
+  height: 100%;
+
+  display: block;
+
+  object-fit: cover;
+}
+
+.dog-profile-hero-placeholder {
+  width: 100%;
+  height: 100%;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  font-size: 60px;
+
+  background: var(--color-surface);
+}
+
+.dog-profile-hero-photo .dog-profile-camera {
+  position: absolute;
+
+  right: 4px;
+  bottom: 6px;
+
+  width: 34px;
+  height: 34px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 50%;
+
+  background: var(--color-surface);
+
+  border: 1px solid var(--color-border);
+
+  font-size: 16px;
+
+  z-index: 3;
+}
+
+.dog-detail-main {
+  width: 100%;
+}
+
+.dog-profile-hero {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 32px;
+
+  width: 100%;
+}
+
+.dog-profile-hero-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.dog-profile-photo-wrap {
+  flex-shrink: 0;
+}
+
+.dog-profile-hero-photo {
+  position: relative;
+
+  display: block;
+
+  width: 190px;
+  height: 190px;
+
+  border-radius: 50%;
+  
+
+  border: 2px solid var(--color-border);
+
+  cursor: pointer;
+
+  background:
+    var(--color-surface);
+}
+
+.dog-profile-hero-photo img {
+  width: 100%;
+  height: 100%;
+
+  display: block;
+
+  object-fit: cover;
+}
+
+.dog-profile-hero-placeholder {
+  width: 100%;
+  height: 100%;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  font-size: 64px;
+}
+
+.dog-profile-hero-photo
+.dog-profile-camera {
+  position: absolute;
+
+  right: 10px;
+  bottom: 10px;
+}
+
+@media (max-width: 768px) {
+
+  .dog-detail-header {
+    display: block;
+  }
+
+  .dog-profile-hero {
+    display: grid;
+
+    grid-template-columns:
+      minmax(0, 1fr)
+      160px;
+
+    align-items: center;
+
+    gap: 18px;
+  }
+
+  .dog-profile-hero-info {
+    min-width: 0;
+  }
+
+  .dog-profile-hero-photo {
+    width: 160px;
+    height: 160px;
+  }
+
+  .dog-profile-hero-info
+  .page-title {
+    margin-bottom: 6px;
+
+    font-size: 30px;
+  }
+
+  .dog-profile-hero-info
+  .page-description {
+    margin-bottom: 0;
+  }
+
+  .dog-detail-actions {
+    margin-top: 20px;
+  }
+}

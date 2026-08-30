@@ -680,7 +680,7 @@ function crearEstadiaDesdeDia(
     >
 
 {estadiasDelDia(dia)
-  .slice(0, 3)
+  .slice(0, 4)
   .map((estadia) => (
     <button
       key={estadia.id}
@@ -719,7 +719,7 @@ onClick={(e) => {
     </button>
   ))}
 
-{estadiasDelDia(dia).length > 3 && (
+{estadiasDelDia(dia).length > 4 && (
   <button
     type="button"
 onClick={(e) => {
@@ -737,7 +737,7 @@ onClick={(e) => {
       textAlign: "left",
     }}
   >
-    + {estadiasDelDia(dia).length - 3} más
+    + {estadiasDelDia(dia).length - 4} más
   </button>
 )}
 
@@ -812,7 +812,7 @@ onClick={(e) => {
 
   <div className="calendar-mobile-dogs">
     {estadiasDelDia(dia)
-      .slice(0, 3)
+      .slice(0, 4)
       .map((estadia) => (
         <div
           key={estadia.id}
@@ -822,18 +822,18 @@ onClick={(e) => {
         </div>
       ))}
 
-    {estadiasDelDia(dia).length > 3 && (
+    {estadiasDelDia(dia).length > 4 && (
       <div className="calendar-mobile-more">
-        +{estadiasDelDia(dia).length - 3} más
+        +{estadiasDelDia(dia).length - 4} 
       </div>
     )}
   </div>
-
+{/*
   {esHoy(dia) && (
     <span className="calendar-mobile-hoy">
       HOY
     </span>
-  )}
+  )}*/}
 </button>
         );
       })}
