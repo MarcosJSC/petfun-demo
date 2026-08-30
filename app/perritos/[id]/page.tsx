@@ -163,6 +163,8 @@ function obtenerEstadoFecha(
 
   const hoy = new Date();
 
+
+
   hoy.setHours(0, 0, 0, 0);
 
   const fechaObjetivo = new Date(
@@ -370,6 +372,9 @@ const [mensajeFoto, setMensajeFoto] =
   useState("");
 
   const fichaSaludRef =
+  useRef<HTMLDivElement | null>(null);
+
+  const previewFichaRef =
   useRef<HTMLDivElement | null>(null);
 
   const [
@@ -1203,6 +1208,31 @@ async function subirFotoPerfil(
     cargarTodo();
   }, [perritoId]);
 
+useEffect(() => {
+  if (!modalFichaSalud) {
+    return;
+  }
+
+  const centrarPreview = () => {
+    const contenedor =
+      previewFichaRef.current;
+
+    if (!contenedor) {
+      return;
+    }
+
+    contenedor.scrollLeft =
+      (contenedor.scrollWidth -
+        contenedor.clientWidth) /
+      2;
+  };
+
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => {
+      centrarPreview();
+    });
+  });
+}, [modalFichaSalud]);
 
 
   async function guardarCambios(
@@ -2875,6 +2905,12 @@ async function eliminarDesparasitacion(
 
       <div className="modal-body">
 
+
+<div
+  ref={previewFichaRef}
+  className="health-preview-scroll"
+>
+
         <div
   ref={fichaSaludRef}
   className="health-share-card"
@@ -3206,7 +3242,7 @@ async function eliminarDesparasitacion(
  {/* footer redes */}
 
   </div>
-
+</div>
 
 
         {/* COMPARTIR - POR AHORA SOLO VISUAL */}

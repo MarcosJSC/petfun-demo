@@ -891,33 +891,41 @@ padding: 6px;
 }
 
 .calendar-mobile-number {
-  align-self: flex-start;
-  font-size: 14px;
-  font-weight: 700;
+  display: block;
+
+  width: 100%;
+
+  text-align: left;
+
+  padding-left: 2px;
+
+  font-weight: 600;
+  white-space: nowrap;
+  line-height: 1;
 }
 
 .calendar-mobile-count {
   position: absolute;
 
-  top: 4px;
-  right: 4px;
-
-  min-width: 17px;
-  height: 17px;
+  top: -2px;
+  right: -2px;
 
   display: flex;
   align-items: center;
   justify-content: center;
 
-  padding: 0 4px;
+ width: 14px;
+  height: 14px;
+  min-width: 14px;
 
-  border-radius: 999px;
+  border-radius: 50%;
 
   background: var(--color-primary);
   color: white;
 
   font-size: 9px;
   font-weight: 700;
+  line-height: 1;
 }
 
 .calendar-mobile-today {
@@ -971,10 +979,9 @@ padding: 6px;
 }
 
 .calendar-mobile-top {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
+  position: relative;
   width: 100%;
+  min-height: 18px;
 }
 
 .calendar-mobile-dogs {
@@ -2928,5 +2935,28 @@ padding: 6px;
 
   .dog-detail-actions {
     margin-top: 20px;
+  }
+}
+
+.health-preview-scroll {
+  width: 100%;
+  overflow-x: auto;
+  overflow-y: visible;
+
+  scrollbar-width: thin;
+}
+
+@media (max-width: 768px) {
+  .health-preview-scroll {
+    width: 100%;
+    overflow-x: auto;
+
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .health-preview-scroll
+  .health-share-card {
+    margin-left: auto;
+    margin-right: auto;
   }
 }
