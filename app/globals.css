@@ -914,16 +914,16 @@ padding: 6px;
   align-items: center;
   justify-content: center;
 
- width: 14px;
-  height: 14px;
-  min-width: 14px;
+ width: 12px;
+  height: 12px;
+  min-width: 12px;
 
   border-radius: 50%;
 
   background: var(--color-primary);
   color: white;
 
-  font-size: 9px;
+  font-size: 7px;
   font-weight: 700;
   line-height: 1;
 }
