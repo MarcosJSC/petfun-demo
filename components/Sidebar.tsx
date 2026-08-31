@@ -9,8 +9,13 @@ import { supabase } from "@/lib/supabase";
 import ThemeToggle from "@/components/ThemeToggle";
 
 import {
+  useSucursalActiva,
+} from "@/contexts/SucursalContext";
+
+import {
   usePermisos,
 } from "@/hooks/usePermisos";
+
 
 const opciones = [
   {
@@ -54,6 +59,60 @@ const opciones = [
 
 
 export default function Sidebar() {
+
+ const {
+  sucursalActivaId,
+  setSucursalActivaId,
+} = useSucursalActiva();
+
+const {
+  esSuperadmin,
+} = usePermisos();
+
+const [
+  sucursalesDisponibles,
+  setSucursalesDisponibles,
+] = useState<
+  {
+    id: number;
+    nombre: string;
+  }[]
+>([]); 
+
+useEffect(() => {
+  if (!esSuperadmin) {
+    return;
+  }
+
+  async function cargarSucursales() {
+    const { data, error } =
+      await supabase
+        .from("sucursales")
+        .select(`
+          id,
+          nombre
+        `)
+        .eq("activa", true)
+        .order("nombre", {
+          ascending: true,
+        });
+
+    if (error) {
+      console.error(
+        "Error cargando sucursales:",
+        error
+      );
+
+      return;
+    }
+
+    setSucursalesDisponibles(
+      data ?? []
+    );
+  }
+
+  cargarSucursales();
+}, [esSuperadmin]);
 
 const [
   mostrarConfirmacionCerrarSesion,
@@ -275,6 +334,65 @@ async function cerrarSesion() {
             : ""}
   </div>
 </div>
+
+{esSuperadmin && (
+  <div
+    style={{
+      marginTop: "14px",
+      marginBottom: "14px",
+    }}
+  >
+    <label
+      style={{
+        display: "block",
+        marginBottom: "6px",
+        fontSize: "12px",
+        fontWeight: 600,
+        color:
+          "var(--color-text-secondary)",
+      }}
+    >
+      Sucursal activa
+    </label>
+
+    <select
+      className="form-select"
+      value={
+        sucursalActivaId === null
+          ? "global"
+          : String(sucursalActivaId)
+      }
+      onChange={(e) => {
+        const valor =
+          e.target.value;
+
+        if (valor === "global") {
+          setSucursalActivaId(null);
+          return;
+        }
+
+        setSucursalActivaId(
+          Number(valor)
+        );
+      }}
+    >
+      <option value="global">
+        Todas las sucursales
+      </option>
+
+      {sucursalesDisponibles.map(
+        (sucursal) => (
+          <option
+            key={sucursal.id}
+            value={sucursal.id}
+          >
+            {sucursal.nombre}
+          </option>
+        )
+      )}
+    </select>
+  </div>
+)}
 
 <button
   type="button"

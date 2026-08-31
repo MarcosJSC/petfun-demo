@@ -5,6 +5,13 @@ import { supabase } from "@/lib/supabase";
 import * as XLSX from "xlsx-js-style";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
+import {
+  useSucursalActiva,
+} from "@/contexts/SucursalContext";
+
+import {
+  usePermisos,
+} from "@/hooks/usePermisos";
 
 type PerritoReporte = {
   id: number;
@@ -25,11 +32,20 @@ type PropietarioReporte = {
   telefono: string | null;
   whatsapp: string | null;
   correo: string | null;
-
+sucursal_id: number;
   perritos: PerritoReporte[];
 };
 
 export default function ReportePropietariosPage() {
+
+  const {
+  sucursalActivaId,
+} = useSucursalActiva();
+
+const {
+  esSuperadmin,
+} = usePermisos();
+
   const [propietarios, setPropietarios] =
     useState<PropietarioReporte[]>([]);
 
@@ -46,57 +62,86 @@ const [
   setPaginaActual,
 ] = useState(1);
 
-  useEffect(() => {
-    async function cargarPropietarios() {
-      setCargando(true);
+ 
+useEffect(() => {
+  async function cargarPropietarios() {
+    setCargando(true);
 
-      const { data, error } =
-        await supabase
-          .from("propietarios")
-          .select(`
+    let consulta =
+      supabase
+        .from("propietarios")
+        .select(`
+          id,
+          sucursal_id,
+          nombre,
+          apellidos,
+          cedula,
+          telefono,
+          whatsapp,
+          correo,
+
+          perritos (
             id,
             nombre,
-            apellidos,
-            cedula,
-            telefono,
-            whatsapp,
-            correo,
+            sexo,
+            peso_kg,
 
-            perritos (
-              id,
-              nombre,
-              sexo,
-              peso_kg,
-
-              razas (
-                nombre
-              )
+            razas (
+              nombre
             )
-          `)
-          .order("nombre", {
-            ascending: true,
-          });
+          )
+        `)
+        .order("nombre", {
+          ascending: true,
+        });
 
-      if (error) {
-        console.error(
-          "Error cargando reporte de propietarios:",
-          error
+    /*
+     * Superadmin:
+     * si hay una sucursal activa,
+     * filtramos el reporte.
+     *
+     * null = Todas las sucursales.
+     */
+    if (
+      esSuperadmin &&
+      sucursalActivaId !== null
+    ) {
+      consulta =
+        consulta.eq(
+          "sucursal_id",
+          sucursalActivaId
         );
+    }
 
-        setCargando(false);
-        return;
-      }
+    const {
+      data,
+      error,
+    } = await consulta;
 
-      setPropietarios(
-        (data ?? []) as unknown as
-          PropietarioReporte[]
+    if (error) {
+      console.error(
+        "Error cargando reporte de propietarios:",
+        error
       );
 
       setCargando(false);
+      return;
     }
 
-    cargarPropietarios();
-  }, []);
+    setPropietarios(
+      (data ?? []) as unknown as
+        PropietarioReporte[]
+    );
+
+    setCargando(false);
+  }
+
+  cargarPropietarios();
+}, [
+  esSuperadmin,
+  sucursalActivaId,
+]);
+
 
   const propietariosFiltrados =
     useMemo(() => {
@@ -180,7 +225,10 @@ const propietariosPaginados =
 
 useEffect(() => {
   setPaginaActual(1);
-}, [busqueda]);
+}, [
+  busqueda,
+  sucursalActivaId,
+]);
 
 useEffect(() => {
   if (paginaActual > totalPaginas) {

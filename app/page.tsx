@@ -2,6 +2,13 @@
 
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
+import {
+  useSucursalActiva,
+} from "@/contexts/SucursalContext";
+
+import {
+  usePermisos,
+} from "@/hooks/usePermisos";
 
 // ========================================
 // RESUMEN GENERAL
@@ -13,6 +20,16 @@ export default function Home() {
 
   const [totalPerritos, setTotalPerritos] =
     useState(0);
+
+   const {
+  sucursalActivaId,
+} = useSucursalActiva();
+
+const {
+  esSuperadmin,
+} = usePermisos(); 
+    
+
 
 // ========================================
 // VACUNAS
@@ -171,35 +188,78 @@ const [
 
   useEffect(() => {
     async function cargarResumen() {
-      const { count: propietariosCount } =
-        await supabase
-          .from("propietarios")
-          .select("*", {
-            count: "exact",
-            head: true,
-          });
 
-      const { count: perritosCount } =
-        await supabase
-          .from("perritos")
-          .select("*", {
-            count: "exact",
-            head: true,
-          });
+console.log(
+  "RECARGANDO DASHBOARD:",
+  {
+    esSuperadmin,
+    sucursalActivaId,
+  }
+);
 
- const { data: estadiasHoyData } =
-  await supabase
- .from("estadias")
+let consultaPropietarios =
+  supabase
+    .from("propietarios")
+    .select("*", {
+      count: "exact",
+      head: true,
+    });
+
+if (
+  esSuperadmin &&
+  sucursalActivaId !== null
+) {
+  consultaPropietarios =
+    consultaPropietarios.eq(
+      "sucursal_id",
+      sucursalActivaId
+    );
+}
+
+const {
+  count: propietariosCount,
+} = await consultaPropietarios;
+
+
+let consultaPerritos =
+  supabase
+    .from("perritos")
+    .select("*", {
+      count: "exact",
+      head: true,
+    });
+
+if (
+  esSuperadmin &&
+  sucursalActivaId !== null
+) {
+  consultaPerritos =
+    consultaPerritos.eq(
+      "sucursal_id",
+      sucursalActivaId
+    );
+}
+
+const {
+  count: perritosCount,
+} = await consultaPerritos;
+
+let consultaEstadias =
+  supabase
+    .from("estadias")
     .select(`
       id,
       perrito_id,
+      sucursal_id,
       fecha_entrada,
       fecha_salida,
       hora_entrada,
-hora_salida,
+      hora_salida,
 
       perritos (
-        nombre
+        nombre,
+  sucursal_id
+
       ),
 
       tipos_estadia (
@@ -209,12 +269,29 @@ hora_salida,
       estados_estadia (
         nombre
       )
-    `);    
+    `);
+
+if (
+  esSuperadmin &&
+  sucursalActivaId !== null
+) {
+  consultaEstadias =
+    consultaEstadias.eq(
+      "sucursal_id",
+      sucursalActivaId
+    );
+}
+
+const {
+  data: estadiasHoyData,
+} = await consultaEstadias;
 
 const estadiasHoy =
   (estadiasHoyData ?? []) as unknown as {
     id: number;
     perrito_id: number;
+
+    sucursal_id: number;
 
     fecha_entrada: string;
     fecha_salida: string;
@@ -235,22 +312,39 @@ const estadiasHoy =
     } | null;
   }[];    
 
-const { data: perritosCumplesData } =
-  await supabase
+let consultaCumples =
+  supabase
     .from("perritos")
     .select(`
       id,
       nombre,
       fecha_nacimiento,
-      activo
+      activo,
+      sucursal_id
     `)
     .eq("activo", true);
+
+if (
+  esSuperadmin &&
+  sucursalActivaId !== null
+) {
+  consultaCumples =
+    consultaCumples.eq(
+      "sucursal_id",
+      sucursalActivaId
+    );
+}
+
+const {
+  data: perritosCumplesData,
+} = await consultaCumples;
 
 
     const perritosCumples =
   (perritosCumplesData ?? []) as {
     id: number;
     nombre: string;
+    sucursal_id: number;
     fecha_nacimiento: string | null;
     activo: boolean;
   }[];
@@ -393,7 +487,9 @@ const { data: vacunasData } =
       tipo_vacuna_id,
 
       perritos (
-        nombre
+        nombre,
+  sucursal_id
+
       ),
 
       tipos_vacuna (
@@ -401,7 +497,27 @@ const { data: vacunasData } =
       )
     `);
 
- if (estadiasHoy.length > 0) {
+const vacunasFiltradas =
+  esSuperadmin &&
+  sucursalActivaId !== null
+    ? (vacunasData ?? []).filter(
+        (vacuna) => {
+          const perrito =
+            Array.isArray(
+              vacuna.perritos
+            )
+              ? vacuna.perritos[0]
+              : vacuna.perritos;
+
+          return (
+            perrito?.sucursal_id ===
+            sucursalActivaId
+          );
+        }
+      )
+    : vacunasData ?? [];
+
+
   const hoyTexto =
     hoy.toISOString().split("T")[0];
 
@@ -457,15 +573,15 @@ setDetalleSalidasHoy(
   salidas
 );
 
-}  
+
     
-if (vacunasData) {
+if (vacunasFiltradas) {
   const ultimasVacunasPorTipo = Object.values(
-    vacunasData.reduce(
+    vacunasFiltradas.reduce(
       (
         acumulador: Record<
           string,
-          (typeof vacunasData)[number]
+  (typeof vacunasFiltradas)[number]
         >,
         vacuna
       ) => {
@@ -598,13 +714,40 @@ const {
     tipo_desparasitacion_id,
 
     perritos (
-      nombre
+    nombre,
+  sucursal_id
+
     ),
 
     tipos_desparasitacion (
       nombre
     )
   `);
+
+const desparasitacionesFiltradas =
+  esSuperadmin &&
+  sucursalActivaId !== null
+    ? (
+        desparasitacionesData ?? []
+      ).filter(
+        (desparasitacion) => {
+          const perrito =
+            Array.isArray(
+              desparasitacion.perritos
+            )
+              ? desparasitacion
+                  .perritos[0]
+              : desparasitacion
+                  .perritos;
+
+          return (
+            perrito?.sucursal_id ===
+            sucursalActivaId
+          );
+        }
+      )
+    : desparasitacionesData ?? [];
+
 
 if (desparasitacionesError) {
   console.error(
@@ -614,14 +757,14 @@ if (desparasitacionesError) {
 }
 
 
-if (desparasitacionesData) {
+if (desparasitacionesFiltradas) {
   const ultimasDesparasitaciones =
     Object.values(
-      desparasitacionesData.reduce(
+    desparasitacionesFiltradas.reduce(
         (
           acumulador: Record<
             string,
-            (typeof desparasitacionesData)[number]
+         (typeof desparasitacionesFiltradas)[number]
           >,
           desparasitacion
         ) => {
@@ -751,7 +894,10 @@ if (desparasitacionesData) {
     }
 
     cargarResumen();
-  }, []);
+ }, [
+  esSuperadmin,
+  sucursalActivaId,
+]);
 
   return (
     <div>

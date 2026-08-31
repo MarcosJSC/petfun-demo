@@ -11,6 +11,9 @@ import { supabase } from "@/lib/supabase";
 import { obtenerContextoSucursal } from "@/lib/sucursalActiva";
 import { usePermisos } from "@/hooks/usePermisos";
 import { RequierePermiso,} from "@/components/RequierePermiso";
+import {
+  useSucursalActiva,
+} from "@/contexts/SucursalContext";
 
 type Propietario = {
   id: number;
@@ -64,20 +67,32 @@ export default function PropietariosPage() {
   esSuperadmin,
 } = usePermisos();
 
+const {
+  sucursalActivaId,
+} = useSucursalActiva();
+
 const [
   sucursalFiltro,
   setSucursalFiltro,
 ] = useState("");
 
-const [
-  sucursalesFiltro,
-  setSucursalesFiltro,
-] = useState<
-  {
-    id: number;
-    nombre: string;
-  }[]
->([]);
+useEffect(() => {
+  if (!esSuperadmin) {
+    return;
+  }
+
+  setSucursalFiltro(
+    sucursalActivaId === null
+      ? ""
+      : String(sucursalActivaId)
+  );
+
+  setPaginaActual(1);
+}, [
+  esSuperadmin,
+  sucursalActivaId,
+]);
+
 
   const [busqueda, setBusqueda] = useState("");
   const [mensaje, setMensaje] = useState("");
@@ -121,10 +136,9 @@ const [
 );
   }
 
-  useEffect(() => {
-    cargarPropietarios();
-    cargarSucursalesFiltro();
-  }, []);
+useEffect(() => {
+  cargarPropietarios();
+}, []);
 
   useEffect(() => {
   setPaginaActual(1);
@@ -160,29 +174,7 @@ const [
     setModalAbierto(false);
   }
 
-  async function cargarSucursalesFiltro() {
-  const { data, error } =
-    await supabase
-      .from("sucursales")
-      .select(`
-        id,
-        nombre
-      `)
-      .eq("activa", true)
-      .order("nombre");
-
-  if (error) {
-    console.error(
-      "Error cargando sucursales:",
-      error
-    );
-    return;
-  }
-
-  setSucursalesFiltro(
-    data ?? []
-  );
-}
+ 
 
   async function guardarPropietario(
     e: FormEvent
@@ -192,17 +184,52 @@ const [
     setGuardando(true);
     setMensaje("");
 
-    const contextoSucursal =
-  await obtenerContextoSucursal();
+let sucursalIdPropietario:
+  number | null = null;
 
-if (!contextoSucursal.sucursalActivaId) {
-  setGuardando(false);
+/*
+ * Superadmin:
+ * utiliza la sucursal global
+ * seleccionada en el Sidebar.
+ */
+if (esSuperadmin) {
+  if (sucursalActivaId === null) {
+    setGuardando(false);
 
-  setMensaje(
-    "No hay una sucursal activa disponible para guardar el propietario."
-  );
+    setMensaje(
+      "Selecciona una sucursal activa antes de crear el propietario."
+    );
 
-  return;
+    return;
+  }
+
+  sucursalIdPropietario =
+    sucursalActivaId;
+}
+
+/*
+ * Usuarios normales:
+ * conservamos la lógica actual
+ * de su sucursal asignada.
+ */
+if (!esSuperadmin) {
+  const contextoSucursal =
+    await obtenerContextoSucursal();
+
+  if (
+    !contextoSucursal.sucursalActivaId
+  ) {
+    setGuardando(false);
+
+    setMensaje(
+      "No hay una sucursal activa disponible para guardar el propietario."
+    );
+
+    return;
+  }
+
+  sucursalIdPropietario =
+    contextoSucursal.sucursalActivaId;
 }
 
     const { error } = await supabase
@@ -223,7 +250,7 @@ if (!contextoSucursal.sucursalActivaId) {
         observaciones:
           observaciones || null,
 
-          sucursal_id: contextoSucursal.sucursalActivaId,
+      sucursal_id: sucursalIdPropietario,
       });
 
     setGuardando(false);
@@ -372,7 +399,7 @@ const propietariosPaginados =
                 marginTop: "3px",
               }}
             >
-              Total: {propietarios.length}
+             Total: {propietariosFiltrados.length}
             </div>
           </div>
 
@@ -385,32 +412,7 @@ const propietariosPaginados =
             }
           />
 
-       {esSuperadmin && (
-  <select
-    className="search-input"
-    value={sucursalFiltro}
-    onChange={(e) =>
-      setSucursalFiltro(
-        e.target.value
-      )
-    }
-  >
-    <option value="">
-      Todas las sucursales
-    </option>
 
-    {sucursalesFiltro.map(
-      (sucursal) => (
-        <option
-          key={sucursal.id}
-          value={sucursal.id}
-        >
-          {sucursal.nombre}
-        </option>
-      )
-    )}
-  </select>
-)}   
 
         </div>
 

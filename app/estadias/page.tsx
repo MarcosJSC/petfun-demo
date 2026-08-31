@@ -13,6 +13,10 @@ import { obtenerContextoSucursal } from "@/lib/sucursalActiva";
 import { RequierePermiso,} from "@/components/RequierePermiso";
 
 import {
+  useSucursalActiva,
+} from "@/contexts/SucursalContext";
+
+import {
   useRouter,
   useSearchParams,
 } from "next/navigation";
@@ -123,6 +127,8 @@ function formatearColones(valor: number) {
 
 function EstadiasContent() {
 
+
+
 const router = useRouter();  
 
 const searchParams = useSearchParams();
@@ -146,6 +152,28 @@ const [
     nombre: string;
   }[]
 >([]);
+
+
+const {
+  sucursalActivaId,
+} = useSucursalActiva();
+
+useEffect(() => {
+  if (!esSuperadmin) {
+    return;
+  }
+
+  setSucursalFiltro(
+    sucursalActivaId === null
+      ? ""
+      : String(sucursalActivaId)
+  );
+
+  setPaginaActual(1);
+}, [
+  esSuperadmin,
+  sucursalActivaId,
+]);
 
 const estadiaEditarDesdeUrl =
   searchParams.get("editar");
@@ -734,6 +762,53 @@ if (
   return;
 }
 
+let sucursalIdEstadia:
+  number | null = null;
+
+/*
+ * Si estamos creando una estadía
+ * como superadmin, usamos la
+ * sucursal activa global.
+ */
+if (
+  !estadiaEditando &&
+  esSuperadmin
+) {
+  if (sucursalActivaId === null) {
+    setGuardando(false);
+
+    setMensaje(
+      "Selecciona una sucursal activa antes de crear la estadía."
+    );
+
+    return;
+  }
+
+  sucursalIdEstadia =
+    sucursalActivaId;
+}
+
+/*
+ * Usuarios normales:
+ * usamos la sucursal del perrito.
+ */
+if (
+  !estadiaEditando &&
+  !esSuperadmin
+) {
+  sucursalIdEstadia =
+    perritoSeleccionado.sucursal_id;
+}
+
+/*
+ * Al editar, por ahora conservamos
+ * la sucursal que ya corresponde
+ * al perrito/registro.
+ */
+if (estadiaEditando) {
+  sucursalIdEstadia =
+    perritoSeleccionado.sucursal_id;
+}
 
   const datosEstadia = {
     perrito_id:
@@ -804,8 +879,8 @@ precio_guarderia_aplicado:
     observaciones:
       observaciones || null,
 
- sucursal_id:
-    perritoSeleccionado.sucursal_id,
+sucursal_id:
+  sucursalIdEstadia,
 
   };
 
@@ -1281,32 +1356,7 @@ useEffect(() => {
     }
   />
 
-{esSuperadmin && (
-  <select
-    className="search-input"
-    value={sucursalFiltro}
-    onChange={(e) =>
-      setSucursalFiltro(
-        e.target.value
-      )
-    }
-  >
-    <option value="">
-      Todas las sucursales
-    </option>
 
-    {sucursalesFiltro.map(
-      (sucursal) => (
-        <option
-          key={sucursal.id}
-          value={sucursal.id}
-        >
-          {sucursal.nombre}
-        </option>
-      )
-    )}
-  </select>
-)}
 
 </div>
 

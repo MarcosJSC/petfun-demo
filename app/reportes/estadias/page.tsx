@@ -5,9 +5,17 @@ import { supabase } from "@/lib/supabase";
 import * as XLSX from "xlsx-js-style";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
+import {
+  useSucursalActiva,
+} from "@/contexts/SucursalContext";
+
+import {
+  usePermisos,
+} from "@/hooks/usePermisos";
 
 type EstadiaReporte = {
   id: number;
+  sucursal_id: number;
   fecha_entrada: string;
   fecha_salida: string;
 
@@ -39,6 +47,15 @@ type EstadiaReporte = {
 };
 
 export default function ReportesPage() {
+
+  const {
+  sucursalActivaId,
+} = useSucursalActiva();
+
+const {
+  esSuperadmin,
+} = usePermisos();
+
   const [estadias, setEstadias] =
     useState<EstadiaReporte[]>([]);
 
@@ -71,68 +88,87 @@ const [
 ] = useState(1);
 
  
+useEffect(() => {
+  async function cargarEstadias() {
+    setCargando(true);
 
-  useEffect(() => {
-    async function cargarEstadias() {
-      setCargando(true);
+    let consulta =
+      supabase
+        .from("estadias")
+        .select(`
+          id,
+          sucursal_id,
+          fecha_entrada,
+          fecha_salida,
+          dias_hotel,
+          dias_guarderia,
+          total,
+          monto_pagado,
 
-      const { data, error } =
-        await supabase
-          .from("estadias")
-          .select(`
-            id,
-            fecha_entrada,
-            fecha_salida,
-            dias_hotel,
-            dias_guarderia,
-            total,
-            monto_pagado,
-
-            perritos (
+          perritos (
+            nombre,
+            propietarios (
               nombre,
-              propietarios (
-                nombre,
-                apellidos
-              )
-            ),
-
-            tipos_estadia (
-              nombre
-            ),
-
-            estados_estadia (
-              nombre
-            ),
-
-            estados_pago (
-              nombre
+              apellidos
             )
-          `)
-          .order(
-            "fecha_entrada",
-            { ascending: false }
-          );
+          ),
 
-      if (error) {
-        console.error(
-          "Error cargando reporte:",
-          error
+          tipos_estadia (
+            nombre
+          ),
+
+          estados_estadia (
+            nombre
+          ),
+
+          estados_pago (
+            nombre
+          )
+        `)
+        .order(
+          "fecha_entrada",
+          { ascending: false }
         );
 
-        setCargando(false);
-        return;
-      }
+    if (
+      esSuperadmin &&
+      sucursalActivaId !== null
+    ) {
+      consulta =
+        consulta.eq(
+          "sucursal_id",
+          sucursalActivaId
+        );
+    }
 
-      setEstadias(
-        (data ?? []) as unknown as
-          EstadiaReporte[]
+    const {
+      data,
+      error,
+    } = await consulta;
+
+    if (error) {
+      console.error(
+        "Error cargando reporte:",
+        error
       );
 
       setCargando(false);
+      return;
     }
 
-    cargarEstadias();
-  }, []);
+    setEstadias(
+      (data ?? []) as unknown as
+        EstadiaReporte[]
+    );
+
+    setCargando(false);
+  }
+
+  cargarEstadias();
+}, [
+  esSuperadmin,
+  sucursalActivaId,
+]);
 
 const estadiasFiltradas =
   useMemo(() => {
@@ -250,6 +286,7 @@ useEffect(() => {
   tipo,
   estado,
   estadoPago,
+  sucursalActivaId,
 ]);
 
 useEffect(() => {

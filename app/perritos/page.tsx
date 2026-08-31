@@ -13,6 +13,9 @@ import { supabase } from "@/lib/supabase";
 import { obtenerContextoSucursal } from "@/lib/sucursalActiva";
 import { usePermisos } from "@/hooks/usePermisos";
 import { RequierePermiso,} from "@/components/RequierePermiso";
+import {
+  useSucursalActiva,
+} from "@/contexts/SucursalContext";
 
 type Propietario = {
   id: number;
@@ -73,15 +76,7 @@ function PerritosContent() {
   setSucursalFiltro,
 ] = useState("");
 
-const [
-  sucursalesFiltro,
-  setSucursalesFiltro,
-] = useState<
-  {
-    id: number;
-    nombre: string;
-  }[]
->([]); 
+
 
   const [modalAbierto, setModalAbierto] =
     useState(false);
@@ -124,6 +119,28 @@ const {
   puede,
   esSuperadmin,
 } = usePermisos();
+
+const {
+  sucursalActivaId,
+} = useSucursalActiva();
+
+useEffect(() => {
+  if (!esSuperadmin) {
+    return;
+  }
+
+  setSucursalFiltro(
+    sucursalActivaId === null
+      ? ""
+      : String(sucursalActivaId)
+  );
+
+  setPaginaActual(1);
+}, [
+  esSuperadmin,
+  sucursalActivaId,
+]);
+
 
 
 async function cargarFotosPerritos(
@@ -229,48 +246,60 @@ setPerritos(lista);
 /*await cargarFotosPerritos(lista);*/
 }
 
-async function cargarSucursalesFiltro() {
+async function cargarPropietarios() {
+  let sucursalId:
+    number | null = null;
+
+  /*
+   * Superadmin:
+   * usamos la sucursal global.
+   */
+  if (esSuperadmin) {
+    sucursalId =
+      sucursalActivaId;
+
+    /*
+     * En modo global no mostramos
+     * propietarios para crear un
+     * perrito, porque primero debe
+     * escogerse una sucursal.
+     */
+    if (sucursalId === null) {
+      setPropietarios([]);
+      return;
+    }
+  }
+
+  /*
+   * Usuarios normales:
+   * conservamos su contexto actual.
+   */
+  if (!esSuperadmin) {
+    const contextoSucursal =
+      await obtenerContextoSucursal();
+
+    if (
+      !contextoSucursal.sucursalActivaId
+    ) {
+      setPropietarios([]);
+      return;
+    }
+
+    sucursalId =
+      contextoSucursal.sucursalActivaId;
+  }
+
   const { data, error } =
     await supabase
-      .from("sucursales")
-      .select(`
-        id,
-        nombre
-      `)
-      .eq("activa", true)
+      .from("propietarios")
+      .select(
+        "id, nombre, apellidos"
+      )
+      .eq(
+        "sucursal_id",
+        sucursalId
+      )
       .order("nombre");
-
-  if (error) {
-    console.error(
-      "Error cargando sucursales:",
-      error
-    );
-
-    return;
-  }
-
-  setSucursalesFiltro(
-    data ?? []
-  );
-}
-
-async function cargarPropietarios() {
-  const contextoSucursal =
-    await obtenerContextoSucursal();
-
-  if (!contextoSucursal.sucursalActivaId) {
-    setPropietarios([]);
-    return;
-  }
-
-  const { data, error } = await supabase
-    .from("propietarios")
-    .select("id, nombre, apellidos")
-    .eq(
-      "sucursal_id",
-      contextoSucursal.sucursalActivaId
-    )
-    .order("nombre");
 
   if (error) {
     console.error(
@@ -287,10 +316,12 @@ async function cargarPropietarios() {
     return;
   }
 
- setPropietarios(
-  (data ?? []) as unknown as Propietario[]
-);
+  setPropietarios(
+    (data ?? []) as unknown as
+      Propietario[]
+  );
 }
+
 
   async function cargarRazas() {
     const { data, error } = await supabase
@@ -307,12 +338,17 @@ async function cargarPropietarios() {
     setRazas(data ?? []);
   }
 
-  useEffect(() => {
-    cargarPerritos();
-    cargarPropietarios();
-    cargarRazas();
-    cargarSucursalesFiltro();
-  }, []);
+useEffect(() => {
+  cargarPerritos();
+  cargarRazas();
+}, []);
+
+useEffect(() => {
+  cargarPropietarios();
+}, [
+  esSuperadmin,
+  sucursalActivaId,
+]);
 
   useEffect(() => {
     if (propietarioDesdeUrl) {
@@ -344,11 +380,22 @@ setPrecioGuarderia("");
     }
   }
 
-  function abrirModal() {
-    limpiarFormulario();
-    setMensaje("");
-    setModalAbierto(true);
+function abrirModal() {
+  if (
+    esSuperadmin &&
+    sucursalActivaId === null
+  ) {
+    setMensaje(
+      "Selecciona una sucursal activa antes de crear un perrito."
+    );
+
+    return;
   }
+
+  limpiarFormulario();
+  setMensaje("");
+  setModalAbierto(true);
+}
 
   function cerrarModal() {
     if (guardando) {
@@ -366,17 +413,50 @@ setPrecioGuarderia("");
     setGuardando(true);
     setMensaje("");
 
-    const contextoSucursal =
-  await obtenerContextoSucursal();
+let sucursalIdPerrito:
+  number | null = null;
 
-if (!contextoSucursal.sucursalActivaId) {
-  setGuardando(false);
+/*
+ * Superadmin:
+ * utiliza la sucursal global.
+ */
+if (esSuperadmin) {
+  if (sucursalActivaId === null) {
+    setGuardando(false);
 
-  setMensaje(
-    "No hay una sucursal activa disponible para guardar el perrito."
-  );
+    setMensaje(
+      "Selecciona una sucursal activa antes de crear el perrito."
+    );
 
-  return;
+    return;
+  }
+
+  sucursalIdPerrito =
+    sucursalActivaId;
+}
+
+/*
+ * Usuarios normales:
+ * utilizamos su sucursal asignada.
+ */
+if (!esSuperadmin) {
+  const contextoSucursal =
+    await obtenerContextoSucursal();
+
+  if (
+    !contextoSucursal.sucursalActivaId
+  ) {
+    setGuardando(false);
+
+    setMensaje(
+      "No hay una sucursal activa disponible para guardar el perrito."
+    );
+
+    return;
+  }
+
+  sucursalIdPerrito =
+    contextoSucursal.sucursalActivaId;
 }
 
     const { error } = await supabase
@@ -413,7 +493,7 @@ precio_guarderia:
     : null,
     
 sucursal_id:
-  contextoSucursal.sucursalActivaId,    
+  sucursalIdPerrito,   
 
       });
 
@@ -573,7 +653,7 @@ const perritosPaginados =
                 marginTop: "3px",
               }}
             >
-              Total: {perritos.length}
+              Total: {perritosFiltrados.length}
             </div>
           </div>
 
@@ -586,32 +666,7 @@ const perritosPaginados =
             }
           />
 
-          {esSuperadmin && (
-  <select
-    className="search-input"
-    value={sucursalFiltro}
-    onChange={(e) =>
-      setSucursalFiltro(
-        e.target.value
-      )
-    }
-  >
-    <option value="">
-      Todas las sucursales
-    </option>
-
-    {sucursalesFiltro.map(
-      (sucursal) => (
-        <option
-          key={sucursal.id}
-          value={sucursal.id}
-        >
-          {sucursal.nombre}
-        </option>
-      )
-    )}
-  </select>
-)}
+    
 
         </div>
 

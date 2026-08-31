@@ -9,6 +9,10 @@ import {
 import { supabase } from "@/lib/supabase";
 import { usePermisos } from "@/hooks/usePermisos";
 
+import {
+  useSucursalActiva,
+} from "@/contexts/SucursalContext";
+
 const diasSemana = [
   "Lun",
   "Mar",
@@ -74,6 +78,7 @@ function obtenerDiasMes(fecha: Date) {
 
 export default function CalendarioEstadiasPage() {
 
+  
 
 const [
   sucursalFiltro,
@@ -94,6 +99,25 @@ const {
   puede,
   esSuperadmin,
 } = usePermisos();
+
+const {
+  sucursalActivaId,
+} = useSucursalActiva();
+
+useEffect(() => {
+  if (!esSuperadmin) {
+    return;
+  }
+
+  setSucursalFiltro(
+    sucursalActivaId === null
+      ? ""
+      : String(sucursalActivaId)
+  );
+}, [
+  esSuperadmin,
+  sucursalActivaId,
+]);
 
 const [
   mostrarDetalleDia,
@@ -429,32 +453,7 @@ function crearEstadiaDesdeDia(
 
           </div>
 
-          {esSuperadmin && (
-  <select
-    className="search-input"
-    value={sucursalFiltro}
-    onChange={(e) =>
-      setSucursalFiltro(
-        e.target.value
-      )
-    }
-  >
-    <option value="">
-      Todas las sucursales
-    </option>
 
-    {sucursalesFiltro.map(
-      (sucursal) => (
-        <option
-          key={sucursal.id}
-          value={sucursal.id}
-        >
-          {sucursal.nombre}
-        </option>
-      )
-    )}
-  </select>
-)}
 
           <h2
             style={{
