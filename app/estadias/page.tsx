@@ -1206,8 +1206,9 @@ useEffect(() => {
   busqueda,
   sucursalFiltro,
 ]);
-<RequierePermiso permiso="estadias.ver">
+
   return (
+    <RequierePermiso permiso="estadias.ver">
     <div>
       <div className="page-header">
         <div>
@@ -2351,18 +2352,17 @@ onChange={(e) => {
         </div>
  </form>
       </div>
+
     </div>
-   
   </div>
-  
 )}
 
-
     </div>
-     
+  </RequierePermiso>
   );
- </RequierePermiso>
-  }/*return estadias*/
+
+} /* return estadias */
+
 
 export default function EstadiasPage() {
   return (
@@ -2376,6 +2376,5 @@ export default function EstadiasPage() {
       <EstadiasContent />
     </Suspense>
   );
-
-
 }
+   
