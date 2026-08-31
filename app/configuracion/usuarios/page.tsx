@@ -90,6 +90,35 @@ const [correoNuevo, setCorreoNuevo] =
 const [passwordNuevo, setPasswordNuevo] =
   useState("");
 
+  const [modalEditar, setModalEditar] =
+  useState(false);
+
+const [
+  usuarioEditando,
+  setUsuarioEditando,
+] = useState<PerfilUsuario | null>(null);
+
+const [nombreEditar, setNombreEditar] =
+  useState("");
+
+const [rolEditar, setRolEditar] =
+  useState<PerfilUsuario["rol"]>(
+    "operador"
+  );
+
+const [
+  sucursalesEditar,
+  setSucursalesEditar,
+] = useState<number[]>([]);
+
+const [activoEditar, setActivoEditar] =
+  useState(true);
+
+const [
+  guardandoEditar,
+  setGuardandoEditar,
+] = useState(false);
+
 const [rolNuevo, setRolNuevo] =
   useState<
     | "administrador"
@@ -154,6 +183,181 @@ const [guardandoNuevo, setGuardandoNuevo] =
 
     iniciar();
   }, []);
+
+  function abrirEditarUsuario(
+  usuario: PerfilUsuario
+) {
+  setUsuarioEditando(usuario);
+
+  setNombreEditar(
+    usuario.nombre
+  );
+
+  setRolEditar(
+    usuario.rol
+  );
+
+  setActivoEditar(
+    usuario.activo
+  );
+
+  setSucursalesEditar(
+    usuario.usuario_sucursales.map(
+      (relacion) =>
+        relacion.sucursal_id
+    )
+  );
+
+  setMensaje("");
+
+  setModalEditar(true);
+
+  console.log(
+  "EDITAR USUARIO",
+  usuario
+);
+}
+
+function cerrarEditarUsuario() {
+  if (guardandoEditar) {
+    return;
+  }
+
+  setModalEditar(false);
+  setUsuarioEditando(null);
+}
+
+function cambiarSucursalEditar(
+  sucursalId: number
+) {
+  setSucursalesEditar(
+    (actuales) =>
+      actuales.includes(sucursalId)
+        ? actuales.filter(
+            (id) =>
+              id !== sucursalId
+          )
+        : [
+            ...actuales,
+            sucursalId,
+          ]
+  );
+}
+
+async function guardarUsuarioEditado() {
+  if (!usuarioEditando) {
+    return;
+  }
+
+  const nombreLimpio =
+    nombreEditar.trim();
+
+  if (!nombreLimpio) {
+    setMensaje(
+      "El nombre es obligatorio."
+    );
+    return;
+  }
+
+  if (
+    rolEditar !== "superadmin" &&
+    sucursalesEditar.length === 0
+  ) {
+    setMensaje(
+      "Debes asignar al menos una sucursal."
+    );
+    return;
+  }
+
+  setGuardandoEditar(true);
+  setMensaje("");
+
+  const {
+    data: { session },
+  } =
+    await supabase.auth.getSession();
+
+  if (!session) {
+    setMensaje(
+      "La sesión ha expirado. Inicia sesión nuevamente."
+    );
+
+    setGuardandoEditar(false);
+    return;
+  }
+
+  try {
+    const respuesta =
+      await fetch(
+        "/api/admin/usuarios",
+        {
+          method: "PATCH",
+
+          headers: {
+            "Content-Type":
+              "application/json",
+
+            Authorization:
+              `Bearer ${session.access_token}`,
+          },
+
+          body: JSON.stringify({
+            usuarioId:
+              usuarioEditando.usuario_id,
+
+            nombre:
+              nombreLimpio,
+
+            rol:
+              rolEditar,
+
+            activo:
+              activoEditar,
+
+            sucursalIds:
+              rolEditar ===
+              "superadmin"
+                ? []
+                : sucursalesEditar,
+          }),
+        }
+      );
+
+    const resultado =
+      await respuesta.json();
+
+    if (!respuesta.ok) {
+      setMensaje(
+        resultado.error ||
+          "No se pudo actualizar el usuario."
+      );
+
+      return;
+    }
+
+    setMensaje(
+      "Usuario actualizado correctamente."
+    );
+
+    setModalEditar(false);
+    setUsuarioEditando(null);
+
+    await cargarUsuarios();
+
+  } catch (error) {
+    console.error(
+      "Error actualizando usuario:",
+      error
+    );
+
+    setMensaje(
+      "Ocurrió un error al actualizar el usuario."
+    );
+
+  } finally {
+    setGuardandoEditar(false);
+  }
+}
 
   async function cargarUsuarios() {
     setCargando(true);
@@ -711,14 +915,15 @@ async function crearNuevoUsuario() {
                           </td>
 
                           <td>
-                            <button
-                              type="button"
-                              className="secondary-button"
-                              disabled
-                              title="Disponible en el siguiente paso"
-                            >
-                              Editar
-                            </button>
+<button
+  type="button"
+  className="secondary-button"
+  onClick={() =>
+    abrirEditarUsuario(usuario)
+  }
+>
+  Editar
+</button>
                           </td>
                         </tr>
                       );
@@ -748,6 +953,7 @@ async function crearNuevoUsuario() {
                           .filter(
                             Boolean
                           ) as string[];
+
 
                   return (
                     <div
@@ -815,17 +1021,18 @@ async function crearNuevoUsuario() {
                           marginTop: "14px",
                         }}
                       >
-                        <button
-                          type="button"
-                          className="secondary-button"
-                          style={{
-                            width: "100%",
-                          }}
-                          disabled
-                          title="Disponible en el siguiente paso"
-                        >
-                          Editar usuario
-                        </button>
+<button
+  type="button"
+  className="secondary-button"
+  style={{
+    width: "100%",
+  }}
+  onClick={() =>
+    abrirEditarUsuario(usuario)
+  }
+>
+  Editar usuario
+</button>
                       </div>
                     </div>
                   );
@@ -1085,6 +1292,228 @@ c
 </button>
 
       
+          </div>
+
+        </form>
+
+      </div>
+    </div>
+  </div>
+)}
+
+
+
+{modalEditar && usuarioEditando && (
+  <div
+    className="modal-backdrop"
+    onMouseDown={(e) => {
+      if (
+        e.target === e.currentTarget
+      ) {
+        cerrarEditarUsuario();
+      }
+    }}
+  >
+    <div className="modal">
+
+      <div className="modal-header">
+        <h2>
+          Editar usuario
+        </h2>
+
+        <button
+          type="button"
+          className="icon-button"
+          onClick={
+            cerrarEditarUsuario
+          }
+          aria-label="Cerrar"
+        >
+          ×
+        </button>
+      </div>
+
+      <div className="modal-body">
+
+        <form
+        
+  onSubmit={(e) => {
+  e.preventDefault();
+  guardarUsuarioEditado();
+}}
+        >
+          <div className="form-grid">
+
+            <div className="form-group full">
+              <label className="form-label">
+                Nombre *
+              </label>
+
+              <input
+                className="form-input"
+                value={nombreEditar}
+                onChange={(e) =>
+                  setNombreEditar(
+                    e.target.value
+                  )
+                }
+                required
+                autoFocus
+              />
+            </div>
+
+            <div className="form-group full">
+              <label className="form-label">
+                Rol *
+              </label>
+
+              <select
+                className="form-input"
+                value={rolEditar}
+                onChange={(e) =>
+                  setRolEditar(
+                    e.target.value as
+                      PerfilUsuario["rol"]
+                  )
+                }
+              >
+                <option value="operador">
+                  Operador
+                </option>
+
+                <option value="consulta">
+                  Consulta
+                </option>
+
+                <option value="administrador">
+                  Administrador
+                </option>
+
+                <option value="superadmin">
+                  Superadministrador
+                </option>
+              </select>
+            </div>
+
+            {rolEditar !== "superadmin" && (
+              <div className="form-group full">
+                <label className="form-label">
+                  Sucursales *
+                </label>
+
+                <div
+                  style={{
+                    display: "grid",
+                    gap: "8px",
+                    marginTop: "4px",
+                  }}
+                >
+                  {sucursales.length === 0 ? (
+                    <div
+                      style={{
+                        color:
+                          "var(--color-text-secondary)",
+                      }}
+                    >
+                      No hay sucursales activas.
+                    </div>
+                  ) : (
+                    sucursales.map(
+                      (sucursal) => (
+                        <label
+                          key={sucursal.id}
+                          style={{
+                            display: "flex",
+                            alignItems: "center",
+                            gap: "10px",
+                            padding: "10px",
+                            border:
+                              "1px solid var(--color-border)",
+                            borderRadius:
+                              "9px",
+                            cursor:
+                              "pointer",
+                          }}
+                        >
+                          <input
+                            type="checkbox"
+                            checked={
+                              sucursalesEditar.includes(
+                                sucursal.id
+                              )
+                            }
+                            onChange={() =>
+                              cambiarSucursalEditar(
+                                sucursal.id
+                              )
+                            }
+                          />
+
+                          <span>
+                            {sucursal.nombre}
+                          </span>
+                        </label>
+                      )
+                    )
+                  )}
+                </div>
+              </div>
+            )}
+
+            <div className="form-group full">
+              <label
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "10px",
+                  cursor: "pointer",
+                }}
+              >
+                <input
+                  type="checkbox"
+                  checked={activoEditar}
+                  onChange={(e) =>
+                    setActivoEditar(
+                      e.target.checked
+                    )
+                  }
+                />
+
+                <span>
+                  Usuario activo
+                </span>
+              </label>
+            </div>
+
+          </div>
+
+          <div className="modal-footer">
+
+            <button
+              type="button"
+              className="secondary-button"
+              onClick={
+                cerrarEditarUsuario
+              }
+              disabled={
+                guardandoEditar
+              }
+            >
+              Cancelar
+            </button>
+
+            <button
+              type="submit"
+              className="primary-button"
+              disabled={
+                guardandoEditar
+              }
+            >
+              {guardandoEditar
+                ? "Guardando..."
+                : "Guardar cambios"}
+            </button>
+
           </div>
 
         </form>

@@ -41,6 +41,39 @@ export default function AppShell({
        * No hay sesión y estamos intentando
        * entrar al sistema.
        */
+if (session) {
+  const {
+    data: perfil,
+    error: errorPerfil,
+  } = await supabase
+    .from("perfiles_usuario")
+    .select(`
+      activo
+    `)
+    .eq(
+      "usuario_id",
+      session.user.id
+    )
+    .single();
+
+  if (
+    errorPerfil ||
+    !perfil ||
+    !perfil.activo
+  ) {
+    sessionStorage.setItem(
+      "petfun_auth_message",
+      "Este usuario se encuentra inactivo. Contacta al administrador."
+    );
+
+    await supabase.auth.signOut();
+
+    router.replace("/login");
+    return;
+  }
+}
+
+
 if (
   !session &&
   !rutaPublica
@@ -87,6 +120,7 @@ if (!session && !rutaPublica) {
   }, [
     esLogin,
     rutaPublica,
+    pathname,
     router,
   ]);
 

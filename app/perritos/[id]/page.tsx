@@ -2445,160 +2445,164 @@ async function eliminarDesparasitacion(
 
       <div
         style={{
-          color: "var(--color-text-secondary)",
+          color:
+            "var(--color-text-secondary)",
           fontSize: "14px",
           marginTop: "3px",
         }}
       >
-        Último registro disponible
+        Último registro de cada tipo
       </div>
     </div>
   </div>
 
-  {!ultimaDesparasitacion ? (
-    <div className="empty-state">
-      No hay desparasitaciones registradas.
+  <>
+    {/* ESCRITORIO */}
+    <div className="desktop-only">
+      <table className="data-table">
+        <thead>
+          <tr>
+            <th>Tipo</th>
+            <th>Aplicada</th>
+            <th>Próxima</th>
+            <th>Estado</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          {desparasitacionesFicha.map(
+            (item) => (
+              <tr key={item.tipo}>
+                <td>
+                  <strong>
+                    {item.tipo}
+                  </strong>
+                </td>
+
+                <td>
+                  {item.estado ===
+                  "sin-registro"
+                    ? "—"
+                    : formatearFecha(
+                        item.fechaAplicacion
+                      )}
+                </td>
+
+                <td>
+                  {item.estado ===
+                  "sin-registro"
+                    ? "—"
+                    : formatearFecha(
+                        item.fechaProxima
+                      )}
+                </td>
+
+                <td>
+                  {item.estado ===
+                  "sin-registro" ? (
+                    <span className="estado-badge sin-registro">
+                      <span className="estado-dot" />
+                      Sin registro
+                    </span>
+                  ) : (
+                    <span
+                      className={`estado-badge ${item.estado}`}
+                    >
+                      <span className="estado-dot" />
+                      {item.textoEstado}
+                    </span>
+                  )}
+                </td>
+              </tr>
+            )
+          )}
+        </tbody>
+      </table>
     </div>
-  ) : (
-   
-    <>
-  {/* ESCRITORIO */}
-  <div className="desktop-only">
-    <table className="data-table">
-      <thead>
-        <tr>
-          <th>Tipo</th>
-          <th>Aplicada</th>
-          <th>Próxima</th>
-          <th>Estado</th>
-        </tr>
-      </thead>
 
-      <tbody>
-        <tr>
-          <td>
-            <strong>
-              {ultimaDesparasitacion
-                .tipos_desparasitacion
-                ?.nombre || "—"}
-            </strong>
-          </td>
+    {/* MÓVIL */}
+    <div className="mobile-only deworming-status-mobile">
 
-          <td>
-            {formatearFecha(
-              ultimaDesparasitacion.fecha_aplicacion
-            )}
-          </td>
-
-          <td>
-            {formatearFecha(
-              ultimaDesparasitacion.fecha_proxima
-            )}
-          </td>
-
-          <td>
-            {(() => {
-              const estado =
-                obtenerEstadoFecha(
-                  ultimaDesparasitacion.fecha_proxima
-                );
-
-              return (
-                <span
-                  className={`estado-badge ${estado.estado}`}
-                >
-                  <span className="estado-dot" />
-                  {estado.texto}
-                </span>
-              );
-            })()}
-          </td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
-
-
-  {/* MÓVIL */}
-  <div className="mobile-only deworming-status-mobile">
-
-    <div className="mobile-list-item">
-
-      <div className="mobile-list-title">
-        🩺{" "}
-        {ultimaDesparasitacion
-          .tipos_desparasitacion
-          ?.nombre || "—"}
-      </div>
-
-      <div className="mobile-list-grid">
-
-        <div>
-          <span className="mobile-list-label">
-            Aplicada
-          </span>
-
-          <strong>
-            {formatearFecha(
-              ultimaDesparasitacion.fecha_aplicacion
-            )}
-          </strong>
-        </div>
-
-        <div>
-          <span className="mobile-list-label">
-            Próxima
-          </span>
-
-          <strong>
-            {formatearFecha(
-              ultimaDesparasitacion.fecha_proxima
-            )}
-          </strong>
-        </div>
-
-        <div
-          style={{
-            gridColumn: "1 / -1",
-          }}
-        >
-          <span className="mobile-list-label">
-            Estado
-          </span>
-
+      {desparasitacionesFicha.map(
+        (item) => (
           <div
-            style={{
-              marginTop: "4px",
-            }}
+            key={item.tipo}
+            className="mobile-list-item"
           >
-            {(() => {
-              const estado =
-                obtenerEstadoFecha(
-                  ultimaDesparasitacion.fecha_proxima
-                );
+            <div className="mobile-list-title">
+              🩺 {item.tipo}
+            </div>
 
+            <div className="mobile-list-grid">
 
-
-              return (
-                <span
-                  className={`estado-badge ${estado.estado}`}
-                >
-                  <span className="estado-dot" />
-                  {estado.texto}
+              <div>
+                <span className="mobile-list-label">
+                  Aplicada
                 </span>
-              );
-            })()}
-          </div>
-        </div>
 
-      </div>
+                <strong>
+                  {item.estado ===
+                  "sin-registro"
+                    ? "—"
+                    : formatearFecha(
+                        item.fechaAplicacion
+                      )}
+                </strong>
+              </div>
+
+              <div>
+                <span className="mobile-list-label">
+                  Próxima
+                </span>
+
+                <strong>
+                  {item.estado ===
+                  "sin-registro"
+                    ? "—"
+                    : formatearFecha(
+                        item.fechaProxima
+                      )}
+                </strong>
+              </div>
+
+              <div
+                style={{
+                  gridColumn: "1 / -1",
+                }}
+              >
+                <span className="mobile-list-label">
+                  Estado
+                </span>
+
+                <div
+                  style={{
+                    marginTop: "4px",
+                  }}
+                >
+                  {item.estado ===
+                  "sin-registro" ? (
+                    <span className="estado-badge sin-registro">
+                      <span className="estado-dot" />
+                      Sin registro
+                    </span>
+                  ) : (
+                    <span
+                      className={`estado-badge ${item.estado}`}
+                    >
+                      <span className="estado-dot" />
+                      {item.textoEstado}
+                    </span>
+                  )}
+                </div>
+              </div>
+
+            </div>
+          </div>
+        )
+      )}
 
     </div>
-
-  </div>
-</>
-
-  )}
+  </>
 </section>
 
       <section className="list-card">

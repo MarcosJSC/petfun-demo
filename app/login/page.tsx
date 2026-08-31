@@ -20,20 +20,34 @@ export default function LoginPage() {
   const [mensaje, setMensaje] =
     useState("");
 
-  useEffect(() => {
-    async function revisarSesion() {
-      const {
-        data: { session },
-      } =
-        await supabase.auth.getSession();
 
-      if (session) {
-        router.replace("/");
-      }
+useEffect(() => {
+  const mensajeAuth =
+    sessionStorage.getItem(
+      "petfun_auth_message"
+    );
+
+  if (mensajeAuth) {
+    setMensaje(mensajeAuth);
+
+    sessionStorage.removeItem(
+      "petfun_auth_message"
+    );
+  }
+
+  async function revisarSesion() {
+    const {
+      data: { session },
+    } =
+      await supabase.auth.getSession();
+
+    if (session) {
+      router.replace("/");
     }
+  }
 
-    revisarSesion();
-  }, [router]);
+  revisarSesion();
+}, [router]);
 
  
 

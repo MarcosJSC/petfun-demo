@@ -10,6 +10,7 @@ import {
 import { supabase } from "@/lib/supabase";
 import { obtenerContextoSucursal } from "@/lib/sucursalActiva";
 import { usePermisos } from "@/hooks/usePermisos";
+import { RequierePermiso,} from "@/components/RequierePermiso";
 
 type Propietario = {
   id: number;
@@ -316,6 +317,7 @@ const propietariosPaginados =
   );
 
   return (
+     <RequierePermiso permiso="propietarios.ver">
     <div>
 
       <div className="page-header">
@@ -842,5 +844,6 @@ const propietariosPaginados =
       )}
 
     </div>
+      </RequierePermiso>
   );
 }

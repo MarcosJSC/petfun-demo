@@ -10,6 +10,7 @@ import { supabase } from "@/lib/supabase";
 import { usePermisos } from "@/hooks/usePermisos";
 import Link from "next/link";
 import { obtenerContextoSucursal } from "@/lib/sucursalActiva";
+import { RequierePermiso,} from "@/components/RequierePermiso";
 
 import {
   useRouter,
@@ -1205,7 +1206,7 @@ useEffect(() => {
   busqueda,
   sucursalFiltro,
 ]);
-
+<RequierePermiso permiso="estadias.ver">
   return (
     <div>
       <div className="page-header">
@@ -2358,8 +2359,9 @@ onChange={(e) => {
 
 
     </div>
+     
   );
-
+ </RequierePermiso>
   }/*return estadias*/
 
 export default function EstadiasPage() {

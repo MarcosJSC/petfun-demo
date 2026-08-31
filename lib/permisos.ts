@@ -5,22 +5,27 @@ export type RolUsuario =
   | "consulta";
 
 export type Permiso =
+  | "propietarios.ver"
   | "propietarios.crear"
   | "propietarios.editar"
   | "propietarios.eliminar"
 
+  | "perritos.ver"
   | "perritos.crear"
   | "perritos.editar"
   | "perritos.eliminar"
 
+  | "estadias.ver"
   | "estadias.crear"
   | "estadias.editar"
   | "estadias.eliminar"
 
+  | "vacunas.ver"
   | "vacunas.crear"
   | "vacunas.editar"
   | "vacunas.eliminar"
 
+  | "desparasitaciones.ver"
   | "desparasitaciones.crear"
   | "desparasitaciones.editar"
   | "desparasitaciones.eliminar"
@@ -35,73 +40,88 @@ const permisosPorRol: Record<
   RolUsuario,
   Permiso[]
 > = {
-  superadmin: [
-    "propietarios.crear",
-    "propietarios.editar",
-    "propietarios.eliminar",
+superadmin: [
+  "propietarios.ver",
+  "propietarios.crear",
+  "propietarios.editar",
+  "propietarios.eliminar",
 
-    "perritos.crear",
-    "perritos.editar",
-    "perritos.eliminar",
+  "perritos.ver",
+  "perritos.crear",
+  "perritos.editar",
+  "perritos.eliminar",
 
-    "estadias.crear",
-    "estadias.editar",
-    "estadias.eliminar",
+  "estadias.ver",
+  "estadias.crear",
+  "estadias.editar",
+  "estadias.eliminar",
 
-    "vacunas.crear",
-    "vacunas.editar",
-    "vacunas.eliminar",
+  "vacunas.ver",
+  "vacunas.crear",
+  "vacunas.editar",
+  "vacunas.eliminar",
 
-    "desparasitaciones.crear",
-    "desparasitaciones.editar",
-    "desparasitaciones.eliminar",
+  "desparasitaciones.ver",
+  "desparasitaciones.crear",
+  "desparasitaciones.editar",
+  "desparasitaciones.eliminar",
 
-    "reportes.ver",
-    "configuracion.ver",
-    "usuarios.administrar",
-    "sucursales.administrar",
-  ],
+  "reportes.ver",
+  "configuracion.ver",
+  "usuarios.administrar",
+  "sucursales.administrar",
+],
 
-  administrador: [
-    "propietarios.crear",
-    "propietarios.editar",
+administrador: [
+  "propietarios.ver",
+  "propietarios.crear",
+  "propietarios.editar",
 
-    "perritos.crear",
-    "perritos.editar",
+  "perritos.ver",
+  "perritos.crear",
+  "perritos.editar",
 
-    "estadias.crear",
-    "estadias.editar",
-    "estadias.eliminar",
+  "estadias.ver",
+  "estadias.crear",
+  "estadias.editar",
+  "estadias.eliminar",
 
-    "vacunas.crear",
-    "vacunas.editar",
-    "vacunas.eliminar",
+  "vacunas.ver",
+  "vacunas.crear",
+  "vacunas.editar",
+  "vacunas.eliminar",
 
-    "desparasitaciones.crear",
-    "desparasitaciones.editar",
-    "desparasitaciones.eliminar",
+  "desparasitaciones.ver",
+  "desparasitaciones.crear",
+  "desparasitaciones.editar",
+  "desparasitaciones.eliminar",
 
-    "reportes.ver",
-  ],
+  "reportes.ver",
+],
 
-  operador: [
-    "propietarios.crear",
-    "propietarios.editar",
+operador: [
+  "propietarios.ver",
+  "propietarios.crear",
+  "propietarios.editar",
 
-    "perritos.crear",
-    "perritos.editar",
+  "perritos.ver",
+  "perritos.crear",
+  "perritos.editar",
 
-    "estadias.crear",
-    "estadias.editar",
+  "estadias.ver",
+  "estadias.crear",
+  "estadias.editar",
 
-    "vacunas.crear",
-    "vacunas.editar",
+  "vacunas.ver",
+  "vacunas.crear",
+  "vacunas.editar",
 
-    "desparasitaciones.crear",
-    "desparasitaciones.editar",
+  "desparasitaciones.ver",
+  "desparasitaciones.crear",
+  "desparasitaciones.editar",
 
-    "reportes.ver",
-  ],
+  "reportes.ver",
+],
 
   consulta: [
     "reportes.ver",

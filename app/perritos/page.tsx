@@ -12,6 +12,7 @@ import { useSearchParams } from "next/navigation";
 import { supabase } from "@/lib/supabase";
 import { obtenerContextoSucursal } from "@/lib/sucursalActiva";
 import { usePermisos } from "@/hooks/usePermisos";
+import { RequierePermiso,} from "@/components/RequierePermiso";
 
 type Propietario = {
   id: number;
@@ -517,6 +518,7 @@ const perritosPaginados =
 ]);
 
   return (
+    <RequierePermiso permiso="perritos.ver">
     <div>
 
       <div className="page-header">
@@ -1147,6 +1149,7 @@ const perritosPaginados =
       )}
 
     </div>
+     </RequierePermiso>
   );
 }
 

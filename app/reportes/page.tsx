@@ -1,9 +1,11 @@
 "use client";
 
 import Link from "next/link";
+import { RequierePermiso,} from "@/components/RequierePermiso";
 
 export default function ReportesPage() {
   return (
+     <RequierePermiso permiso="reportes.ver">
     <div>
       <div className="page-header">
         <div>
@@ -106,9 +108,12 @@ export default function ReportesPage() {
           >
             Abrir reporte →
           </div>
+          
         </Link>
 
       </div>
+      
     </div>
+     </RequierePermiso>
   );
 }

@@ -451,3 +451,358 @@ export async function POST(
     );
   }
 }
+
+
+export async function PATCH(
+  request: NextRequest
+) {
+  try {
+    /*
+     * 1. Obtener token.
+     */
+    const authorization =
+      request.headers.get(
+        "authorization"
+      );
+
+    if (
+      !authorization ||
+      !authorization.startsWith(
+        "Bearer "
+      )
+    ) {
+      return NextResponse.json(
+        {
+          error: "No autorizado.",
+        },
+        {
+          status: 401,
+        }
+      );
+    }
+
+    const token =
+      authorization.replace(
+        "Bearer ",
+        ""
+      );
+
+    /*
+     * 2. Validar sesión.
+     */
+    const {
+      data: {
+        user: usuarioActual,
+      },
+      error: errorUsuario,
+    } =
+      await supabaseAdmin.auth.getUser(
+        token
+      );
+
+    if (
+      errorUsuario ||
+      !usuarioActual
+    ) {
+      return NextResponse.json(
+        {
+          error: "Sesión inválida.",
+        },
+        {
+          status: 401,
+        }
+      );
+    }
+
+    /*
+     * 3. Verificar superadmin.
+     */
+    const {
+      data: perfilActual,
+      error: errorPerfil,
+    } =
+      await supabaseAdmin
+        .from("perfiles_usuario")
+        .select(`
+          usuario_id,
+          rol,
+          activo
+        `)
+        .eq(
+          "usuario_id",
+          usuarioActual.id
+        )
+        .single();
+
+    if (
+      errorPerfil ||
+      !perfilActual ||
+      perfilActual.rol !==
+        "superadmin" ||
+      !perfilActual.activo
+    ) {
+      return NextResponse.json(
+        {
+          error:
+            "No tienes permiso para editar usuarios.",
+        },
+        {
+          status: 403,
+        }
+      );
+    }
+
+    /*
+     * 4. Leer datos.
+     */
+    const body =
+      await request.json();
+
+    const usuarioId =
+      String(
+        body.usuarioId || ""
+      ).trim();
+
+    const nombre =
+      String(
+        body.nombre || ""
+      ).trim();
+
+    const rol =
+      String(
+        body.rol || ""
+      ) as RolPermitido;
+
+    const activo =
+      body.activo !== false;
+
+    const sucursalIds =
+      Array.isArray(
+        body.sucursalIds
+      )
+        ? body.sucursalIds
+            .map(Number)
+            .filter(
+              (id: number) =>
+                Number.isInteger(id) &&
+                id > 0
+            )
+        : [];
+
+    /*
+     * 5. Validaciones.
+     */
+    if (!usuarioId) {
+      return NextResponse.json(
+        {
+          error:
+            "El usuario es obligatorio.",
+        },
+        {
+          status: 400,
+        }
+      );
+    }
+
+    if (!nombre) {
+      return NextResponse.json(
+        {
+          error:
+            "El nombre es obligatorio.",
+        },
+        {
+          status: 400,
+        }
+      );
+    }
+
+    if (
+      !rolesPermitidos.includes(
+        rol
+      )
+    ) {
+      return NextResponse.json(
+        {
+          error:
+            "Rol no válido.",
+        },
+        {
+          status: 400,
+        }
+      );
+    }
+
+    if (
+      rol !== "superadmin" &&
+      sucursalIds.length === 0
+    ) {
+      return NextResponse.json(
+        {
+          error:
+            "Debes asignar al menos una sucursal.",
+        },
+        {
+          status: 400,
+        }
+      );
+    }
+
+    /*
+     * 6. Actualizar perfil.
+     */
+    const {
+      error: errorActualizarPerfil,
+    } =
+      await supabaseAdmin
+        .from("perfiles_usuario")
+        .update({
+          nombre,
+          rol,
+          activo,
+        })
+        .eq(
+          "usuario_id",
+          usuarioId
+        );
+
+    if (errorActualizarPerfil) {
+      console.error(
+        "Error actualizando perfil:",
+        errorActualizarPerfil
+      );
+
+      return NextResponse.json(
+        {
+          error:
+            "No se pudo actualizar el usuario.",
+        },
+        {
+          status: 500,
+        }
+      );
+    }
+
+    /*
+     * 7. Eliminar asignaciones
+     *    anteriores.
+     */
+    const {
+      error:
+        errorEliminarSucursales,
+    } =
+      await supabaseAdmin
+        .from("usuario_sucursales")
+        .delete()
+        .eq(
+          "usuario_id",
+          usuarioId
+        );
+
+    if (errorEliminarSucursales) {
+      console.error(
+        "Error eliminando asignaciones:",
+        errorEliminarSucursales
+      );
+
+      return NextResponse.json(
+        {
+          error:
+            "El usuario fue actualizado, pero no se pudieron actualizar sus sucursales.",
+        },
+        {
+          status: 500,
+        }
+      );
+    }
+
+    /*
+     * 8. Crear las nuevas
+     *    asignaciones.
+     *
+     * Superadmin no necesita
+     * sucursales.
+     */
+    if (
+      rol !== "superadmin"
+    ) {
+      const asignaciones =
+        sucursalIds.map(
+          (sucursalId: number) => ({
+            usuario_id:
+              usuarioId,
+
+            sucursal_id:
+              sucursalId,
+          })
+        );
+
+      const {
+        error:
+          errorNuevasSucursales,
+      } =
+        await supabaseAdmin
+          .from(
+            "usuario_sucursales"
+          )
+          .insert(
+            asignaciones
+          );
+
+      if (
+        errorNuevasSucursales
+      ) {
+        console.error(
+          "Error asignando nuevas sucursales:",
+          errorNuevasSucursales
+        );
+
+        return NextResponse.json(
+          {
+            error:
+              "El usuario fue actualizado, pero no se pudieron guardar sus nuevas sucursales.",
+          },
+          {
+            status: 500,
+          }
+        );
+      }
+    }
+
+    /*
+     * 9. Listo.
+     */
+    return NextResponse.json({
+      ok: true,
+
+      usuario: {
+        usuario_id:
+          usuarioId,
+
+        nombre,
+        rol,
+        activo,
+
+        sucursalIds:
+          rol === "superadmin"
+            ? []
+            : sucursalIds,
+      },
+    });
+
+  } catch (error) {
+    console.error(
+      "Error inesperado editando usuario:",
+      error
+    );
+
+    return NextResponse.json(
+      {
+        error:
+          "Ocurrió un error inesperado.",
+      },
+      {
+        status: 500,
+      }
+    );
+  }
+}

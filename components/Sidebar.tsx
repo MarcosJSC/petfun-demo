@@ -8,38 +8,48 @@ import { supabase } from "@/lib/supabase";
 
 import ThemeToggle from "@/components/ThemeToggle";
 
+import {
+  usePermisos,
+} from "@/hooks/usePermisos";
+
 const opciones = [
   {
     nombre: "Dashboard",
     ruta: "/",
     icono: "▦",
+    permiso: null,
   },
   {
     nombre: "Propietarios",
     ruta: "/propietarios",
     icono: "👤",
+    permiso: "propietarios.ver",
   },
   {
     nombre: "Perritos",
     ruta: "/perritos",
     icono: "🐾",
+    permiso: "perritos.ver",
   },
   {
     nombre: "Estadías",
     ruta: "/estadias/calendario",
     icono: "🏨",
+    permiso: "estadias.ver",
   },
   {
-  nombre: "Reportes",
-  ruta: "/reportes",
-  icono: "📊",
-},
+    nombre: "Reportes",
+    ruta: "/reportes",
+    icono: "📊",
+    permiso: "reportes.ver",
+  },
   {
     nombre: "Configuración",
     ruta: "/configuracion",
     icono: "⚙️",
+    permiso: "configuracion.ver",
   },
-];
+] as const;
 
 
 
@@ -53,6 +63,11 @@ const [
   const pathname = usePathname();
 
   const router = useRouter();
+
+  const {
+  puede,
+  cargandoRol,
+} = usePermisos();
 
 const [nombreUsuario, setNombreUsuario] =
   useState("");
@@ -188,36 +203,60 @@ async function cerrarSesion() {
           </button>
         </div>
 
-        <nav>
-          {opciones.map((opcion) => {
-           const activo =
-  opcion.nombre === "Dashboard"
-    ? pathname === "/"
-    : opcion.nombre === "Estadías"
-      ? pathname.startsWith("/estadias")
-      : pathname.startsWith(opcion.ruta);
+<nav>
+  {!cargandoRol &&
+    opciones
+      .filter((opcion) => {
+        /*
+         * Las opciones sin permiso,
+         * como Dashboard,
+         * siempre se muestran.
+         */
+        if (!opcion.permiso) {
+          return true;
+        }
 
-            return (
-              <Link
-                key={opcion.ruta}
-                href={opcion.ruta}
-                className={`sidebar-link ${
-                  activo ? "active" : ""
-                }`}
-              >
-                <span
-                  style={{
-                    marginRight: "10px",
-                  }}
-                >
-                  {opcion.icono}
-                </span>
+        /*
+         * Las demás solo se muestran
+         * si el usuario tiene permiso.
+         */
+        return puede(
+          opcion.permiso
+        );
+      })
+      .map((opcion) => {
+        const activo =
+          opcion.nombre === "Dashboard"
+            ? pathname === "/"
+            : opcion.nombre === "Estadías"
+              ? pathname.startsWith(
+                  "/estadias"
+                )
+              : pathname.startsWith(
+                  opcion.ruta
+                );
 
-                {opcion.nombre}
-              </Link>
-            );
-          })}
-        </nav>
+        return (
+          <Link
+            key={opcion.ruta}
+            href={opcion.ruta}
+            className={`sidebar-link ${
+              activo ? "active" : ""
+            }`}
+          >
+            <span
+              style={{
+                marginRight: "10px",
+              }}
+            >
+              {opcion.icono}
+            </span>
+
+            {opcion.nombre}
+          </Link>
+        );
+      })}
+</nav>
 
         <div className="sidebar-user">
   <div className="sidebar-user-name">
