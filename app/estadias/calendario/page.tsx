@@ -392,6 +392,7 @@ function crearEstadiaDesdeDia(
 
   return (
     <main className="page-container">
+      {/*
       <div className="page-header">
         <div>
           <h1 className="page-title">
@@ -406,64 +407,24 @@ function crearEstadiaDesdeDia(
 
     
       </div>
+       */}
 
       <section className="card">
 
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
-            gap: "12px",
-            marginBottom: "20px",
-            flexWrap: "wrap",
-          }}
-        >
-          <div
-            style={{
-              display: "flex",
-              gap: "8px",
-              alignItems: "center",
-            }}
-          >
-            <button
-              type="button"
-              className="secondary-button"
-              onClick={mesAnterior}
-            >
-              ←
-            </button>
-
-            <button
-              type="button"
-              className="secondary-button"
-              onClick={irHoy}
-            >
-              Hoy
-            </button>
-
-            <button
-              type="button"
-              className="secondary-button"
-              onClick={mesSiguiente}
-            >
-              →
-            </button>
-
-
-          </div>
-
-
-
-          <h2
-            style={{
-              margin: 0,
-              textTransform: "capitalize",
-            }}
-          >
-            {tituloMes}
-          </h2>
-        </div>
+<div
+  style={{
+    marginBottom: "20px",
+  }}
+>
+  <h3
+    style={{
+      margin: 0,
+      textTransform: "capitalize",
+    }}
+  >
+    Calendario: {tituloMes}
+  </h3>
+</div>
  
 
 <div
@@ -847,12 +808,40 @@ onClick={(e) => {
     marginTop: "18px",
   }}
 >
-  <Link
+
+
+  <button
+              type="button"
+              className="secondary-button"
+              onClick={mesAnterior}
+            >
+              ←
+            </button>
+
+            <button
+              type="button"
+              className="secondary-button"
+              onClick={irHoy}
+            >
+              Hoy
+            </button>
+
+            <button
+              type="button"
+              className="secondary-button"
+              onClick={mesSiguiente}
+            >
+              →
+            </button>
+
+
+              <Link
     href="/estadias"
     className="secondary-button"
   >
     ← Lista de estadías
   </Link>
+
 </div>
 
   </div>

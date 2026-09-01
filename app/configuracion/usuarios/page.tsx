@@ -212,10 +212,7 @@ const [guardandoNuevo, setGuardandoNuevo] =
 
   setModalEditar(true);
 
-  console.log(
-  "EDITAR USUARIO",
-  usuario
-);
+
 }
 
 function cerrarEditarUsuario() {
@@ -1073,7 +1070,6 @@ async function crearNuevoUsuario() {
           ×
         </button>
       </div>
-c
       <div className="modal-body">
 
       <form

@@ -1661,22 +1661,23 @@ useEffect(() => {
 
             </div>
 <p></p>
-           <div
+<div
   style={{
     gridColumn: "1 / -1",
   }}
 >
-  <span className="mobile-list-label">
+  <span
+    className="mobile-list-label"
+    style={{
+      display: "block",
+    }}
+  >
     Sucursal
   </span>
 
   <strong>
     {estadia.sucursales?.nombre || "—"}
   </strong>
-</div> 
-
-         <div className="mobile-record-action">
-  Ver estadía →
 </div>
 
 

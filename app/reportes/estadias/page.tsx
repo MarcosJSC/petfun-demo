@@ -1102,14 +1102,22 @@ return (
                     ?.nombre || "—"}
                 </td>
 
-                <td>
-                  {formatearFecha(estadia.fecha_entrada)}
-                </td>
+          <td>
+  {formatearFecha(
+    estadia.fecha_entrada
+  )}
+</td>
 
-                <td>
-                  {estadia.estados_estadia
-                    ?.nombre || "—"}
-                </td>
+<td>
+  {formatearFecha(
+    estadia.fecha_salida
+  )}
+</td>
+
+<td>
+  {estadia.estados_estadia
+    ?.nombre || "—"}
+</td>
 
                 <td>
                   {estadia.estados_pago

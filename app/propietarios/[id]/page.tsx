@@ -16,6 +16,13 @@ type Propietario = {
   contacto_emergencia_nombre: string | null;
   contacto_emergencia_telefono: string | null;
   observaciones: string | null;
+
+  sucursal_id: number;
+
+  sucursales: {
+    id: number;
+    nombre: string;
+  } | null;
 };
 
 type Perrito = {
@@ -28,6 +35,8 @@ type Perrito = {
     nombre: string;
   } | null;
 };
+
+
 
 export default function PropietarioDetallePage() {
   const params = useParams();
@@ -90,7 +99,12 @@ export default function PropietarioDetallePage() {
         correo,
         contacto_emergencia_nombre,
         contacto_emergencia_telefono,
-        observaciones
+        observaciones,
+        sucursal_id,
+        sucursales (
+      id,
+      nombre
+    )
       `)
       .eq("id", propietarioId)
       .single();
@@ -101,7 +115,9 @@ export default function PropietarioDetallePage() {
       return;
     }
 
-    setPropietario(data);
+   setPropietario(
+  data as unknown as Propietario
+);
 
     setNombre(data.nombre ?? "");
     setApellidos(data.apellidos ?? "");
@@ -392,6 +408,16 @@ export default function PropietarioDetallePage() {
           </div>
         </div>
 
+<div className="card">
+  <div className="card-label">
+    Sucursal
+  </div>
+
+  <strong>
+    {propietario.sucursales?.nombre || "—"}
+  </strong>
+</div>
+
       </div>
 
       <section
@@ -456,17 +482,19 @@ export default function PropietarioDetallePage() {
             </div>
           </div>
 
-          <button
-            className="primary-button"
-            type="button"
-            onClick={() =>
-              router.push(
-                `/perritos?propietario=${propietarioId}`
-              )
-            }
-          >
-            + Agregar perrito
-          </button>
+{puede("perritos.crear") && (
+  <button
+    className="primary-button"
+    type="button"
+    onClick={() =>
+      router.push(
+        `/perritos?propietario=${propietarioId}`
+      )
+    }
+  >
+    + Agregar perrito
+  </button>
+)}
 
         </div>
 

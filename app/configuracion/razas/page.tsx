@@ -1,37 +1,33 @@
 "use client";
 
-import { FormEvent, useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
-
-import { supabase } from "@/lib/supabase";
+import {
+  FormEvent,
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
 
 import {
-  useSucursalActiva,
-} from "@/contexts/SucursalContext";
+  useRouter,
+} from "next/navigation";
+
+import {
+  supabase,
+} from "@/lib/supabase";
 
 
-type Sucursal = {
+type Raza = {
   id: number;
   nombre: string;
-  direccion: string | null;
-  telefono: string | null;
-  correo: string | null;
   activa: boolean;
-  created_at: string;
 };
 
 
-export default function SucursalesPage() {
-
-const {
-  sucursalActivaId,
-  setSucursalActivaId,
-} = useSucursalActiva();
-
+export default function RazasPage() {
   const router = useRouter();
 
-  const [sucursales, setSucursales] =
-    useState<Sucursal[]>([]);
+  const [razas, setRazas] =
+    useState<Raza[]>([]);
 
   const [cargando, setCargando] =
     useState(true);
@@ -42,24 +38,19 @@ const {
   const [mensaje, setMensaje] =
     useState("");
 
+  const [busqueda, setBusqueda] =
+    useState("");
+
   const [modalAbierto, setModalAbierto] =
     useState(false);
 
   const [
-    sucursalEditando,
-    setSucursalEditando,
-  ] = useState<Sucursal | null>(null);
+    razaEditando,
+    setRazaEditando,
+  ] =
+    useState<Raza | null>(null);
 
   const [nombre, setNombre] =
-    useState("");
-
-  const [direccion, setDireccion] =
-    useState("");
-
-  const [telefono, setTelefono] =
-    useState("");
-
-  const [correo, setCorreo] =
     useState("");
 
   const [guardando, setGuardando] =
@@ -89,11 +80,13 @@ const {
       return;
     }
 
-    const { data: perfil, error } =
+    const {
+      data: perfil,
+      error,
+    } =
       await supabase
         .from("perfiles_usuario")
         .select(`
-          nombre,
           rol,
           activo
         `)
@@ -116,24 +109,23 @@ const {
 
     setAutorizado(true);
 
-    await cargarSucursales();
+    await cargarRazas();
   }
 
 
-  async function cargarSucursales() {
+  async function cargarRazas() {
     setCargando(true);
 
-    const { data, error } =
+    const {
+      data,
+      error,
+    } =
       await supabase
-        .from("sucursales")
+        .from("razas")
         .select(`
           id,
           nombre,
-          direccion,
-          telefono,
-          correo,
-          activa,
-          created_at
+          activa
         `)
         .order(
           "nombre",
@@ -144,20 +136,20 @@ const {
 
     if (error) {
       console.error(
-        "Error cargando sucursales:",
+        "Error cargando razas:",
         error
       );
 
       setMensaje(
-        "No se pudieron cargar las sucursales."
+        "No se pudieron cargar las razas."
       );
 
       setCargando(false);
       return;
     }
 
-    setSucursales(
-      (data ?? []) as Sucursal[]
+    setRazas(
+      (data ?? []) as Raza[]
     );
 
     setCargando(false);
@@ -166,15 +158,11 @@ const {
 
   function limpiarFormulario() {
     setNombre("");
-    setDireccion("");
-    setTelefono("");
-    setCorreo("");
-
-    setSucursalEditando(null);
+    setRazaEditando(null);
   }
 
 
-  function abrirNuevaSucursal() {
+  function abrirNuevaRaza() {
     limpiarFormulario();
 
     setMensaje("");
@@ -182,27 +170,13 @@ const {
   }
 
 
-  function abrirEditarSucursal(
-    sucursal: Sucursal
+  function abrirEditarRaza(
+    raza: Raza
   ) {
-    setSucursalEditando(
-      sucursal
-    );
+    setRazaEditando(raza);
 
     setNombre(
-      sucursal.nombre
-    );
-
-    setDireccion(
-      sucursal.direccion || ""
-    );
-
-    setTelefono(
-      sucursal.telefono || ""
-    );
-
-    setCorreo(
-      sucursal.correo || ""
+      raza.nombre
     );
 
     setMensaje("");
@@ -221,7 +195,7 @@ const {
   }
 
 
-  async function guardarSucursal(
+  async function guardarRaza(
     e: FormEvent<HTMLFormElement>
   ) {
     e.preventDefault();
@@ -231,7 +205,7 @@ const {
 
     if (!nombreLimpio) {
       setMensaje(
-        "El nombre de la sucursal es obligatorio."
+        "El nombre de la raza es obligatorio."
       );
 
       return;
@@ -240,43 +214,54 @@ const {
     setGuardando(true);
     setMensaje("");
 
-    const datosSucursal = {
-      nombre: nombreLimpio,
+    /*
+     * Comprobamos si ya existe
+     * otra raza con el mismo nombre.
+     */
+    const razaDuplicada =
+      razas.find(
+        (raza) =>
+          raza.nombre
+            .trim()
+            .toLowerCase() ===
+            nombreLimpio.toLowerCase() &&
+          raza.id !==
+            razaEditando?.id
+      );
 
-      direccion:
-        direccion.trim() ||
-        null,
+    if (razaDuplicada) {
+      setMensaje(
+        "Ya existe una raza con ese nombre."
+      );
 
-      telefono:
-        telefono.trim() ||
-        null,
-
-      correo:
-        correo.trim() ||
-        null,
-    };
+      setGuardando(false);
+      return;
+    }
 
 
-    if (sucursalEditando) {
-      const { error } =
+    if (razaEditando) {
+      const {
+        error,
+      } =
         await supabase
-          .from("sucursales")
-          .update(
-            datosSucursal
-          )
+          .from("razas")
+          .update({
+            nombre:
+              nombreLimpio,
+          })
           .eq(
             "id",
-            sucursalEditando.id
+            razaEditando.id
           );
 
       if (error) {
         console.error(
-          "Error actualizando sucursal:",
+          "Error actualizando raza:",
           error
         );
 
         setMensaje(
-          "No se pudo actualizar la sucursal."
+          "No se pudo actualizar la raza."
         );
 
         setGuardando(false);
@@ -284,25 +269,30 @@ const {
       }
 
       setMensaje(
-        "Sucursal actualizada correctamente."
+        "Raza actualizada correctamente."
       );
     } else {
-      const { error } =
+      const {
+        error,
+      } =
         await supabase
-          .from("sucursales")
+          .from("razas")
           .insert({
-            ...datosSucursal,
-            activa: true,
+            nombre:
+              nombreLimpio,
+
+            activa:
+              true,
           });
 
       if (error) {
         console.error(
-          "Error creando sucursal:",
+          "Error creando raza:",
           error
         );
 
         setMensaje(
-          "No se pudo crear la sucursal."
+          "No se pudo crear la raza."
         );
 
         setGuardando(false);
@@ -310,25 +300,25 @@ const {
       }
 
       setMensaje(
-        "Sucursal creada correctamente."
+        "Raza creada correctamente."
       );
     }
 
-
     setGuardando(false);
+
     setModalAbierto(false);
 
     limpiarFormulario();
 
-    await cargarSucursales();
+    await cargarRazas();
   }
 
 
-  async function cambiarEstadoSucursal(
-    sucursal: Sucursal
+  async function cambiarEstadoRaza(
+    raza: Raza
   ) {
     const nuevoEstado =
-      !sucursal.activa;
+      !raza.activa;
 
     const accion =
       nuevoEstado
@@ -337,7 +327,7 @@ const {
 
     const confirmado =
       window.confirm(
-        `¿Deseas ${accion} la sucursal "${sucursal.nombre}"?`
+        `¿Deseas ${accion} la raza "${raza.nombre}"?`
       );
 
     if (!confirmado) {
@@ -346,26 +336,28 @@ const {
 
     setMensaje("");
 
-    const { error } =
+    const {
+      error,
+    } =
       await supabase
-        .from("sucursales")
+        .from("razas")
         .update({
           activa:
             nuevoEstado,
         })
         .eq(
           "id",
-          sucursal.id
+          raza.id
         );
 
     if (error) {
       console.error(
-        "Error cambiando estado de sucursal:",
+        "Error cambiando estado de raza:",
         error
       );
 
       setMensaje(
-        "No se pudo cambiar el estado de la sucursal."
+        "No se pudo cambiar el estado de la raza."
       );
 
       return;
@@ -373,19 +365,46 @@ const {
 
     setMensaje(
       nuevoEstado
-        ? "Sucursal activada correctamente."
-        : "Sucursal desactivada correctamente."
+        ? "Raza activada correctamente."
+        : "Raza desactivada correctamente."
     );
 
-if (
-  !nuevoEstado &&
-  sucursalActivaId === sucursal.id
-) {
-  setSucursalActivaId(null);
-}
-
-    await cargarSucursales();
+    await cargarRazas();
   }
+
+
+  const razasFiltradas =
+    useMemo(() => {
+      const texto =
+        busqueda
+          .trim()
+          .toLowerCase();
+
+      if (!texto) {
+        return razas;
+      }
+
+      return razas.filter(
+        (raza) =>
+          raza.nombre
+            .toLowerCase()
+            .includes(texto)
+      );
+    }, [
+      razas,
+      busqueda,
+    ]);
+
+
+  const razasActivas =
+    razas.filter(
+      (raza) =>
+        raza.activa
+    ).length;
+
+  const razasInactivas =
+    razas.length -
+    razasActivas;
 
 
   if (
@@ -406,11 +425,12 @@ if (
         <div className="page-header">
           <div>
             <h1 className="page-title">
-              Sucursales
+              Razas
             </h1>
 
             <p className="page-description">
-              Administración de sucursales de PetFunCR.
+              Administración del catálogo
+              de razas de PetFunCR.
             </p>
           </div>
         </div>
@@ -430,8 +450,8 @@ if (
                 "var(--color-text-secondary)",
             }}
           >
-            Solo un superadministrador puede
-            administrar las sucursales.
+            Solo un superadministrador
+            puede administrar las razas.
           </p>
 
           <button
@@ -472,11 +492,12 @@ if (
           </button>
 
           <h1 className="page-title">
-            🏢 Sucursales
+            🐾 Razas
           </h1>
 
           <p className="page-description">
-            Administra las sucursales de PetFunCR.
+            Administra el catálogo de razas
+            utilizado por PetFunCR.
           </p>
         </div>
 
@@ -486,10 +507,10 @@ if (
             type="button"
             className="primary-button"
             onClick={
-              abrirNuevaSucursal
+              abrirNuevaRaza
             }
           >
-            + Nueva sucursal
+            + Nueva raza
           </button>
         </div>
       </div>
@@ -510,27 +531,33 @@ if (
       >
         <div className="card">
           <div className="card-label">
-            Total de sucursales
+            Total de razas
           </div>
 
           <div className="card-value">
-            {sucursales.length}
+            {razas.length}
           </div>
         </div>
 
 
         <div className="card">
           <div className="card-label">
-            Sucursales activas
+            Razas activas
           </div>
 
           <div className="card-value">
-            {
-              sucursales.filter(
-                (sucursal) =>
-                  sucursal.activa
-              ).length
-            }
+            {razasActivas}
+          </div>
+        </div>
+
+
+        <div className="card">
+          <div className="card-label">
+            Razas inactivas
+          </div>
+
+          <div className="card-value">
+            {razasInactivas}
           </div>
         </div>
       </div>
@@ -541,7 +568,7 @@ if (
         <div className="list-toolbar">
           <div>
             <strong>
-              Sucursales registradas
+              Razas registradas
             </strong>
 
             <div
@@ -552,19 +579,31 @@ if (
                 marginTop: "3px",
               }}
             >
-              Total: {sucursales.length}
+              Total: {razasFiltradas.length}
             </div>
           </div>
+
+
+          <input
+            className="search-input"
+            placeholder="Buscar raza..."
+            value={busqueda}
+            onChange={(e) =>
+              setBusqueda(
+                e.target.value
+              )
+            }
+          />
         </div>
 
 
         {cargando ? (
           <div className="empty-state">
-            Cargando sucursales...
+            Cargando razas...
           </div>
-        ) : sucursales.length === 0 ? (
+        ) : razasFiltradas.length === 0 ? (
           <div className="empty-state">
-            No hay sucursales registradas.
+            No se encontraron razas.
           </div>
         ) : (
           <>
@@ -574,56 +613,38 @@ if (
               <table className="data-table">
                 <thead>
                   <tr>
-                    <th>Sucursal</th>
-                    <th>Dirección</th>
-                    <th>Teléfono</th>
-                    <th>Correo</th>
+                    <th>Raza</th>
                     <th>Estado</th>
                     <th>Acciones</th>
                   </tr>
                 </thead>
 
                 <tbody>
-                  {sucursales.map(
-                    (sucursal) => (
+                  {razasFiltradas.map(
+                    (raza) => (
                       <tr
                         key={
-                          sucursal.id
+                          raza.id
                         }
                       >
                         <td>
                           <strong>
-                            🏢{" "}
+                            🐾{" "}
                             {
-                              sucursal.nombre
+                              raza.nombre
                             }
                           </strong>
                         </td>
 
                         <td>
-                          {sucursal.direccion ||
-                            "—"}
-                        </td>
-
-                        <td>
-                          {sucursal.telefono ||
-                            "—"}
-                        </td>
-
-                        <td>
-                          {sucursal.correo ||
-                            "—"}
-                        </td>
-
-                        <td>
                           <span
                             className={
-                              sucursal.activa
+                              raza.activa
                                 ? "branch-status active"
                                 : "branch-status inactive"
                             }
                           >
-                            {sucursal.activa
+                            {raza.activa
                               ? "Activa"
                               : "Inactiva"}
                           </span>
@@ -643,8 +664,8 @@ if (
                               type="button"
                               className="secondary-button"
                               onClick={() =>
-                                abrirEditarSucursal(
-                                  sucursal
+                                abrirEditarRaza(
+                                  raza
                                 )
                               }
                             >
@@ -654,17 +675,17 @@ if (
                             <button
                               type="button"
                               className={
-                                sucursal.activa
+                                raza.activa
                                   ? "danger-button"
                                   : "secondary-button"
                               }
                               onClick={() =>
-                                cambiarEstadoSucursal(
-                                  sucursal
+                                cambiarEstadoRaza(
+                                  raza
                                 )
                               }
                             >
-                              {sucursal.activa
+                              {raza.activa
                                 ? "Desactivar"
                                 : "Activar"}
                             </button>
@@ -682,79 +703,34 @@ if (
 
             <div className="mobile-only branch-mobile-list">
 
-              {sucursales.map(
-                (sucursal) => (
+              {razasFiltradas.map(
+                (raza) => (
                   <div
                     key={
-                      sucursal.id
+                      raza.id
                     }
                     className="mobile-list-item"
                   >
                     <div className="branch-card-top">
 
                       <div className="mobile-list-title">
-                        🏢{" "}
+                        🐾{" "}
                         {
-                          sucursal.nombre
+                          raza.nombre
                         }
                       </div>
 
                       <span
                         className={
-                          sucursal.activa
+                          raza.activa
                             ? "branch-status active"
                             : "branch-status inactive"
                         }
                       >
-                        {sucursal.activa
+                        {raza.activa
                           ? "Activa"
                           : "Inactiva"}
                       </span>
-
-                    </div>
-
-
-                    <div className="mobile-list-grid">
-
-                      <div
-                        style={{
-                          gridColumn:
-                            "1 / -1",
-                        }}
-                      >
-                        <span className="mobile-list-label">
-                          Dirección
-                        </span>
-
-                        <strong>
-                          {sucursal.direccion ||
-                            "—"}
-                        </strong>
-                      </div>
-
-
-                      <div>
-                        <span className="mobile-list-label">
-                          Teléfono
-                        </span>
-
-                        <strong>
-                          {sucursal.telefono ||
-                            "—"}
-                        </strong>
-                      </div>
-
-
-                      <div>
-                        <span className="mobile-list-label">
-                          Correo
-                        </span>
-
-                        <strong>
-                          {sucursal.correo ||
-                            "—"}
-                        </strong>
-                      </div>
 
                     </div>
 
@@ -765,35 +741,33 @@ if (
                         type="button"
                         className="secondary-button"
                         onClick={() =>
-                          abrirEditarSucursal(
-                            sucursal
+                          abrirEditarRaza(
+                            raza
                           )
                         }
                       >
                         Editar
                       </button>
 
-
                       <button
                         type="button"
                         className={
-                          sucursal.activa
+                          raza.activa
                             ? "danger-button"
                             : "secondary-button"
                         }
                         onClick={() =>
-                          cambiarEstadoSucursal(
-                            sucursal
+                          cambiarEstadoRaza(
+                            raza
                           )
                         }
                       >
-                        {sucursal.activa
+                        {raza.activa
                           ? "Desactivar"
                           : "Activar"}
                       </button>
 
                     </div>
-
                   </div>
                 )
               )}
@@ -823,9 +797,9 @@ if (
 
             <div className="modal-header">
               <h2>
-                {sucursalEditando
-                  ? "Editar sucursal"
-                  : "Nueva sucursal"}
+                {razaEditando
+                  ? "Editar raza"
+                  : "Nueva raza"}
               </h2>
 
               <button
@@ -845,7 +819,7 @@ if (
 
               <form
                 onSubmit={
-                  guardarSucursal
+                  guardarRaza
                 }
               >
                 <div className="form-grid">
@@ -865,58 +839,6 @@ if (
                       }
                       required
                       autoFocus
-                    />
-                  </div>
-
-
-                  <div className="form-group full">
-                    <label className="form-label">
-                      Dirección
-                    </label>
-
-                    <input
-                      className="form-input"
-                      value={direccion}
-                      onChange={(e) =>
-                        setDireccion(
-                          e.target.value
-                        )
-                      }
-                    />
-                  </div>
-
-
-                  <div className="form-group">
-                    <label className="form-label">
-                      Teléfono
-                    </label>
-
-                    <input
-                      className="form-input"
-                      value={telefono}
-                      onChange={(e) =>
-                        setTelefono(
-                          e.target.value
-                        )
-                      }
-                    />
-                  </div>
-
-
-                  <div className="form-group">
-                    <label className="form-label">
-                      Correo
-                    </label>
-
-                    <input
-                      type="email"
-                      className="form-input"
-                      value={correo}
-                      onChange={(e) =>
-                        setCorreo(
-                          e.target.value
-                        )
-                      }
                     />
                   </div>
 
@@ -948,9 +870,9 @@ if (
                   >
                     {guardando
                       ? "Guardando..."
-                      : sucursalEditando
+                      : razaEditando
                         ? "Guardar cambios"
-                        : "Crear sucursal"}
+                        : "Crear raza"}
                   </button>
 
                 </div>

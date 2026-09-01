@@ -11,6 +11,13 @@ type EstadiaDetalle = {
 
   perrito_id: number;
 
+  sucursal_id: number;
+
+sucursales: {
+  id: number;
+  nombre: string;
+} | null;
+
   fecha_entrada: string;
   hora_entrada: string | null;
 
@@ -110,7 +117,11 @@ const { puede } = usePermisos();
       .select(`
         id,
         perrito_id,
-
+        sucursal_id,
+sucursales (
+  id,
+  nombre
+),
         fecha_entrada,
         hora_entrada,
         fecha_salida,
@@ -347,6 +358,16 @@ const { puede } = usePermisos();
               ?.nombre || "—"}
           </strong>
         </div>
+
+        <div className="card">
+  <div className="card-label">
+    Sucursal 
+  </div>
+
+  <strong>
+    {estadia.sucursales?.nombre || "—"}
+  </strong>
+</div>
 
       </div>
 

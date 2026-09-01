@@ -1,9 +1,13 @@
 "use client";
 
 import Link from "next/link";
+import {
+  RequierePermiso,
+} from "@/components/RequierePermiso";
 
 export default function ConfiguracionPage() {
   return (
+        <RequierePermiso permiso="configuracion.ver">
     <div>
       <div className="page-header">
         <div>
@@ -95,9 +99,8 @@ export default function ConfiguracionPage() {
           </div>
         </Link>
 
-
-        <Link
-          href="/configuracion/permisos"
+   <Link
+          href="/configuracion/razas"
           className="card config-menu-card"
         >
           <div
@@ -106,7 +109,7 @@ export default function ConfiguracionPage() {
               marginBottom: "12px",
             }}
           >
-            🔐
+            🐶
           </div>
 
           <h2
@@ -114,7 +117,7 @@ export default function ConfiguracionPage() {
               margin: "0 0 8px",
             }}
           >
-            Roles y permisos
+            Razas
           </h2>
 
           <p
@@ -124,16 +127,21 @@ export default function ConfiguracionPage() {
                 "var(--color-text-secondary)",
             }}
           >
-            Define qué acciones puede realizar
-            cada tipo de usuario.
+             Administra el catálogo de razas
+    disponible para los perritos.
           </p>
 
           <div className="config-menu-link">
-            Configurar permisos →
+            Administrar Razas →
           </div>
         </Link>
-
+      
       </div>
     </div>
+
+
+
+    
+     </RequierePermiso>
   );
 }

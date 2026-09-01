@@ -76,10 +76,12 @@ administrador: [
   "propietarios.ver",
   "propietarios.crear",
   "propietarios.editar",
+  "propietarios.eliminar",
 
   "perritos.ver",
   "perritos.crear",
   "perritos.editar",
+  "perritos.eliminar",
 
   "estadias.ver",
   "estadias.crear",
@@ -123,9 +125,16 @@ operador: [
   "reportes.ver",
 ],
 
-  consulta: [
-    "reportes.ver",
-  ],
+consulta: [
+  "propietarios.ver",
+  "perritos.ver",
+  "estadias.ver",
+  "vacunas.ver",
+  "desparasitaciones.ver",
+
+  "reportes.ver",
+],
+
 };
 
 

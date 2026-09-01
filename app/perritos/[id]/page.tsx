@@ -53,6 +53,12 @@ type Perrito = {
   nombre: string;
 
     sucursal_id: number;
+
+sucursales: {
+  id: number;
+  nombre: string;
+} | null;
+
 foto_path: string | null;
 
   fecha_nacimiento: string | null;
@@ -803,6 +809,9 @@ async function compartirFichaSalud() {
       .select(`
         id,
         nombre,
+
+        
+        
         fecha_nacimiento,
         sexo,
         peso_kg,
@@ -821,6 +830,10 @@ async function compartirFichaSalud() {
           nombre
         ),
          sucursal_id,
+         sucursales (
+  id,
+  nombre
+),
       foto_path
       `)
       .eq("id", perritoId)
@@ -833,6 +846,10 @@ async function compartirFichaSalud() {
 
    setPerrito(
   data as unknown as Perrito
+);
+
+await cargarPropietariosSucursal(
+  data.sucursal_id
 );
 
 await cargarFotoPerfil(
@@ -885,6 +902,9 @@ setPrecioGuarderia(
     setObservacionesMedicas(
       data.observaciones_medicas ?? ""
     );
+
+
+
   }
 
   async function cargarFotoPerfil(
@@ -1089,53 +1109,75 @@ async function subirFotoPerfil(
   }
 }
 
-  async function cargarCatalogos() {
-    const [
-      propietariosResult,
-      razasResult,
-      vacunasResult,
-      desparasitacionesResult,
-    ] = await Promise.all([
-      supabase
-        .from("propietarios")
-        .select("id, nombre, apellidos")
-        .order("nombre"),
+async function cargarPropietariosSucursal(
+  sucursalId: number
+) {
+  const { data, error } =
+    await supabase
+      .from("propietarios")
+      .select(`
+        id,
+        nombre,
+        apellidos
+      `)
+      .eq(
+        "sucursal_id",
+        sucursalId
+      )
+      .order("nombre");
 
-      supabase
-        .from("razas")
-        .select("id, nombre")
-        .eq("activa", true)
-        .order("nombre"),
-
-      supabase
-        .from("tipos_vacuna")
-        .select("id, nombre")
-        .eq("activa", true)
-        .order("nombre"),
-
-      supabase
-        .from("tipos_desparasitacion")
-        .select("id, nombre")
-        .eq("activa", true)
-        .order("nombre"),
-    ]);
-
-    setPropietarios(
-      propietariosResult.data ?? []
+  if (error) {
+    console.error(
+      "Error cargando propietarios de la sucursal:",
+      error
     );
 
-    setRazas(
-      razasResult.data ?? []
-    );
-
-    setTiposVacuna(
-      vacunasResult.data ?? []
-    );
-
-    setTiposDesparasitacion(
-      desparasitacionesResult.data ?? []
-    );
+    setPropietarios([]);
+    return;
   }
+
+  setPropietarios(
+    (data ?? []) as Propietario[]
+  );
+}
+
+ async function cargarCatalogos() {
+  const [
+    razasResult,
+    vacunasResult,
+    desparasitacionesResult,
+  ] = await Promise.all([
+    supabase
+      .from("razas")
+      .select("id, nombre")
+      .eq("activa", true)
+      .order("nombre"),
+
+    supabase
+      .from("tipos_vacuna")
+      .select("id, nombre")
+      .eq("activa", true)
+      .order("nombre"),
+
+    supabase
+      .from("tipos_desparasitacion")
+      .select("id, nombre")
+      .eq("activa", true)
+      .order("nombre"),
+  ]);
+
+  setRazas(
+    razasResult.data ?? []
+  );
+
+  setTiposVacuna(
+    vacunasResult.data ?? []
+  );
+
+  setTiposDesparasitacion(
+    desparasitacionesResult.data ?? []
+  );
+}
 
   async function cargarVacunas() {
     const { data, error } = await supabase
@@ -1433,8 +1475,16 @@ const editando = vacunaEditando !== null;
 
   setGuardando(false);
 
-  if (error) {
-    console.error(error);
+ if (error) {
+  console.error(
+    "ERROR GUARDANDO VACUNA:",
+    {
+      message: error.message,
+      code: error.code,
+      details: error.details,
+      hint: error.hint,
+    }
+  );
 
     setMensaje(
       editando
@@ -1757,28 +1807,34 @@ async function eliminarDesparasitacion(
     )}
   </div>
 
+{puede("perritos.editar") && (
   <span className="dog-profile-camera">
     📷
   </span>
+)}
 
-  <input
-    type="file"
-    accept="image/jpeg,image/png,image/webp"
-    style={{
-      display: "none",
-    }}
-    disabled={subiendoFoto}
-    onChange={(e) => {
-      const archivo =
-        e.target.files?.[0];
+<input
+  type="file"
+  accept="image/jpeg,image/png,image/webp"
+  style={{
+    display: "none",
+  }}
+  disabled={
+    subiendoFoto ||
+    !puede("perritos.editar")
+  }
+  onChange={(e) => {
+    const archivo =
+      e.target.files?.[0];
 
-      if (archivo) {
-        subirFotoPerfil(archivo);
-      }
+    if (archivo) {
+      subirFotoPerfil(archivo);
+    }
 
-      e.target.value = "";
-    }}
-  />
+    e.target.value = "";
+  }}
+/>
+
 </label>
 
         {mensajeFoto && (
@@ -1988,6 +2044,16 @@ async function eliminarDesparasitacion(
           maximumFractionDigits: 0,
         }).format(perrito.precio_guarderia)
       : "—"}
+  </strong>
+</div>
+
+<div className="card">
+  <div className="card-label">
+    Sucursal
+  </div>
+
+  <strong>
+    {perrito.sucursales?.nombre || "—"}
   </strong>
 </div>
 
