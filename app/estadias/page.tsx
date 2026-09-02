@@ -1766,7 +1766,7 @@ useEffect(() => {
         )
       }
     >
-      🔙
+      ⏪
     </button>
 
     <span className="pagination-info">
@@ -1790,7 +1790,7 @@ useEffect(() => {
         )
       }
     >
-      🔜
+      ⏩
     </button>
 
   </div>

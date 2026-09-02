@@ -573,7 +573,7 @@ const propietariosPaginados =
         )
       }
     >
-     🔙
+     ⏪
     </button>
 
     <span className="pagination-info">
@@ -593,7 +593,7 @@ const propietariosPaginados =
         )
       }
     >
-     🔜
+     ⏩
     </button>
   </div>
 )}
