@@ -80,6 +80,18 @@ const {
   const [estadoPago, setEstadoPago] =
     useState("");
 
+    const [
+  anioAnalisis,
+  setAnioAnalisis,
+] = useState(
+  new Date().getFullYear()
+);
+
+const [
+  mostrarGraficosAnuales,
+  setMostrarGraficosAnuales,
+] = useState(false);
+
 const REGISTROS_POR_PAGINA = 20;
 
 const [
@@ -325,6 +337,145 @@ const resumen = useMemo(() => {
     }
   );
 }, [estadiasFiltradas]);
+
+const nombresMeses = [
+  "Ene",
+  "Feb",
+  "Mar",
+  "Abr",
+  "May",
+  "Jun",
+  "Jul",
+  "Ago",
+  "Sep",
+  "Oct",
+  "Nov",
+  "Dic",
+];
+
+
+const aniosDisponibles =
+  useMemo(() => {
+    const anios =
+      estadias
+        .map((estadia) =>
+          Number(
+            estadia.fecha_entrada.slice(
+              0,
+              4
+            )
+          )
+        )
+        .filter(
+          (anio) =>
+            Number.isFinite(anio)
+        );
+
+    anios.push(
+      new Date().getFullYear()
+    );
+
+    return Array.from(
+      new Set(anios)
+    ).sort(
+      (a, b) => b - a
+    );
+  }, [estadias]);
+
+
+const datosAnuales =
+  useMemo(() => {
+    const meses =
+      nombresMeses.map(
+        (nombre, indice) => ({
+          mes: indice,
+          nombre,
+          estadias: 0,
+          cobrado: 0,
+        })
+      );
+
+    estadias.forEach(
+      (estadia) => {
+        const fecha =
+          new Date(
+            `${estadia.fecha_entrada}T00:00:00`
+          );
+
+        if (
+          fecha.getFullYear() !==
+          anioAnalisis
+        ) {
+          return;
+        }
+
+        const mes =
+          fecha.getMonth();
+
+        meses[mes].estadias += 1;
+
+        meses[mes].cobrado +=
+          Number(
+            estadia.monto_pagado || 0
+          );
+      }
+    );
+
+    return meses;
+  }, [
+    estadias,
+    anioAnalisis,
+  ]);
+
+
+const resumenAnual =
+  useMemo(() => {
+    const estadiasAnuales =
+      datosAnuales.reduce(
+        (total, mes) =>
+          total + mes.estadias,
+        0
+      );
+
+    const cobradoAnual =
+      datosAnuales.reduce(
+        (total, mes) =>
+          total + mes.cobrado,
+        0
+      );
+
+    return {
+      estadias:
+        estadiasAnuales,
+
+      cobrado:
+        cobradoAnual,
+
+      promedio:
+        estadiasAnuales > 0
+          ? cobradoAnual /
+            estadiasAnuales
+          : 0,
+    };
+  }, [datosAnuales]);
+
+
+const maxEstadias =
+  Math.max(
+    1,
+    ...datosAnuales.map(
+      (mes) => mes.estadias
+    )
+  );
+
+
+const maxCobrado =
+  Math.max(
+    1,
+    ...datosAnuales.map(
+      (mes) => mes.cobrado
+    )
+  );
 
 function formatearColones(
   monto: number
@@ -1017,6 +1168,245 @@ return (
         </strong>
       </div>
     </div>
+
+    <section
+  className="list-card"
+  style={{
+    marginBottom: "24px",
+  }}
+>
+
+<div className="list-toolbar">
+  <div>
+    <strong>
+      📈 Gráficos de estadías e ingresos
+    </strong>
+
+    <div
+      style={{
+        color:
+          "var(--color-text-secondary)",
+        fontSize: "14px",
+        marginTop: "3px",
+      }}
+    >
+      Evolución mensual según fecha de entrada.
+    </div>
+  </div>
+
+  <div
+    style={{
+      display: "flex",
+      alignItems: "center",
+      gap: "8px",
+    }}
+  >
+    <select
+      className="form-select"
+      style={{
+        width: "auto",
+        minWidth: "110px",
+      }}
+      value={anioAnalisis}
+      onChange={(e) =>
+        setAnioAnalisis(
+          Number(e.target.value)
+        )
+      }
+    >
+      {aniosDisponibles.map(
+        (anio) => (
+          <option
+            key={anio}
+            value={anio}
+          >
+            {anio}
+          </option>
+        )
+      )}
+    </select>
+
+    <button
+      type="button"
+      className="secondary-button"
+      onClick={() =>
+        setMostrarGraficosAnuales(
+          (valor) => !valor
+        )
+      }
+      aria-label={
+        mostrarGraficosAnuales
+          ? "Contraer gráficos"
+          : "Expandir gráficos"
+      }
+      title={
+        mostrarGraficosAnuales
+          ? "Contraer"
+          : "Expandir"
+      }
+    >
+      {mostrarGraficosAnuales
+        ? "▲"
+        : "▼"}
+    </button>
+  </div>
+</div>
+
+
+
+{mostrarGraficosAnuales && (
+  <>
+    <div className="annual-summary">
+
+      <div>
+        <span>
+          Estadías
+        </span>
+
+        <strong>
+          {resumenAnual.estadias}
+        </strong>
+      </div>
+
+      <div>
+        <span>
+          Cobrado
+        </span>
+
+        <strong>
+          {formatearColones(
+            resumenAnual.cobrado
+          )}
+        </strong>
+      </div>
+
+      <div>
+        <span>
+          Promedio / estadía
+        </span>
+
+        <strong>
+          {formatearColones(
+            resumenAnual.promedio
+          )}
+        </strong>
+      </div>
+
+    </div>
+
+
+    <div className="annual-charts">
+
+      {/* ESTADÍAS */}
+      <div className="annual-chart-card">
+
+        <div className="annual-chart-title">
+          📊 Estadías por mes
+        </div>
+
+        <div className="annual-chart">
+
+          {datosAnuales.map(
+            (mes) => (
+              <div
+                key={mes.mes}
+                className="annual-bar-column"
+              >
+                <div className="annual-bar-value">
+                  {mes.estadias}
+                </div>
+
+                <div className="annual-bar-area">
+                  <div
+                    className="annual-bar"
+                    style={{
+                      height:
+                        `${Math.max(
+                          2,
+                          (
+                            mes.estadias /
+                            maxEstadias
+                          ) * 100
+                        )}%`,
+                    }}
+                  />
+                </div>
+
+                <div className="annual-bar-label">
+                  {mes.nombre}
+                </div>
+              </div>
+            )
+          )}
+
+        </div>
+      </div>
+
+
+      {/* INGRESOS */}
+      <div className="annual-chart-card">
+
+        <div className="annual-chart-title">
+          💰 Monto cobrado por mes
+        </div>
+
+        <div className="annual-chart">
+
+          {datosAnuales.map(
+            (mes) => (
+              <div
+                key={mes.mes}
+                className="annual-bar-column"
+              >
+                <div className="annual-bar-value annual-money-value">
+                  {mes.cobrado > 0
+                    ? new Intl.NumberFormat(
+                        "es-CR",
+                        {
+                          notation:
+                            "compact",
+                          maximumFractionDigits:
+                            1,
+                        }
+                      ).format(
+                        mes.cobrado
+                      )
+                    : "0"}
+                </div>
+
+                <div className="annual-bar-area">
+                  <div
+                    className="annual-bar annual-money-bar"
+                    style={{
+                      height:
+                        `${Math.max(
+                          2,
+                          (
+                            mes.cobrado /
+                            maxCobrado
+                          ) * 100
+                        )}%`,
+                    }}
+                  />
+                </div>
+
+                <div className="annual-bar-label">
+                  {mes.nombre}
+                </div>
+              </div>
+            )
+          )}
+
+        </div>
+      </div>
+
+    </div>
+  </>
+)}
+
+
+  
+</section>
 
     <section className="list-card">
       <div className="list-toolbar">
