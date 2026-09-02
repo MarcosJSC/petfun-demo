@@ -883,7 +883,7 @@ const perritosPaginados =
         )
       }
     >
-      ← Anterior
+      🔙
     </button>
 
     <span className="pagination-info">
@@ -908,7 +908,7 @@ const perritosPaginados =
         )
       }
     >
-      Siguiente →
+     🔜
     </button>
 
   </div>

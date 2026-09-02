@@ -920,7 +920,7 @@ function exportarPDF() {
         )
       }
     >
-      ← Anterior
+     🔙
     </button>
 
     <span
@@ -950,7 +950,7 @@ function exportarPDF() {
         )
       }
     >
-      Siguiente →
+      🔜
     </button>
   </div>
 )}

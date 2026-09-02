@@ -1320,7 +1320,7 @@ return (
         )
       }
     >
-      ← Anterior
+     🔙
     </button>
 
     <span
@@ -1350,7 +1350,7 @@ return (
         )
       }
     >
-      Siguiente →
+     🔜
     </button>
   </div>
 )}
