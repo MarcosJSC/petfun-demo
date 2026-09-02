@@ -60,6 +60,8 @@ const opciones = [
 
 export default function Sidebar() {
 
+
+
  const {
   sucursalActivaId,
   setSucursalActivaId,
@@ -118,6 +120,31 @@ const [
   mostrarConfirmacionCerrarSesion,
   setMostrarConfirmacionCerrarSesion,
 ] = useState(false);
+
+const [
+  mostrarCambiarPassword,
+  setMostrarCambiarPassword,
+] = useState(false);
+
+const [
+  nuevaPassword,
+  setNuevaPassword,
+] = useState("");
+
+const [
+  confirmarPassword,
+  setConfirmarPassword,
+] = useState("");
+
+const [
+  guardandoPassword,
+  setGuardandoPassword,
+] = useState(false);
+
+const [
+  mensajePassword,
+  setMensajePassword,
+] = useState("");
 
   const pathname = usePathname();
 
@@ -193,6 +220,97 @@ if (error) {
 
   cargarPerfil();
 }, []);
+
+function abrirCambiarPassword() {
+  setMenuAbierto(false);
+
+  setNuevaPassword("");
+  setConfirmarPassword("");
+  setMensajePassword("");
+
+  setMostrarCambiarPassword(true);
+}
+
+
+function cerrarCambiarPassword() {
+  if (guardandoPassword) {
+    return;
+  }
+
+  setMostrarCambiarPassword(false);
+
+  setNuevaPassword("");
+  setConfirmarPassword("");
+  setMensajePassword("");
+}
+
+
+async function cambiarPassword() {
+  if (nuevaPassword.length < 8) {
+    setMensajePassword(
+      "La contraseña debe tener al menos 8 caracteres."
+    );
+
+    return;
+  }
+
+  if (
+    nuevaPassword !==
+    confirmarPassword
+  ) {
+    setMensajePassword(
+      "Las contraseñas no coinciden."
+    );
+
+    return;
+  }
+
+  setGuardandoPassword(true);
+  setMensajePassword("");
+
+  try {
+    const {
+      error,
+    } =
+      await supabase.auth.updateUser({
+        password: nuevaPassword,
+      });
+
+    if (error) {
+      console.error(
+        "Error cambiando contraseña:",
+        error
+      );
+
+      setMensajePassword(
+        error.message ||
+          "No se pudo cambiar la contraseña."
+      );
+
+      return;
+    }
+
+    setNuevaPassword("");
+    setConfirmarPassword("");
+
+    setMensajePassword(
+      "Contraseña actualizada correctamente."
+    );
+
+  } catch (error) {
+    console.error(
+      "Error inesperado cambiando contraseña:",
+      error
+    );
+
+    setMensajePassword(
+      "Ocurrió un error al cambiar la contraseña."
+    );
+
+  } finally {
+    setGuardandoPassword(false);
+  }
+}
 
 async function cerrarSesion() {
   await supabase.auth.signOut();
@@ -397,6 +515,19 @@ async function cerrarSesion() {
 <button
   type="button"
   className="secondary-button sidebar-logout"
+  onClick={
+    abrirCambiarPassword
+  }
+  style={{
+    marginBottom: "8px",
+  }}
+>
+  🔐 Cambio Clave
+</button>
+
+<button
+  type="button"
+  className="secondary-button sidebar-logout"
   onClick={() => {
     setMenuAbierto(false);
     setMostrarConfirmacionCerrarSesion(true);
@@ -408,6 +539,166 @@ async function cerrarSesion() {
 <ThemeToggle />
 
       </aside>
+
+{mostrarCambiarPassword && (
+  <div
+    className="modal-backdrop"
+    onMouseDown={(e) => {
+      if (
+        e.target ===
+        e.currentTarget
+      ) {
+        cerrarCambiarPassword();
+      }
+    }}
+  >
+    <div className="modal">
+
+      <div className="modal-header">
+        <h2>
+          Cambiar contraseña
+        </h2>
+
+        <button
+          type="button"
+          className="icon-button"
+          onClick={
+            cerrarCambiarPassword
+          }
+          aria-label="Cerrar"
+        >
+          ×
+        </button>
+      </div>
+
+
+      <div className="modal-body">
+
+        <p
+          style={{
+            marginTop: 0,
+            color:
+              "var(--color-text-secondary)",
+          }}
+        >
+          Ingresa tu nueva contraseña.
+        </p>
+
+
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+
+            cambiarPassword();
+          }}
+        >
+          <div className="form-grid">
+
+            <div className="form-group full">
+              <label className="form-label">
+                Nueva contraseña *
+              </label>
+
+              <input
+                type="password"
+                className="form-input"
+                value={nuevaPassword}
+                onChange={(e) =>
+                  setNuevaPassword(
+                    e.target.value
+                  )
+                }
+                minLength={8}
+                required
+                autoFocus
+              />
+
+              <div
+                style={{
+                  marginTop: "5px",
+                  fontSize: "12px",
+                  color:
+                    "var(--color-text-secondary)",
+                }}
+              >
+                Mínimo 8 caracteres.
+              </div>
+            </div>
+
+
+            <div className="form-group full">
+              <label className="form-label">
+                Confirmar contraseña *
+              </label>
+
+              <input
+                type="password"
+                className="form-input"
+                value={
+                  confirmarPassword
+                }
+                onChange={(e) =>
+                  setConfirmarPassword(
+                    e.target.value
+                  )
+                }
+                minLength={8}
+                required
+              />
+            </div>
+
+          </div>
+
+
+          {mensajePassword && (
+            <div
+              className="status-message"
+              style={{
+                marginTop: "14px",
+              }}
+            >
+              {mensajePassword}
+            </div>
+          )}
+
+
+          <div className="modal-footer">
+
+            <button
+              type="button"
+              className="secondary-button"
+              onClick={
+                cerrarCambiarPassword
+              }
+              disabled={
+                guardandoPassword
+              }
+            >
+              Cerrar
+            </button>
+
+
+            <button
+              type="submit"
+              className="primary-button"
+              disabled={
+                guardandoPassword
+              }
+            >
+              {guardandoPassword
+                ? "Guardando..."
+                : "Cambiar contraseña"}
+            </button>
+
+          </div>
+
+        </form>
+
+      </div>
+    </div>
+  </div>
+)}
+
 
 {mostrarConfirmacionCerrarSesion && (
   <div

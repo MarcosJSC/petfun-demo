@@ -724,14 +724,35 @@ async function compartirFichaSalud() {
       await document.fonts.ready;
     }
 
-    const blob = await toBlob(
-      elemento,
-      {
-        pixelRatio: 3,
-        cacheBust: true,
-        backgroundColor: "#ffffff",
-      }
-    );
+const esMovil =
+  window.innerWidth <= 768;
+
+const anchoBase =
+  elemento.offsetWidth;
+
+const anchoExportacion =
+  esMovil
+    ? anchoBase
+    : anchoBase + 80;
+
+const altoExportacion =
+  elemento.offsetHeight;
+
+const blob = await toBlob(
+  elemento,
+  {
+    pixelRatio: 4,
+    cacheBust: true,
+    backgroundColor: "#ffffff",
+
+    width: anchoExportacion,
+    height: altoExportacion,
+
+    style: {
+      width: `${anchoExportacion}px`,
+    },
+  }
+);
 
     if (!blob) {
       throw new Error(
@@ -3228,11 +3249,25 @@ async function eliminarDesparasitacion(
                 )
               )}
 
-            </div>
-
-
+             </div>
 
           )}
+
+          {perrito.observaciones_medicas?.trim() && (
+            <div
+              className="health-alert-item"
+              style={{
+                marginTop: "8px",
+              }}
+            >
+              📝{" "}
+              <strong>
+                Observaciones:
+              </strong>{" "}
+              {perrito.observaciones_medicas}
+            </div>
+          )}
+
         </section>
    {/* footer redes */}
    

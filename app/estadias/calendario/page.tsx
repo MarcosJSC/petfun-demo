@@ -839,7 +839,7 @@ onClick={(e) => {
     href="/estadias"
     className="secondary-button"
   >
-    ← Lista de estadías
+    ← Listado
   </Link>
 
 </div>

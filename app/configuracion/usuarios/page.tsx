@@ -138,6 +138,37 @@ const [activoNuevo, setActivoNuevo] =
 const [guardandoNuevo, setGuardandoNuevo] =
   useState(false);
 
+  const [
+  usuarioActualId,
+  setUsuarioActualId,
+] = useState("");
+
+const [
+  modalPassword,
+  setModalPassword,
+] = useState(false);
+
+const [
+  usuarioPassword,
+  setUsuarioPassword,
+] =
+  useState<PerfilUsuario | null>(null);
+
+const [
+  nuevaPassword,
+  setNuevaPassword,
+] = useState("");
+
+const [
+  confirmarPassword,
+  setConfirmarPassword,
+] = useState("");
+
+const [
+  guardandoPassword,
+  setGuardandoPassword,
+] = useState(false);
+
   useEffect(() => {
     async function iniciar() {
       const {
@@ -149,6 +180,10 @@ const [guardandoNuevo, setGuardandoNuevo] =
         setCargando(false);
         return;
       }
+
+      setUsuarioActualId(
+  user.id
+);
 
       const { data: perfil, error } =
         await supabase
@@ -519,6 +554,136 @@ async function guardarUsuarioEditado() {
   }
 
 /*FUNCIONES*/
+
+function abrirRestablecerPassword(
+  usuario: PerfilUsuario
+) {
+  setUsuarioPassword(
+    usuario
+  );
+
+  setNuevaPassword("");
+  setConfirmarPassword("");
+  setMensaje("");
+
+  setModalPassword(true);
+}
+
+
+function cerrarRestablecerPassword() {
+  if (guardandoPassword) {
+    return;
+  }
+
+  setModalPassword(false);
+  setUsuarioPassword(null);
+
+  setNuevaPassword("");
+  setConfirmarPassword("");
+}
+
+
+async function restablecerPassword() {
+  if (!usuarioPassword) {
+    return;
+  }
+
+  if (nuevaPassword.length < 8) {
+    setMensaje(
+      "La contraseña debe tener al menos 8 caracteres."
+    );
+
+    return;
+  }
+
+  if (
+    nuevaPassword !==
+    confirmarPassword
+  ) {
+    setMensaje(
+      "Las contraseñas no coinciden."
+    );
+
+    return;
+  }
+
+  setGuardandoPassword(true);
+  setMensaje("");
+
+  const {
+    data: { session },
+  } =
+    await supabase.auth.getSession();
+
+  if (!session) {
+    setMensaje(
+      "La sesión ha expirado. Inicia sesión nuevamente."
+    );
+
+    setGuardandoPassword(false);
+    return;
+  }
+
+  try {
+    const respuesta =
+      await fetch(
+        "/api/admin/usuarios/password",
+        {
+          method: "POST",
+
+          headers: {
+            "Content-Type":
+              "application/json",
+
+            Authorization:
+              `Bearer ${session.access_token}`,
+          },
+
+          body: JSON.stringify({
+            usuarioId:
+              usuarioPassword.usuario_id,
+
+            nuevaPassword,
+          }),
+        }
+      );
+
+    const resultado =
+      await respuesta.json();
+
+    if (!respuesta.ok) {
+      setMensaje(
+        resultado.error ||
+          "No se pudo restablecer la contraseña."
+      );
+
+      return;
+    }
+
+    setMensaje(
+      `Contraseña de ${usuarioPassword.nombre} restablecida correctamente.`
+    );
+
+    setModalPassword(false);
+    setUsuarioPassword(null);
+
+    setNuevaPassword("");
+    setConfirmarPassword("");
+
+  } catch (error) {
+    console.error(
+      "Error restableciendo contraseña:",
+      error
+    );
+
+    setMensaje(
+      "Ocurrió un error al restablecer la contraseña."
+    );
+
+  } finally {
+    setGuardandoPassword(false);
+  }
+}
 
   async function cargarSucursales() {
   const { data, error } =
@@ -911,17 +1076,43 @@ async function crearNuevoUsuario() {
                             </span>
                           </td>
 
-                          <td>
-<button
-  type="button"
-  className="secondary-button"
-  onClick={() =>
-    abrirEditarUsuario(usuario)
-  }
->
-  Editar
-</button>
-                          </td>
+ <td>
+  <div
+    style={{
+      display: "flex",
+      gap: "8px",
+      flexWrap: "wrap",
+    }}
+  >
+    <button
+      type="button"
+      className="secondary-button"
+      onClick={() =>
+        abrirEditarUsuario(
+          usuario
+        )
+      }
+    >
+      Editar
+    </button>
+
+    {usuario.usuario_id !==
+      usuarioActualId && (
+      <button
+        type="button"
+        className="secondary-button"
+        onClick={() =>
+          abrirRestablecerPassword(
+            usuario
+          )
+        }
+      >
+        Contraseña
+      </button>
+    )}
+  </div>
+</td>
+
                         </tr>
                       );
                     }
@@ -1013,24 +1204,46 @@ async function crearNuevoUsuario() {
                         </div>
                       </div>
 
-                      <div
-                        style={{
-                          marginTop: "14px",
-                        }}
-                      >
-<button
-  type="button"
-  className="secondary-button"
+<div
   style={{
-    width: "100%",
+    marginTop: "14px",
+    display: "grid",
+    gap: "8px",
   }}
-  onClick={() =>
-    abrirEditarUsuario(usuario)
-  }
 >
-  Editar usuario
-</button>
-                      </div>
+  <button
+    type="button"
+    className="secondary-button"
+    style={{
+      width: "100%",
+    }}
+    onClick={() =>
+      abrirEditarUsuario(
+        usuario
+      )
+    }
+  >
+    Editar usuario
+  </button>
+
+  {usuario.usuario_id !==
+    usuarioActualId && (
+    <button
+      type="button"
+      className="secondary-button"
+      style={{
+        width: "100%",
+      }}
+      onClick={() =>
+        abrirRestablecerPassword(
+          usuario
+        )
+      }
+    >
+      Restablecer contraseña
+    </button>
+  )}
+</div>
                     </div>
                   );
                 }
@@ -1508,6 +1721,161 @@ async function crearNuevoUsuario() {
               {guardandoEditar
                 ? "Guardando..."
                 : "Guardar cambios"}
+            </button>
+
+            
+
+          </div>
+
+          
+
+        </form>
+
+      </div>
+    </div>
+  </div>
+)}
+
+{modalPassword &&
+  usuarioPassword && (
+  <div
+    className="modal-backdrop"
+    onMouseDown={(e) => {
+      if (
+        e.target ===
+        e.currentTarget
+      ) {
+        cerrarRestablecerPassword();
+      }
+    }}
+  >
+    <div className="modal">
+
+      <div className="modal-header">
+        <h2>
+          Restablecer contraseña
+        </h2>
+
+        <button
+          type="button"
+          className="icon-button"
+          onClick={
+            cerrarRestablecerPassword
+          }
+          aria-label="Cerrar"
+        >
+          ×
+        </button>
+      </div>
+
+
+      <div className="modal-body">
+
+        <p
+          style={{
+            marginTop: 0,
+            color:
+              "var(--color-text-secondary)",
+          }}
+        >
+          Asignar una nueva contraseña a{" "}
+          <strong>
+            {usuarioPassword.nombre}
+          </strong>.
+        </p>
+
+
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+
+            restablecerPassword();
+          }}
+        >
+          <div className="form-grid">
+
+            <div className="form-group full">
+              <label className="form-label">
+                Nueva contraseña *
+              </label>
+
+              <input
+                type="password"
+                className="form-input"
+                value={nuevaPassword}
+                onChange={(e) =>
+                  setNuevaPassword(
+                    e.target.value
+                  )
+                }
+                minLength={8}
+                required
+                autoFocus
+              />
+
+              <div
+                style={{
+                  marginTop: "5px",
+                  fontSize: "12px",
+                  color:
+                    "var(--color-text-secondary)",
+                }}
+              >
+                Mínimo 8 caracteres.
+              </div>
+            </div>
+
+
+            <div className="form-group full">
+              <label className="form-label">
+                Confirmar contraseña *
+              </label>
+
+              <input
+                type="password"
+                className="form-input"
+                value={
+                  confirmarPassword
+                }
+                onChange={(e) =>
+                  setConfirmarPassword(
+                    e.target.value
+                  )
+                }
+                minLength={8}
+                required
+              />
+            </div>
+
+          </div>
+
+
+          <div className="modal-footer">
+
+            <button
+              type="button"
+              className="secondary-button"
+              onClick={
+                cerrarRestablecerPassword
+              }
+              disabled={
+                guardandoPassword
+              }
+            >
+              Cancelar
+            </button>
+
+
+            <button
+              type="submit"
+              className="primary-button"
+              disabled={
+                guardandoPassword
+              }
+            >
+              {guardandoPassword
+                ? "Guardando..."
+                : "Restablecer contraseña"}
             </button>
 
           </div>

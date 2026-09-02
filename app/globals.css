@@ -1,28 +1,29 @@
 :root {
-  /* Colores principales */
-  --color-primary: #7057d9;
-  --color-primary-hover: #5f47c8;
-  --color-primary-soft: #eeeafd;
+  /* Marca */
+  --color-primary: #6d3fd1;
+  --color-primary-hover: #5b32b8;
+  --color-primary-soft: #f3effc;
 
   --color-secondary: #5da88a;
 
   /* Modo claro */
-  --color-background: #f6f7fb;
-  --color-surface: #ffffff;
-  --color-surface-secondary: #f0f1f5;
+ --color-background: #f7f6fb;
+--color-surface: #ffffff;
+--color-surface-secondary: #efedf5;
 
-  --color-text: #25252b;
-  --color-text-secondary: #6f7078;
+--color-text: #1f1f29;
+--color-text-secondary: #696875;
 
-  --color-border: #e4e5ea;
+--color-border: #dedbe7;
 
   --color-sidebar: #ffffff;
 
+  /* Estados */
   --color-success: #48a868;
   --color-warning: #df9b3d;
   --color-danger: #d85b5b;
 
-  --shadow-card: 0 2px 8px rgba(0, 0, 0, 0.04);
+  --shadow-card: 0 3px 12px rgba(50, 35, 90, 0.055);
 }
 
 html[data-theme="dark"] {
@@ -2612,6 +2613,55 @@ padding: 3px;
   overflow: visible !important;
 }
 
+.health-share-card-export
+.health-v2-brand img {
+  width: 72px !important;
+  height: 72px !important;
+}
+
+.health-share-card-export
+.health-v2-name {
+  font-size: 27px !important;
+}
+
+.health-share-card-export
+.health-profile-photo {
+  width: 75px !important;
+  height: 75px !important;
+}
+
+.health-share-card-export
+.health-v2-header {
+  align-items: flex-start !important;
+}
+
+.health-share-card-export
+.health-v2-dog {
+  min-width: 0 !important;
+  flex: 1 1 auto !important;
+}
+
+.health-share-card-export
+.health-v2-brand {
+  flex: 0 0 auto !important;
+}
+
+.health-share-card-export
+.health-item {
+  min-width: 0 !important;
+}
+
+.health-share-card-export
+.health-item-top {
+  min-width: 0 !important;
+}
+
+.health-share-card-export
+.health-items-vaccines,
+.health-share-card-export
+.health-items-deworming {
+  min-width: 0 !important;
+}
 
 /* VACUNAS SIEMPRE 2 x 2 */
 
