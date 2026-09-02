@@ -730,6 +730,7 @@ function exportarPDF() {
           <>
             {/* ESCRITORIO */}
             <div className="desktop-only">
+             <div className="table-scroll-x">
               <table className="data-table">
                 <thead>
                   <tr>
@@ -784,6 +785,7 @@ function exportarPDF() {
                   )}
                 </tbody>
               </table>
+                </div>
             </div>
 
             {/* MÓVIL */}

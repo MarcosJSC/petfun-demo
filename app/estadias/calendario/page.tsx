@@ -803,45 +803,48 @@ onClick={(e) => {
 
 {/* ACA TERMINAN LOS CALENDARIOS */}
 
+
 <div
   style={{
     marginTop: "18px",
+    display: "flex",
+    alignItems: "center",
+    gap: "6px",
   }}
 >
-
+  <button
+    type="button"
+    className="secondary-button"
+    onClick={mesAnterior}
+  >
+    ←
+  </button>
 
   <button
-              type="button"
-              className="secondary-button"
-              onClick={mesAnterior}
-            >
-              ←
-            </button>
+    type="button"
+    className="secondary-button"
+    onClick={irHoy}
+  >
+    Hoy
+  </button>
 
-            <button
-              type="button"
-              className="secondary-button"
-              onClick={irHoy}
-            >
-              Hoy
-            </button>
+  <button
+    type="button"
+    className="secondary-button"
+    onClick={mesSiguiente}
+  >
+    →
+  </button>
 
-            <button
-              type="button"
-              className="secondary-button"
-              onClick={mesSiguiente}
-            >
-              →
-            </button>
-
-
-              <Link
+  <Link
     href="/estadias"
     className="secondary-button"
+    style={{
+      marginLeft: "auto",
+    }}
   >
     ← Listado
   </Link>
-
 </div>
 
   </div>

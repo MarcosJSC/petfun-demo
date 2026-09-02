@@ -489,7 +489,14 @@ sucursales (
               Monto pagado
             </span>
 
-            <strong>
+            <strong
+              style={{
+                color:
+                  estadia.monto_pagado == 0
+                    ? "var(--color-danger)"
+                    : "var(--color-success)",
+              }}
+              >
               {formatearColones(
                 estadia.monto_pagado
               )}

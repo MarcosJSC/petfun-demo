@@ -1052,6 +1052,7 @@ return (
         <>
   {/* ESCRITORIO */}
   <div className="desktop-only">
+   <div className="table-scroll-x">
     <table className="data-table">
       <thead>
         <tr>
@@ -1147,6 +1148,7 @@ return (
         )}
       </tbody>
     </table>
+      </div>
   </div>
 
 

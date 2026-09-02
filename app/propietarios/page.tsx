@@ -425,6 +425,7 @@ const propietariosPaginados =
   <>
     {/* Vista escritorio */}
     <div className="desktop-only">
+      <div className="table-scroll-x">
       <table className="data-table">
 
         <thead>
@@ -477,6 +478,7 @@ const propietariosPaginados =
         </tbody>
 
       </table>
+         </div>
     </div>
 
 

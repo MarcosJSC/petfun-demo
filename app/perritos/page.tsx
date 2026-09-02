@@ -678,6 +678,7 @@ const perritosPaginados =
   <>
     {/* Vista escritorio */}
     <div className="desktop-only">
+      <div className="table-scroll-x">
       <table className="data-table">
 
         <thead>
@@ -688,6 +689,7 @@ const perritosPaginados =
             <th>Sexo</th>
             <th>Peso</th>
             <th>Propietario</th>
+            <th>Sucursal</th>
           </tr>
         </thead>
 
@@ -755,6 +757,7 @@ const perritosPaginados =
         </tbody>
 
       </table>
+       </div>
     </div>
 
 

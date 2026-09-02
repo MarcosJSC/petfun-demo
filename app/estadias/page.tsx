@@ -1392,6 +1392,7 @@ useEffect(() => {
           <th>Estado</th>
           <th>Pago</th>
           <th>Total</th>
+         <th>Pagado</th>
           <th>Saldo</th>
           <th>Acciones</th>
           <th>Sucursal</th>
@@ -1448,6 +1449,12 @@ useEffect(() => {
               <td>
                 {formatearColones(
                   estadia.total
+                )}
+              </td>
+
+                <td>
+                {formatearColones(
+                  (estadia.total - saldo)
                 )}
               </td>
 
@@ -1642,7 +1649,7 @@ useEffect(() => {
 
               <div>
                 <span className="mobile-record-label">
-                  Saldo
+                  Saldos
                 </span>
 
                 <strong
@@ -1660,6 +1667,43 @@ useEffect(() => {
               </div>
 
             </div>
+
+
+<p></p>
+   <div className="mobile-record-grid">
+
+              <div>
+                <span className="mobile-record-label">
+                  Monto Pagado
+                </span>
+
+             <strong
+                  style={{
+                    color:
+                      (estadia.total - saldo) == 0
+                        ? "var(--color-danger)"
+                        : "var(--color-success)",
+                  }}
+                >
+                  {formatearColones(
+                    estadia.total - saldo
+                  )}
+                </strong>
+              </div>
+
+              <div>
+                <span className="mobile-record-label">
+                  Sucursal
+                </span>
+
+                <strong>
+                 {estadia.sucursales?.nombre || "—"}
+                </strong>
+              </div>
+              </div>
+
+      
+    {/*        
 <p></p>
 <div
   style={{
@@ -1679,7 +1723,7 @@ useEffect(() => {
     {estadia.sucursales?.nombre || "—"}
   </strong>
 </div>
-
+ */}
 
 <div
   style={{
