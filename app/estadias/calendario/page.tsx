@@ -494,20 +494,51 @@ function crearEstadiaDesdeDia(
 
 <div className="desktop-only">
 
+
+
 <div
   style={{
+    marginTop: "18px",
     display: "flex",
-    justifyContent: "flex-end",
-    marginBottom: "16px",
+    alignItems: "center",
+    gap: "6px",
   }}
 >
+  <button
+    type="button"
+    className="secondary-button"
+    onClick={mesAnterior}
+  >
+    ←
+  </button>
+
+  <button
+    type="button"
+    className="secondary-button"
+    onClick={irHoy}
+  >
+    Hoy
+  </button>
+
+  <button
+    type="button"
+    className="secondary-button"
+    onClick={mesSiguiente}
+  >
+    →
+  </button>
+
   <Link
     href="/estadias"
     className="secondary-button"
+    style={{
+      marginLeft: "auto",
+    }}
   >
-    ← Lista de estadías
+    ← Lista de Estadías
   </Link>
 </div>
+<p></p>
 
         <div
           style={{
