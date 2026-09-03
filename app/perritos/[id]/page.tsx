@@ -462,6 +462,7 @@ const vacunasFicha =
         textoEstado: "Sin registro",
         fechaAplicacion: null,
         fechaVencimiento: null,
+        observaciones: null,
       };
     }
 
@@ -474,6 +475,7 @@ const vacunasFicha =
       tipo,
       estado:
         estado.estado,
+
       textoEstado:
         estado.estado === "vigente"
           ? "Vigente"
@@ -488,6 +490,9 @@ const vacunasFicha =
 
       fechaVencimiento:
         vacuna.fecha_vencimiento,
+
+      observaciones:
+        vacuna.observaciones,
     };
   });
 
@@ -530,6 +535,7 @@ const desparasitacionesFicha = [
       textoEstado: "Sin registro",
       fechaAplicacion: null,
       fechaProxima: null,
+      observaciones: null,
     };
   }
 
@@ -542,6 +548,7 @@ const desparasitacionesFicha = [
     tipo,
     estado:
       estado.estado,
+
     textoEstado:
       estado.estado === "vigente"
         ? "Al día"
@@ -556,6 +563,9 @@ const desparasitacionesFicha = [
 
     fechaProxima:
       registro.fecha_proxima,
+
+    observaciones:
+      registro.observaciones,
   };
 });
 
@@ -3097,33 +3107,50 @@ async function eliminarDesparasitacion(
 
                   </div>
 
-                  {vacuna.estado !==
-                    "sin-registro" && (
-                    <div className="health-dates">
+            {vacuna.estado !==
+  "sin-registro" && (
+  <>
+    <div className="health-dates">
 
-                      <span>
-                        Aplicada:{" "}
-                        <strong>
-                          {formatearFecha(
-                            vacuna.fechaAplicacion
-                          )}
-                        </strong>
-                      </span>
+      <span>
+        Aplicada:{" "}
+        <strong>
+          {formatearFecha(
+            vacuna.fechaAplicacion
+          )}
+        </strong>
+      </span>
 
-                      <span>
-                        {vacuna.estado ===
-                        "vencida"
-                          ? "Venció:"
-                          : "Vence:"}{" "}
-                        <strong>
-                          {formatearFecha(
-                            vacuna.fechaVencimiento
-                          )}
-                        </strong>
-                      </span>
+      <span>
+        {vacuna.estado ===
+        "vencida"
+          ? "Venció:"
+          : "Vence:"}{" "}
+        <strong>
+          {formatearFecha(
+            vacuna.fechaVencimiento
+          )}
+        </strong>
+      </span>
 
-                    </div>
-                  )}
+    </div>
+
+    {vacuna.observaciones?.trim() && (
+      <div
+        style={{
+          marginTop: "8px",
+          fontSize: "13px",
+          color:
+            "var(--color-text-secondary)",
+          lineHeight: 1.35,
+        }}
+      >
+        {vacuna.observaciones}
+      </div>
+    )}
+  </>
+)}
+
                 </div>
               )
             )}
@@ -3168,30 +3195,47 @@ async function eliminarDesparasitacion(
 
                   </div>
 
-                  {item.estado !==
-                    "sin-registro" && (
-                    <div className="health-dates">
+             {item.estado !==
+  "sin-registro" && (
+  <>
+    <div className="health-dates">
 
-                      <span>
-                        Última:{" "}
-                        <strong>
-                          {formatearFecha(
-                            item.fechaAplicacion
-                          )}
-                        </strong>
-                      </span>
+      <span>
+        Última:{" "}
+        <strong>
+          {formatearFecha(
+            item.fechaAplicacion
+          )}
+        </strong>
+      </span>
 
-                      <span>
-                        Próxima:{" "}
-                        <strong>
-                          {formatearFecha(
-                            item.fechaProxima
-                          )}
-                        </strong>
-                      </span>
+      <span>
+        Próxima:{" "}
+        <strong>
+          {formatearFecha(
+            item.fechaProxima
+          )}
+        </strong>
+      </span>
 
-                    </div>
-                  )}
+    </div>
+
+    {item.observaciones?.trim() && (
+      <div
+        style={{
+          marginTop: "8px",
+          fontSize: "13px",
+          color:
+            "var(--color-text-secondary)",
+          lineHeight: 1.35,
+        }}
+      >
+        {item.observaciones}
+      </div>
+    )}
+  </>
+)}
+
                 </div>
               )
             )}
