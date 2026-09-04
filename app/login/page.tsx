@@ -177,8 +177,8 @@ async function recuperarPassword() {
       src={LOGO_PETFUNCR_URL}
       alt="PetFunCR"
  style={{
-    width: "86px",
-    height: "86px",
+    width: "100px",
+    height: "100px",
     objectFit: "contain",
     display: "block",
     margin: "0 auto",
