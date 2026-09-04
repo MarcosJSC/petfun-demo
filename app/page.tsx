@@ -910,6 +910,7 @@ if (desparasitacionesFiltradas) {
       </p>
       
 <section style={{ marginBottom: "32px" }}>
+  {/*
   <div
     style={{
       marginBottom: "16px",
@@ -930,6 +931,7 @@ if (desparasitacionesFiltradas) {
     </p>
   </div>
 
+  */}
  <div className="dashboard-grid dashboard-summary-grid">
 
    
