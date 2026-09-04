@@ -4,7 +4,12 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+
 import { supabase } from "@/lib/supabase";
+
+import {
+  LOGO_PETFUNCR_URL,
+} from "@/lib/branding";
 
 import ThemeToggle from "@/components/ThemeToggle";
 
@@ -37,7 +42,7 @@ const opciones = [
     permiso: "perritos.ver",
   },
   {
-    nombre: "Estadías",
+    nombre: "Hospedajes",
     ruta: "/estadias/calendario",
     icono: "🏨",
     permiso: "estadias.ver",
@@ -336,9 +341,29 @@ async function cerrarSesion() {
           ☰
         </button>
 
-        <div className="mobile-logo">
-          🐶 PetFunCR
-        </div>
+   
+   <div
+  className="mobile-logo"
+  style={{
+    display: "flex",
+    alignItems: "center",
+    gap: "8px",
+  }}
+>
+  <img
+    src={LOGO_PETFUNCR_URL}
+    alt="PetFunCR"
+    style={{
+      width: "30px",
+      height: "30px",
+      objectFit: "contain",
+      flexShrink: 0,
+    }}
+  />
+
+  <span>PetFunCR</span>
+</div>
+   
       </div>
 
 
@@ -364,9 +389,27 @@ async function cerrarSesion() {
         }`}
       >
         <div className="sidebar-top">
-          <h2 className="sidebar-logo">
-            🐶 PetFunCR
-          </h2>
+  <h2
+  className="sidebar-logo"
+  style={{
+    display: "flex",
+    alignItems: "center",
+    gap: "10px",
+  }}
+>
+  <img
+    src={LOGO_PETFUNCR_URL}
+    alt="PetFunCR"
+    style={{
+      width: "42px",
+      height: "42px",
+      objectFit: "contain",
+      flexShrink: 0,
+    }}
+  />
+
+  <span>PetFunCR</span>
+</h2>
 
           <button
             type="button"
@@ -403,15 +446,17 @@ async function cerrarSesion() {
       })
       .map((opcion) => {
         const activo =
-          opcion.nombre === "Dashboard"
-            ? pathname === "/"
-            : opcion.nombre === "Estadías"
-              ? pathname.startsWith(
-                  "/estadias"
-                )
-              : pathname.startsWith(
-                  opcion.ruta
-                );
+       opcion.ruta === "/"
+    ? pathname === "/"
+    : opcion.ruta.startsWith(
+        "/estadias"
+      )
+      ? pathname.startsWith(
+          "/estadias"
+        )
+      : pathname.startsWith(
+          opcion.ruta
+        );
 
         return (
           <Link

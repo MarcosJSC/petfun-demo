@@ -5,6 +5,10 @@ import { useRouter } from "next/navigation";
 import ThemeToggle from "@/components/ThemeToggle";
 import { supabase } from "@/lib/supabase";
 
+import {
+  LOGO_PETFUNCR_URL,
+} from "@/lib/branding";
+
 export default function LoginPage() {
   const router = useRouter();
 
@@ -167,19 +171,29 @@ async function recuperarPassword() {
 
       <div className="login-card">
 
-        <div className="login-brand">
-          <div className="login-brand-icon">
-            🐶
-          </div>
+<div className="login-brand">
+  <div className="login-brand-icon">
+    <img
+      src={LOGO_PETFUNCR_URL}
+      alt="PetFunCR"
+ style={{
+    width: "86px",
+    height: "86px",
+    objectFit: "contain",
+    display: "block",
+    margin: "0 auto",
+  }}
+    />
+  </div>
 
-          <h1>
-            PetFunCR
-          </h1>
+  <h1>
+    PetFunCR
+  </h1>
 
-          <p>
-            Sistema de gestión de guardería y hotel
-          </p>
-        </div>
+  <p>
+    Sistema de gestión de guardería y hotel
+  </p>
+</div>
 
 
         <form
