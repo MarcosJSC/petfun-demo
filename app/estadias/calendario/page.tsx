@@ -691,11 +691,13 @@ onClick={(e) => {
         estadia.tipos_estadia?.nombre
       ).background,
 
+      color: "white",
+/*
     color:
       obtenerEstiloTipo(
         estadia.tipos_estadia?.nombre
       ).color,
-
+*/
     border: "none",
         overflow: "hidden",
         textOverflow: "ellipsis",
