@@ -2837,7 +2837,8 @@ async function eliminarDesparasitacion(
 
       <div
         style={{
-          color: "var(--color-text-secondary)",
+          color:
+            "var(--color-text-secondary)",
           fontSize: "14px",
           marginTop: "3px",
         }}
@@ -2847,270 +2848,156 @@ async function eliminarDesparasitacion(
     </div>
   </div>
 
-  {vacunasActuales.length === 0 ? (
-    <div className="empty-state">
-      No hay vacunas registradas.
-    </div>
-  ) : (
-   
-<>
-  {/* ESCRITORIO */}
-  <div className="desktop-only">
-    <table className="data-table">
-      <thead>
-        <tr>
-          <th>Vacuna</th>
-          <th>Aplicación</th>
-          <th>Vencimiento</th>
-          <th>Observaciones</th>
-        </tr>
-      </thead>
+  <>
+    {/* ESCRITORIO */}
 
-      <tbody>
-        {vacunasActuales.map((vacuna) => {
-          const estado = obtenerEstadoFecha(
-            vacuna.fecha_vencimiento
-          );
+    <div className="desktop-only">
+      <table className="data-table">
+        <thead>
+          <tr>
+            <th>Vacuna</th>
+            <th>Aplicación</th>
+            <th>Vencimiento</th>
+            <th>Estado</th>
+          </tr>
+        </thead>
 
-{modalDocumento && (
-  <div
-    className="modal-backdrop"
-    onMouseDown={(e) => {
-      if (
-        e.target === e.currentTarget &&
-        !guardandoDocumento
-      ) {
-        setModalDocumento(false);
-      }
-    }}
-  >
-    <div className="modal">
+        <tbody>
+          {vacunasFicha.map(
+            (item) => (
+              <tr key={item.tipo}>
+                <td>
+                  <strong>
+                    {item.tipo}
+                  </strong>
+                </td>
 
-      <div className="modal-header">
-        <h2>
-          Agregar documento
-        </h2>
+                <td>
+                  {item.estado ===
+                  "sin-registro"
+                    ? "—"
+                    : formatearFecha(
+                        item.fechaAplicacion
+                      )}
+                </td>
 
-        <button
-          type="button"
-          className="icon-button"
-          onClick={() =>
-            setModalDocumento(false)
-          }
-          disabled={
-            guardandoDocumento
-          }
-        >
-          ×
-        </button>
-      </div>
+                <td>
+                  {item.estado ===
+                  "sin-registro"
+                    ? "—"
+                    : formatearFecha(
+                        item.fechaVencimiento
+                      )}
+                </td>
 
-      <div className="modal-body">
-
-        <form
-          onSubmit={guardarDocumento}
-        >
-          <div className="form-grid">
-
-            <div className="form-group full">
-              <label className="form-label">
-                Descripción
-              </label>
-
-              <input
-                className="form-input"
-                value={
-                  descripcionDocumento
-                }
-                onChange={(e) =>
-                  setDescripcionDocumento(
-                    e.target.value
-                  )
-                }
-                placeholder="Ej: Vacunas julio 2026"
-              />
-            </div>
-
-            <div className="form-group full">
-              <label className="form-label">
-                Imagen *
-              </label>
-
-              <input
-                className="form-input"
-                type="file"
-                accept="image/jpeg,image/png,image/webp"
-                required
-                onChange={(e) =>
-                  setArchivoDocumento(
-                    e.target.files?.[0] ??
-                    null
-                  )
-                }
-              />
-            </div>
-
-          </div>
-
-          {mensajeDocumento && (
-            <div
-              className="status-message"
-              style={{
-                marginTop: "14px",
-              }}
-            >
-              {mensajeDocumento}
-            </div>
+                <td>
+                  {item.estado ===
+                  "sin-registro" ? (
+                    <span className="estado-badge sin-registro">
+                      <span className="estado-dot" />
+                      Sin registro
+                    </span>
+                  ) : (
+                    <span
+                      className={`estado-badge ${item.estado}`}
+                    >
+                      <span className="estado-dot" />
+                      {item.textoEstado}
+                    </span>
+                  )}
+                </td>
+              </tr>
+            )
           )}
-
-          <div className="modal-footer">
-
-            <button
-              type="button"
-              className="secondary-button"
-              disabled={
-                guardandoDocumento
-              }
-              onClick={() =>
-                setModalDocumento(false)
-              }
-            >
-              Cancelar
-            </button>
-
-            <button
-              type="submit"
-              className="primary-button"
-              disabled={
-                guardandoDocumento ||
-                !archivoDocumento
-              }
-            >
-              {guardandoDocumento
-                ? "Guardando..."
-                : "Guardar documento"}
-            </button>
-
-          </div>
-        </form>
-
-      </div>
+        </tbody>
+      </table>
     </div>
-  </div>
-)}       
 
 
-          return (
-            <tr key={vacuna.id}>
-              <td>
-                <strong>
-                  {vacuna.tipos_vacuna?.nombre || "—"}
-                </strong>
-              </td>
+    {/* MÓVIL */}
 
-              <td>
-                {formatearFecha(
-                  vacuna.fecha_aplicacion
-                )}
-              </td>
+    <div className="mobile-only vaccine-status-mobile">
 
-              <td>
-                {formatearFecha(
-                  vacuna.fecha_vencimiento
-                )}
-              </td>
+      {vacunasFicha.map(
+        (item) => (
+          <div
+            key={item.tipo}
+            className="mobile-list-item"
+          >
+            <div className="mobile-list-title">
+              💉 {item.tipo}
+            </div>
 
-              <td>
-                <span
-                  className={`estado-badge ${estado.estado}`}
-                >
-                  <span className="estado-dot" />
-                  {estado.texto}
+            <div className="mobile-list-grid">
+
+              <div>
+                <span className="mobile-list-label">
+                  Aplicación
                 </span>
-              </td>
-            </tr>
-          );
-        })}
-      </tbody>
-    </table>
-  </div>
 
+                <strong>
+                  {item.estado ===
+                  "sin-registro"
+                    ? "—"
+                    : formatearFecha(
+                        item.fechaAplicacion
+                      )}
+                </strong>
+              </div>
 
-  {/* MÓVIL */}
-  <div className="mobile-only vaccine-status-mobile">
+              <div>
+                <span className="mobile-list-label">
+                  Vencimiento
+                </span>
 
-    {vacunasActuales.map((vacuna) => {
-      const estado = obtenerEstadoFecha(
-        vacuna.fecha_vencimiento
-      );
-
-      return (
-        <div
-          key={vacuna.id}
-          className="mobile-list-item"
-        >
-          <div className="mobile-list-title">
-            💉 {vacuna.tipos_vacuna?.nombre || "—"}
-          </div>
-
-          <div className="mobile-list-grid">
-
-            <div>
-              <span className="mobile-list-label">
-                Aplicación
-              </span>
-
-              <strong>
-                {formatearFecha(
-                  vacuna.fecha_aplicacion
-                )}
-              </strong>
-            </div>
-
-            <div>
-              <span className="mobile-list-label">
-                Vencimiento
-              </span>
-
-              <strong>
-                {formatearFecha(
-                  vacuna.fecha_vencimiento
-                )}
-              </strong>
-            </div>
-
-            <div
-              style={{
-                gridColumn: "1 / -1",
-              }}
-            >
-              <span className="mobile-list-label">
-                Estado
-              </span>
+                <strong>
+                  {item.estado ===
+                  "sin-registro"
+                    ? "—"
+                    : formatearFecha(
+                        item.fechaVencimiento
+                      )}
+                </strong>
+              </div>
 
               <div
                 style={{
-                  marginTop: "4px",
+                  gridColumn: "1 / -1",
                 }}
               >
-                <span
-                  className={`estado-badge ${estado.estado}`}
-                >
-                  <span className="estado-dot" />
-                  {estado.texto}
+                <span className="mobile-list-label">
+                  Estado
                 </span>
+
+                <div
+                  style={{
+                    marginTop: "4px",
+                  }}
+                >
+                  {item.estado ===
+                  "sin-registro" ? (
+                    <span className="estado-badge sin-registro">
+                      <span className="estado-dot" />
+                      Sin registro
+                    </span>
+                  ) : (
+                    <span
+                      className={`estado-badge ${item.estado}`}
+                    >
+                      <span className="estado-dot" />
+                      {item.textoEstado}
+                    </span>
+                  )}
+                </div>
               </div>
+
             </div>
-
           </div>
-        </div>
-      );
-    })}
+        )
+      )}
 
-  </div>
-</>
-
-  )}
+    </div>
+  </>
 </section>
 
       <section
