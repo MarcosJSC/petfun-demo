@@ -67,6 +67,51 @@ export default function ReportesPage() {
 
 
         <Link
+          href="/reportes/graficos"
+          className="card report-menu-card"
+        >
+          <div
+            style={{
+              fontSize: "28px",
+              marginBottom: "12px",
+            }}
+          >
+            📊
+          </div>
+
+          <h2
+            style={{
+              margin: "0 0 8px",
+            }}
+          >
+            Gráficos de Ingresos
+          </h2>
+
+          <p
+            style={{
+              margin: 0,
+              color:
+                "var(--color-text-secondary)",
+            }}
+          >
+            Información de Estadías y los Ingresos mensuales por año.
+          </p>
+
+          <div
+            style={{
+              marginTop: "18px",
+              color: "var(--color-primary)",
+              fontWeight: 600,
+            }}
+          >
+            Abrir reporte →
+          </div>
+          
+        </Link>
+
+
+
+ <Link
           href="/reportes/propietarios"
           className="card report-menu-card"
         >
@@ -110,6 +155,7 @@ export default function ReportesPage() {
           </div>
           
         </Link>
+
 
       </div>
       
