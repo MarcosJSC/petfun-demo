@@ -1070,20 +1070,11 @@ onClick={(e) => {
                         )
                       )}
                     </td>
-                    <td>
-                      {esSuperadmin && !sucursalFiltro && (
-    <div
-      style={{
-        marginTop: "6px",
-      }}
-    >
-
+    <td>
   <span className="branch-status active">
-  {estadia.sucursales?.nombre || "—"}
-</span>
-       </div>
-       )}
-                    </td>
+    {estadia.sucursales?.nombre || "—"}
+  </span>
+</td>
                   </tr>
                 )
               )}
