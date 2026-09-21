@@ -166,6 +166,10 @@ function calcularEdad(fechaNacimiento: string | null) {
   }`;
 }
 
+
+
+
+
 function obtenerEstadoFecha(
   fecha: string | null
 ) {
@@ -1786,6 +1790,66 @@ function abrirNuevaVacuna() {
   setObservacionesVacuna("");
 
   setModalVacuna(true);
+}
+
+
+function calcularVencimientoVacuna(
+  fecha: string
+) {
+  if (!fecha) {
+    setFechaVencimientoVacuna("");
+    return;
+  }
+
+  const [anio, mes, dia] =
+    fecha.split("-").map(Number);
+
+  const fechaVencimiento = new Date(
+    anio + 1,
+    mes - 1,
+    dia
+  );
+
+  const anioVencimiento =
+    fechaVencimiento.getFullYear();
+
+  const mesVencimiento = String(
+    fechaVencimiento.getMonth() + 1
+  ).padStart(2, "0");
+
+  const diaVencimiento = String(
+    fechaVencimiento.getDate()
+  ).padStart(2, "0");
+
+  setFechaVencimientoVacuna(
+    `${anioVencimiento}-${mesVencimiento}-${diaVencimiento}`
+  );
+}
+
+
+
+
+function calcularVencimientoDesparacitacion(
+  fecha: string
+) {
+  if (!fecha) {
+    setFechaProximaDesparasitacion("");
+    return;
+  }
+
+  const fecha_n = new Date(
+    fecha + "T00:00:00"
+  );
+
+  fecha_n.setMonth(fecha_n.getMonth() + 3);
+
+  const año = fecha_n.getFullYear();
+  const mes = String(fecha_n.getMonth() + 1).padStart(2, "0");
+  const dia = String(fecha_n.getDate()).padStart(2, "0");
+
+  setFechaProximaDesparasitacion(
+    `${año}-${mes}-${dia}`
+  );
 }
 
 function abrirEditarVacuna(vacuna: Vacuna) {
@@ -4489,11 +4553,18 @@ async function eliminarDesparasitacion(
                       value={
                         fechaAplicacionVacuna
                       }
-                      onChange={(e) =>
-                        setFechaAplicacionVacuna(
-                          e.target.value
-                        )
-                      }
+
+
+                      onChange={(e) => {
+  setFechaAplicacionVacuna(
+    e.target.value
+  );
+
+  calcularVencimientoVacuna(
+    e.target.value
+  );
+}}
+                      
                       required
                     />
                   </div>
@@ -4648,10 +4719,18 @@ async function eliminarDesparasitacion(
                       value={
                         fechaAplicacionDesparasitacion
                       }
-                      onChange={(e) =>
-                        setFechaAplicacionDesparasitacion(
-                          e.target.value
-                        )
+                    
+
+                      onChange={(e) => {
+  setFechaAplicacionDesparasitacion(
+    e.target.value
+  );
+
+  calcularVencimientoDesparacitacion(
+    e.target.value
+  );
+}
+
                       }
                       required
                     />
