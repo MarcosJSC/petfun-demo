@@ -38,13 +38,13 @@ const opciones = [
   {
     nombre: "Perritos",
     ruta: "/perritos",
-    icono: "🐾",
+    icono: "🐶",
     permiso: "perritos.ver",
   },
   {
     nombre: "Hospedajes",
     ruta: "/estadias/calendario",
-    icono: "🏨",
+    icono: "📅",
     permiso: "estadias.ver",
   },
   {

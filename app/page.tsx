@@ -1020,7 +1020,7 @@ if (desparasitacionesFiltradas) {
   }}
 >
  <div className="card-label">
-    Hospedados hoy
+    📅 Hospedados hoy
   </div>
 
  <div
@@ -1058,7 +1058,7 @@ if (desparasitacionesFiltradas) {
   }}
 >
   <div className="card-label">
-    Entradas hoy
+    🙋‍♂️ Entradas hoy
   </div>
 
   <div
@@ -1098,7 +1098,7 @@ if (desparasitacionesFiltradas) {
   }}
 >
   <div className="card-label">
-    Salidas hoy
+    👋 Salidas hoy
   </div>
 
   <div
@@ -1136,7 +1136,7 @@ if (desparasitacionesFiltradas) {
   }}
 >
   <div className="card-label">
-    Entradas Mañana
+    🐕‍🦺 Entradas Mañana
   </div>
 
   <div
@@ -1174,7 +1174,7 @@ if (desparasitacionesFiltradas) {
   }}
 >
   <div className="card-label">
-    Salidas Mañana
+    🛫 Salidas Mañana
   </div>
 
   <div
@@ -1277,7 +1277,7 @@ if (desparasitacionesFiltradas) {
 
  <div className="card">
       <div className="card-label">
-        Propietarios
+       👤 Propietarios
       </div>
 
       <div className="card-value">
@@ -1287,7 +1287,7 @@ if (desparasitacionesFiltradas) {
 
     <div className="card">
       <div className="card-label">
-        Perritos
+        🐶 Perritos
       </div>
 
       <div className="card-value">
