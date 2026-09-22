@@ -135,6 +135,13 @@ const [entradasHoy, setEntradasHoy] =
 const [salidasHoy, setSalidasHoy] =
   useState(0);
 
+  const [entradasM, setEntradasM] =
+  useState(0);
+
+const [salidasM, setSalidasM] =
+  useState(0);
+  
+
   const [
   detalleEntradasHoy,
   setDetalleEntradasHoy,
@@ -145,6 +152,16 @@ const [
   setDetalleSalidasHoy,
 ] = useState<any[]>([]);
 
+ const [
+  detalleEntradasM,
+  setDetalleEntradasM,
+] = useState<any[]>([]);
+
+const [
+  detalleSalidasM,
+  setDetalleSalidasM,
+] = useState<any[]>([]);
+
 const [
   mostrarEntradasHoy,
   setMostrarEntradasHoy,
@@ -153,6 +170,16 @@ const [
 const [
   mostrarSalidasHoy,
   setMostrarSalidasHoy,
+] = useState(false);
+
+const [
+  mostrarEntradasM,
+  setMostrarEntradasM,
+] = useState(false);
+
+const [
+  mostrarSalidasM,
+  setMostrarSalidasM,
 ] = useState(false);
 
 // CUMPLEAÑOS
@@ -521,6 +548,18 @@ const vacunasFiltradas =
   const hoyTexto =
     hoy.toISOString().split("T")[0];
 
+   
+ let MananaFecha = new Date();
+MananaFecha.setHours(0, 0, 0, 0);
+MananaFecha.setDate(MananaFecha.getDate() + 1);
+
+const MananaTexto =
+    MananaFecha.toISOString().split("T")[0];
+
+    
+//console.log("FECHA MAÑANA",MananaTexto);
+ 
+
   const activasHoy =
     estadiasHoy.filter((estadia) => {
       const estado =
@@ -557,6 +596,23 @@ setDetalleEntradasHoy(
 );
 
 
+const entradasM =
+  estadiasHoy.filter(
+    (estadia) =>
+      estadia.fecha_entrada === MananaTexto &&
+      estadia.estados_estadia?.nombre !==
+        "Cancelada"
+  );
+
+setEntradasM(
+  entradasM.length
+);
+
+setDetalleEntradasM(
+  entradasM
+);
+
+
 const salidas =
   estadiasHoy.filter(
     (estadia) =>
@@ -573,6 +629,21 @@ setDetalleSalidasHoy(
   salidas
 );
 
+const salidasM =
+  estadiasHoy.filter(
+    (estadia) =>
+      estadia.fecha_salida === MananaTexto &&
+      estadia.estados_estadia?.nombre !==
+        "Cancelada"
+  );
+
+setSalidasM(
+  salidasM.length
+);
+
+setDetalleSalidasM(
+  salidasM
+);
 
     
 if (vacunasFiltradas) {
@@ -1051,6 +1122,82 @@ if (desparasitacionesFiltradas) {
   </div>
 </button>
 
+<button
+  type="button"
+  className="card"
+  onClick={() =>
+    setMostrarEntradasM(true)
+  }
+  style={{
+    textAlign: "left",
+    cursor: "pointer",
+    border: "none",
+    color: "inherit",
+  }}
+>
+  <div className="card-label">
+    Entradas Mañana
+  </div>
+
+  <div
+    className="card-value"
+    style={{
+      color: "var(--color-text)",
+    }}
+  >
+    {entradasM}
+  </div>
+
+  <div
+    style={{
+      marginTop: "8px",
+      fontSize: "13px",
+      color:
+        "var(--color-text-secondary)",
+    }}
+  >
+    Ver detalles →
+  </div>
+</button>
+
+<button
+  type="button"
+  className="card"
+  onClick={() =>
+    setMostrarSalidasM(true)
+  }
+  style={{
+    textAlign: "left",
+    cursor: "pointer",
+    border: "none",
+    color: "inherit",
+  }}
+>
+  <div className="card-label">
+    Salidas Mañana
+  </div>
+
+  <div
+    className="card-value"
+    style={{
+      color: "var(--color-text)",
+    }}
+  >
+    {salidasM}
+  </div>
+
+  <div
+    style={{
+      marginTop: "8px",
+      fontSize: "13px",
+      color:
+        "var(--color-text-secondary)",
+    }}
+  >
+    Ver detalles →
+  </div>
+</button>
+
 
 <button
   type="button"
@@ -1479,7 +1626,207 @@ if (desparasitacionesFiltradas) {
 )}
 
 
-{/* FIN MODAL ENTRADAS HOY */}
+{/* MODAL ENTRADAS MAÑANA */}
+
+{mostrarEntradasM && (
+  <div
+    className="modal-backdrop"
+    onMouseDown={(e) => {
+      if (e.target === e.currentTarget) {
+        setMostrarEntradasM(false);
+      }
+    }}
+  >
+    <div className="modal">
+
+      <div className="modal-header">
+        <h2>
+          Entradas Mañana
+        </h2>
+
+        <button
+          type="button"
+          className="icon-button"
+          onClick={() =>
+            setMostrarEntradasM(false)
+          }
+        >
+          ×
+        </button>
+      </div>
+
+      <div className="modal-body">
+
+        {detalleEntradasM.length === 0 ? (
+          <div className="empty-state">
+            No hay entradas programadas para mañana.
+          </div>
+        ) : (
+          <table className="data-table">
+
+            <thead>
+              <tr>
+                <th>Perrito</th>
+                <th>Tipo</th>
+                <th>Hora entrada</th>
+                <th>Estado</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              {detalleEntradasM.map(
+                (estadia) => (
+                  <tr
+                    key={estadia.id}
+                    className="clickable-row"
+                    onClick={() => {
+                      window.location.href =
+                        `/perritos/${estadia.perrito_id}`;
+                    }}
+                  >
+                    <td>
+                      <strong>
+                        🐶{" "}
+                        {estadia.perritos?.nombre ||
+                          "—"}
+                      </strong>
+                    </td>
+
+                    <td>
+                      {estadia.tipos_estadia
+                        ?.nombre || "—"}
+                    </td>
+
+                    <td>
+                      {estadia.hora_entrada
+                        ? estadia.hora_entrada.slice(
+                            0,
+                            5
+                          )
+                        : "—"}
+                    </td>
+
+                    <td>
+                      {estadia.estados_estadia
+                        ?.nombre || "—"}
+                    </td>
+                  </tr>
+                )
+              )}
+            </tbody>
+
+          </table>
+        )}
+
+      </div>
+
+    </div>
+  </div>
+)}
+
+
+{/* FIN MODAL ENTRADAS MAÑANA */}
+
+{/* MODAL SALIDAS MAÑANA */}
+
+{mostrarSalidasM && (
+  <div
+    className="modal-backdrop"
+    onMouseDown={(e) => {
+      if (e.target === e.currentTarget) {
+        setMostrarSalidasM(false);
+      }
+    }}
+  >
+    <div className="modal">
+
+      <div className="modal-header">
+        <h2>
+          Salidas Mañana
+        </h2>
+
+        <button
+          type="button"
+          className="icon-button"
+          onClick={() =>
+            setMostrarSalidasM(false)
+          }
+        >
+          ×
+        </button>
+      </div>
+
+      <div className="modal-body">
+
+        {detalleSalidasM.length === 0 ? (
+          <div className="empty-state">
+            No hay salidas programadas para mañana.
+          </div>
+        ) : (
+          <table className="data-table">
+
+            <thead>
+              <tr>
+                <th>Perrito</th>
+                <th>Tipo</th>
+                <th>Hora entrada</th>
+                <th>Estado</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              {detalleSalidasM.map(
+                (estadia) => (
+                  <tr
+                    key={estadia.id}
+                    className="clickable-row"
+                    onClick={() => {
+                      window.location.href =
+                        `/perritos/${estadia.perrito_id}`;
+                    }}
+                  >
+                    <td>
+                      <strong>
+                        🐶{" "}
+                        {estadia.perritos?.nombre ||
+                          "—"}
+                      </strong>
+                    </td>
+
+                    <td>
+                      {estadia.tipos_estadia
+                        ?.nombre || "—"}
+                    </td>
+
+                    <td>
+                      {estadia.hora_entrada
+                        ? estadia.hora_entrada.slice(
+                            0,
+                            5
+                          )
+                        : "—"}
+                    </td>
+
+                    <td>
+                      {estadia.estados_estadia
+                        ?.nombre || "—"}
+                    </td>
+                  </tr>
+                )
+              )}
+            </tbody>
+
+          </table>
+        )}
+
+      </div>
+
+    </div>
+  </div>
+)}
+
+
+{/* FIN MODAL SALIDAS MAÑANA */}
 
 {/* MODAL CUMPLEAÑEROS HOY */}
 
