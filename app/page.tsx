@@ -280,9 +280,10 @@ let consultaEstadias =
       sucursal_id,
       fecha_entrada,
       fecha_salida,
+      dias_totales,
+      dias_restantes,
       hora_entrada,
-      hora_salida,
-
+      hora_salida,   
       perritos (
         nombre,
   sucursal_id
@@ -2456,6 +2457,8 @@ if (desparasitacionesFiltradas) {
                 <th>Tipo</th>
                 <th>Entrada</th>
                 <th>Salida</th>
+                <th>T. Días</th>
+                <th>Días Rest.</th>
               </tr>
             </thead>
 
@@ -2512,6 +2515,8 @@ if (desparasitacionesFiltradas) {
                         )
                       )}
                     </td>
+                    <td>{estadia.dias_totales}</td>
+                    <td>{estadia.dias_restantes}</td>
                   </tr>
                 )
               )}
