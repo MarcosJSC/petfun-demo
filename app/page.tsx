@@ -271,6 +271,11 @@ const {
   count: perritosCount,
 } = await consultaPerritos;
 
+const hoy_d = new Date();
+hoy.setHours(0, 0, 0, 0);
+
+const hoyTexto_d = hoy_d.toISOString().split("T")[0];
+
 let consultaEstadias =
   supabase
     .from("estadias")
@@ -297,7 +302,9 @@ let consultaEstadias =
       estados_estadia (
         nombre
       )
-    `);
+    `)
+     .or(`fecha_entrada.gte.${hoyTexto_d},fecha_salida.gte.${hoyTexto_d}`)
+    ;
 
 if (
   esSuperadmin &&
