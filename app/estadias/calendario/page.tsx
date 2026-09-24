@@ -411,134 +411,148 @@ function crearEstadiaDesdeDia(
 
       <section className="card">
 
-<div
-  style={{
-    marginBottom: "20px",
-  }}
->
-  <h3
-    style={{
-      margin: 0,
-      textTransform: "capitalize",
-    }}
-  >
-    Calendario: {tituloMes}
-  </h3>
-</div>
- 
-
-<div
-  style={{
-    display: "flex",
-    gap: "18px",
-    flexWrap: "wrap",
-    marginBottom: "16px",
-    fontSize: "13px",
-  }}
->
-  <div
-    style={{
-      display: "flex",
-      alignItems: "center",
-      gap: "6px",
-    }}
-  >
-    <span
-      style={{
-        width: "10px",
-        height: "10px",
-        borderRadius: "50%",
-        background: "#8b5cf6",
-      }}
-    />
-    Hotel
-  </div>
-
-  <div
-    style={{
-      display: "flex",
-      alignItems: "center",
-      gap: "6px",
-    }}
-  >
-    <span
-      style={{
-        width: "10px",
-        height: "10px",
-        borderRadius: "50%",
-        background: "#22c55e",
-      }}
-    />
-    Guardería
-  </div>
-
-  <div
-    style={{
-      display: "flex",
-      alignItems: "center",
-      gap: "6px",
-    }}
-  >
-    <span
-      style={{
-        width: "10px",
-        height: "10px",
-        borderRadius: "50%",
-        background: "#3b82f6",
-      }}
-    />
-    Mixta
-  </div>
-</div>
 
 
 <div className="desktop-only">
 
-
-
 <div
   style={{
-    marginTop: "18px",
     display: "flex",
     alignItems: "center",
-    gap: "6px",
+    justifyContent: "space-between",
+    gap: "24px",
+    flexWrap: "wrap",
+    marginBottom: "20px",
   }}
 >
-  <button
-    type="button"
-    className="secondary-button"
-    onClick={mesAnterior}
-  >
-    ←
-  </button>
-
-  <button
-    type="button"
-    className="secondary-button"
-    onClick={irHoy}
-  >
-    Hoy
-  </button>
-
-  <button
-    type="button"
-    className="secondary-button"
-    onClick={mesSiguiente}
-  >
-    →
-  </button>
-
-  <Link
-    href="/estadias"
-    className="secondary-button"
+  {/* IZQUIERDA: Título + Leyenda */}
+  <div
     style={{
-      marginLeft: "auto",
+      display: "flex",
+      alignItems: "center",
+      gap: "24px",
     }}
   >
-    ← Lista de Estadías
-  </Link>
+    {/* Título */}
+    <h3
+      style={{
+        margin: 0,
+        textTransform: "capitalize",
+      }}
+    >
+      Calendario: {tituloMes}
+    </h3>
+
+    {/* Leyenda */}
+    <div
+      style={{
+        display: "flex",
+        alignItems: "center",
+        gap: "18px",
+        fontSize: "13px",
+      }}
+    >
+      <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          gap: "6px",
+        }}
+      >
+        <span
+          style={{
+            width: "10px",
+            height: "10px",
+            borderRadius: "50%",
+            background: "#8b5cf6",
+          }}
+        />
+        Hotel
+      </div>
+
+      <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          gap: "6px",
+        }}
+      >
+        <span
+          style={{
+            width: "10px",
+            height: "10px",
+            borderRadius: "50%",
+            background: "#22c55e",
+          }}
+        />
+        Guardería
+      </div>
+
+      <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          gap: "6px",
+        }}
+      >
+        <span
+          style={{
+            width: "10px",
+            height: "10px",
+            borderRadius: "50%",
+            background: "#3b82f6",
+          }}
+        />
+        Mixta
+      </div>
+    </div>
+  </div>
+
+  {/* DERECHA: Controles */}
+  <div
+    style={{
+      display: "flex",
+      alignItems: "center",
+      gap: "6px",
+    }}
+  >
+    <button
+      type="button"
+      className="secondary-button"
+      onClick={mesAnterior}
+    >
+      ←
+    </button>
+
+    <button
+      type="button"
+      className="secondary-button"
+      onClick={irHoy}
+    >
+      Hoy
+    </button>
+
+    <button
+      type="button"
+      className="secondary-button"
+      onClick={mesSiguiente}
+    >
+      →
+    </button>
+
+    <Link
+      href="/estadias"
+      className="secondary-button"
+      style={{
+        marginLeft: "6px",
+      }}
+    >
+      ← Lista de Estadías
+    </Link>
+  </div>
 </div>
-<p></p>
+
+
 
         <div
           style={{
@@ -878,6 +892,51 @@ onClick={(e) => {
   >
     ← Listado
   </Link>
+</div>
+<p></p>
+<div
+  style={{
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "space-between",
+    gap: "24px",
+    flexWrap: "wrap",
+    marginBottom: "20px",
+  }}
+>
+  {/* IZQUIERDA: Título + Leyenda */}
+  
+  <div
+    style={{
+      display: "flex",
+      alignItems: "center",
+      gap: "24px",
+    }}
+  >
+    {/* Título */}
+    <h4
+      style={{
+        margin: 0,
+        textTransform: "capitalize",
+      }}
+    >
+       {tituloMes}
+    </h4>
+
+  </div>
+
+  {/* DERECHA: Controles */}
+  <div
+    style={{
+      display: "flex",
+      alignItems: "center",
+      gap: "6px",
+    }}
+  >
+
+
+
+  </div>
 </div>
 
   </div>
