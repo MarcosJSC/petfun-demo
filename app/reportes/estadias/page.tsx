@@ -657,7 +657,7 @@ function exportarExcel() {
 
   const datosResumen = [
     ["PetFunCR"],
-    ["Reporte de estadías"],
+    ["Reporte de hospedajes"],
     [],
     ["Desde", periodoDesde],
     ["Hasta", periodoHasta],
@@ -669,7 +669,7 @@ function exportarExcel() {
     ],
     [],
     [
-      "Cantidad de estadías",
+      "Cantidad de hospedajes",
       estadiasFiltradas.length,
     ],
     [
@@ -752,12 +752,12 @@ function exportarExcel() {
   XLSX.utils.book_append_sheet(
     libro,
     hoja,
-    "Estadías"
+    "Hospedajes"
   );
 
   XLSX.writeFile(
     libro,
-    "reporte-estadias-petfuncr.xlsx"
+    "reporte-hospedajes-petfuncr.xlsx"
   );
 }
 
@@ -771,7 +771,7 @@ function exportarPDF() {
 
   documento.setFontSize(18);
   documento.text(
-    "PetFunCR - Reporte de estadías",
+    "PetFunCR - Reporte de Hospedajes",
     14,
     15
   );
@@ -797,7 +797,7 @@ function exportarPDF() {
   );
 
   documento.text(
-    `Estadías: ${estadiasFiltradas.length}`,
+    `Hospedajes: ${estadiasFiltradas.length}`,
     14,
     28
   );
@@ -888,7 +888,7 @@ function exportarPDF() {
   });
 
   documento.save(
-    "reporte-estadias-petfuncr.pdf"
+    "reporte-hospedajes-petfuncr.pdf"
   );
 }
 
@@ -928,7 +928,7 @@ return (
       <div className="list-toolbar">
         <div>
           <strong>
-            Reporte de estadías
+            Reporte de hospedajes
           </strong>
 
           <div
@@ -939,7 +939,7 @@ return (
               marginTop: "3px",
             }}
           >
-            Filtra las estadías y revisa sus totales.
+            Filtra los hospedajes y revisa sus totales.
           </div>
         </div>
 
@@ -1117,7 +1117,7 @@ return (
     >
       <div className="card">
         <div className="card-label">
-          Estadías
+          Hospedajes
         </div>
 
         <div className="card-value">
@@ -1179,7 +1179,7 @@ return (
 <div className="list-toolbar">
   <div>
     <strong>
-      📈 Gráficos de estadías e ingresos
+      📈 Gráficos de hospedajes e ingresos
     </strong>
 
     <div
@@ -1260,7 +1260,7 @@ return (
 
       <div>
         <span>
-          Estadías
+          Hospedajes
         </span>
 
         <strong>
@@ -1301,7 +1301,7 @@ return (
       <div className="annual-chart-card">
 
         <div className="annual-chart-title">
-          📊 Estadías por mes
+          📊 Hospedajes por mes
         </div>
 
         <div className="annual-chart">
@@ -1412,7 +1412,7 @@ return (
       <div className="list-toolbar">
         <div>
           <strong>
-            Estadías encontradas
+            Hospedajes encontradas
           </strong>
 
           <div
@@ -1434,7 +1434,7 @@ return (
         </div>
       ) : estadiasFiltradas.length === 0 ? (
         <div className="empty-state">
-          No se encontraron estadías.
+          No se encontraron hospedajes.
         </div>
       ) : (
      

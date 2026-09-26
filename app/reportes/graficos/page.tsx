@@ -295,7 +295,7 @@ export default function GraficosPage() {
             </h1>
 
             <p className="page-description">
-              Gráficos de estadías e ingresos de PetFunCR.
+              Gráficos de hospedajes e ingresos de PetFunCR.
             </p>
           </div>
         </div>
@@ -312,7 +312,7 @@ export default function GraficosPage() {
 
             <div>
               <strong>
-                📈 Gráficos de estadías e ingresos
+                📈 Gráficos de hospedajes e ingresos
               </strong>
 
               <div
@@ -405,7 +405,7 @@ export default function GraficosPage() {
 
                   <div>
                     <span>
-                      Estadías
+                      Hospedajes
                     </span>
 
                     <strong>
@@ -449,7 +449,7 @@ export default function GraficosPage() {
                   <div className="annual-chart-card">
 
                     <div className="annual-chart-title">
-                      📊 Estadías por mes
+                      📊 Hospedajes por mes
                     </div>
 
                     <div className="annual-chart">

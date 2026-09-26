@@ -39,7 +39,7 @@ export default function ReportesPage() {
               margin: "0 0 8px",
             }}
           >
-            Reporte de estadías
+            Reporte de hospedajes
           </h2>
 
           <p
@@ -49,7 +49,7 @@ export default function ReportesPage() {
                 "var(--color-text-secondary)",
             }}
           >
-            Filtra estadías por fecha, tipo,
+            Filtra hospedajes por fecha, tipo,
             estado y pago. Consulta totales y
             exporta a Excel o PDF.
           </p>
@@ -94,7 +94,7 @@ export default function ReportesPage() {
                 "var(--color-text-secondary)",
             }}
           >
-            Información de Estadías y los Ingresos mensuales por año.
+            Información de Hospedajes y los Ingresos mensuales por año.
           </p>
 
           <div
