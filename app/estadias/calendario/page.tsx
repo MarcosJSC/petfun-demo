@@ -547,7 +547,7 @@ function crearEstadiaDesdeDia(
         marginLeft: "6px",
       }}
     >
-      ← Lista de Estadías
+      ← Lista de Hospedajes
     </Link>
   </div>
 </div>
@@ -767,6 +767,27 @@ onClick={(e) => {
 
   <div className="calendar-mobile">
 
+      <div
+    style={{
+      display: "flex",
+      alignItems: "center",
+      gap: "24px",
+    }}
+  >
+    {/* Título */}
+    <h4
+      style={{
+        margin: 0,
+        textTransform: "capitalize",
+      }}
+    >
+       Calendario de {tituloMes}
+<p></p>
+    </h4>
+    
+
+  </div>
+
     <div className="calendar-mobile-header">
       {diasSemana.map((dia) => (
         <div key={dia}>
@@ -893,7 +914,7 @@ onClick={(e) => {
     ← Listado
   </Link>
 </div>
-<p></p>
+
 <div
   style={{
     display: "flex",
@@ -906,24 +927,7 @@ onClick={(e) => {
 >
   {/* IZQUIERDA: Título + Leyenda */}
   
-  <div
-    style={{
-      display: "flex",
-      alignItems: "center",
-      gap: "24px",
-    }}
-  >
-    {/* Título */}
-    <h4
-      style={{
-        margin: 0,
-        textTransform: "capitalize",
-      }}
-    >
-       {tituloMes}
-    </h4>
 
-  </div>
 
   {/* DERECHA: Controles */}
   <div
@@ -1030,7 +1034,7 @@ onClick={(e) => {
         `/estadias?nueva=${fechaDetalle}`;
     }}
   >
-    + Nueva estadía este día
+    + Nuevo hospedaje este día
   </button>
   )}
 </div>
@@ -1040,7 +1044,7 @@ onClick={(e) => {
 
         {estadiasDetalle.length === 0 ? (
           <div className="empty-state">
-            No hay estadías ese día.
+            No hay hospedajes ese día.
           </div>
         ) : (
           <table className="data-table">

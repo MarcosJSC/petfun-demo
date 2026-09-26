@@ -173,7 +173,7 @@ sucursales (
       console.error(error);
 
       setMensaje(
-        "No se pudo cargar la estadía."
+        "No se pudo cargar el hospedaje."
       );
 
       setCargando(false);
@@ -198,7 +198,7 @@ sucursales (
   if (cargando) {
     return (
       <div className="empty-state">
-        Cargando estadía...
+        Cargando hospedaje...
       </div>
     );
   }
@@ -207,12 +207,12 @@ sucursales (
     return (
       <div>
         <h1 className="page-title">
-          Estadía
+          Hospedaje
         </h1>
 
         <div className="empty-state">
           {mensaje ||
-            "No se encontró la estadía."}
+            "No se encontró el hospedaje."}
         </div>
       </div>
     );
@@ -249,7 +249,7 @@ sucursales (
       href="/estadias"
       className="secondary-button"
     >
-      ← Estadías
+      ← Hospedajes
     </Link>
 
 {puede("estadias.editar") && (
@@ -257,7 +257,7 @@ sucursales (
       href={`/estadias?editar=${estadia.id}`}
       className="primary-button"
     >
-      Editar estadía
+      Editar hospedaje
     </Link>
     )}
 
@@ -538,7 +538,7 @@ sucursales (
 
         <div className="list-toolbar">
           <strong>
-            Información de la estadía
+            Información del hospedaje
           </strong>
         </div>
 

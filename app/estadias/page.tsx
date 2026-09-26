@@ -359,7 +359,7 @@ observaciones,
       console.error(error);
 
       setMensaje(
-        "No se pudieron cargar las estadías."
+        "No se pudieron cargar los hospedajes."
       );
 
       setCargando(false);
@@ -644,7 +644,7 @@ async function eliminarEstadia(
   estadia: Estadia
 ) {
   const confirmar = window.confirm(
-    `¿Seguro que deseas eliminar esta estadía de ${
+    `¿Seguro que deseas eliminar este hospedaje de ${
       estadia.perritos?.nombre ?? "este perrito"
     }?\n\nEsta acción no se puede deshacer.`
   );
@@ -662,14 +662,14 @@ async function eliminarEstadia(
     console.error(error);
 
     setMensaje(
-      "No se pudo eliminar la estadía."
+      "No se pudo eliminar el hospedaje."
     );
 
     return;
   }
 
   setMensaje(
-    "Estadía eliminada correctamente."
+    "Hospedaje eliminado correctamente."
   );
 
   await cargarEstadias();
@@ -715,7 +715,7 @@ if (!contextoSucursal.sucursalActivaId) {
   setGuardando(false);
 
   setMensaje(
-    "No hay una sucursal activa disponible para guardar la estadía."
+    "No hay una sucursal activa disponible para guardar el hospedaje."
   );
 
   return;
@@ -778,7 +778,7 @@ if (
     setGuardando(false);
 
     setMensaje(
-      "Selecciona una sucursal activa antes de crear la estadía."
+      "Selecciona una sucursal activa antes de crear el hospedaje."
     );
 
     return;
@@ -908,8 +908,8 @@ sucursal_id:
 
     setMensaje(
       estadiaEditando
-        ? "No se pudo actualizar la estadía."
-        : "No se pudo guardar la estadía."
+        ? "No se pudo actualizar el hospedaje."
+        : "No se pudo guardar el hospedaje."
     );
 
     return;
@@ -917,8 +917,8 @@ sucursal_id:
 
   setMensaje(
     estadiaEditando
-      ? "Estadía actualizada correctamente 🐶"
-      : "Estadía guardada correctamente 🐶"
+      ? "Hospedaje actualizado correctamente 🐶"
+      : "Hospedaje guardado correctamente 🐶"
   );
 
 limpiarFormulario();
@@ -1288,7 +1288,7 @@ useEffect(() => {
       <div className="page-header">
         <div>
           <h1 className="page-title">
-            Estadías
+            Hospedajes
           </h1>
 
           <p className="page-description">
@@ -1315,7 +1315,7 @@ useEffect(() => {
     className="primary-button"
     onClick={abrirModal}
   >
-    + Nueva estadía
+    + Nuevo hospedaje
   </button>
 )}
 </div>
@@ -1332,7 +1332,7 @@ useEffect(() => {
  <div className="list-toolbar">
   <div>
     <strong>
-      Estadías registradas
+      Hospedajes registrados
     </strong>
 
     <div
@@ -1362,16 +1362,16 @@ useEffect(() => {
 
         {cargando ? (
           <div className="empty-state">
-            Cargando estadías...
+            Cargando hospedajes...
           </div>
       
       ) : estadias.length === 0 ? (
   <div className="empty-state">
-    Todavía no hay estadías registradas.
+    Todavía no hay hospedajes registrados.
   </div>
 ) : estadiasFiltradas.length === 0 ? (
   <div className="empty-state">
-    No se encontraron estadías.
+    No se encontraron hospedajes.
   </div>
 ) : (
 
@@ -1742,7 +1742,7 @@ useEffect(() => {
       eliminarEstadia(estadia);
     }}
   >
-    Eliminar estadía
+    Eliminar hospedaje
   </button>
   )}
 </div>
@@ -1817,8 +1817,8 @@ useEffect(() => {
       <div className="modal-header">
    <h2>
   {estadiaEditando
-    ? "Editar estadía"
-    : "Nueva estadía"}
+    ? "Editar hospedaje"
+    : "Nuevo hospedaje"}
 </h2>
 
         <button
@@ -1885,7 +1885,7 @@ useEffect(() => {
 
           <div className="form-group full">
             <label className="form-label">
-              Tipo de estadía *
+              Tipo de hospedaje *
             </label>
 
             <select
@@ -1917,7 +1917,7 @@ useEffect(() => {
 
      <div className="form-group full">
   <label className="form-label">
-    Estado de la estadía
+    Estado del hospedaje
   </label>
 
   <select
@@ -2391,7 +2391,7 @@ onChange={(e) => {
 
 <div className="form-group full">
   <label className="form-label">
-    Alimentación durante la estadía
+    Alimentación durante el hospedaje
   </label>
 
   <textarea
@@ -2417,7 +2417,7 @@ onChange={(e) => {
     onChange={(e) =>
       setObservaciones(e.target.value)
     }
-    placeholder="Notas adicionales de esta estadía..."
+    placeholder="Notas adicionales de este hospedaje..."
   />
 </div>
 
@@ -2432,7 +2432,7 @@ onChange={(e) => {
   ? "Guardando..."
   : estadiaEditando
     ? "Guardar cambios"
-    : "Guardar estadía"}
+    : "Guardar hospedaje"}
 </button>
 
 <button
@@ -2464,7 +2464,7 @@ export default function EstadiasPage() {
     <Suspense
       fallback={
         <div className="empty-state">
-          Cargando estadías...
+          Cargando hospedajes...
         </div>
       }
     >
