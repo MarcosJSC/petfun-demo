@@ -978,6 +978,24 @@ useEffect(() => {
       );
     }
   }
+
+  if (
+    formasPago.length > 0 &&
+    !formaPagoId
+  ) {
+    const formapago =
+      formasPago.find(
+        (estado) =>
+          estado.nombre === "SINPE Móvil"
+      );
+
+    if (formapago) {
+      setFormaPagoId(
+        String(formapago.id)
+      );
+    }
+  }
+
 }, [
   estadosEstadia,
   estadosPago,
