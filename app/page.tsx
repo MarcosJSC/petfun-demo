@@ -274,7 +274,12 @@ const {
 const hoy_d = new Date();
 hoy.setHours(0, 0, 0, 0);
 
-const hoyTexto_d = hoy_d.toISOString().split("T")[0];
+/*const hoyTexto_d = hoy_d.toISOString().split("T")[0];*/
+const hoyTexto_d = hoy_d.toLocaleDateString("en-CA", {
+  timeZone: "America/Costa_Rica"
+});
+
+
 
 let consultaEstadias =
   supabase
@@ -552,17 +557,26 @@ const vacunasFiltradas =
       )
     : vacunasData ?? [];
 
-
+/*
   const hoyTexto =
     hoy.toISOString().split("T")[0];
+*/
+    const hoyTexto = hoy.toLocaleDateString("en-CA", {
+  timeZone: "America/Costa_Rica"
+});
 
    
  let MananaFecha = new Date();
 MananaFecha.setHours(0, 0, 0, 0);
 MananaFecha.setDate(MananaFecha.getDate() + 1);
 
+/*
 const MananaTexto =
     MananaFecha.toISOString().split("T")[0];
+*/
+    const MananaTexto = MananaFecha.toLocaleDateString("en-CA", {
+  timeZone: "America/Costa_Rica"
+});
 
     
 //console.log("FECHA MAÑANA",MananaTexto);
