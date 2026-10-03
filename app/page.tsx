@@ -2445,6 +2445,7 @@ if (desparasitacionesFiltradas) {
       }
     }}
   >
+  <div className="desktop-only">
     <div className="modal">
 
       <div className="modal-header">
@@ -2548,7 +2549,121 @@ if (desparasitacionesFiltradas) {
 
       </div>
     </div>
+  </div>{/*FIN DESKTOP*/}
+  <div className="mobile-only">
+  <div className="modal">
+
+    <div className="modal-header">
+      <h2>
+        Hospedados hoy
+      </h2>
+
+      <button
+        type="button"
+        className="icon-button"
+        onClick={() =>
+          setMostrarHospedadosHoy(false)
+        }
+      >
+        ×
+      </button>
+    </div>
+
+    <div className="modal-body">
+
+      {detalleHospedadosHoy.length === 0 ? (
+        <div className="empty-state">
+          No hay perritos hospedados hoy.
+        </div>
+      ) : (
+        <div className="mobile-list">
+
+          {detalleHospedadosHoy.map((estadia) => (
+            <div
+              key={estadia.id}
+              className="mobile-record-card"
+              onClick={() => {
+                window.location.href =
+                  `/perritos/${estadia.perrito_id}`;
+              }}
+            >
+
+              {/* Perrito + tipo */}
+              <div
+                className="mobile-record-grid"
+                style={{ marginBottom: "0px" }}
+              >
+                <div>
+                  <strong className="mobile-record-title">
+                    🐶 {estadia.perritos?.nombre || "—"}
+                  </strong>
+                </div>
+
+                <div style={{ alignItems: "flex-end" }}>
+                  <strong>
+                    {estadia.tipos_estadia?.nombre || "—"} T. {estadia.dias_totales} R. {estadia.dias_restantes}
+                  </strong>
+                </div>
+              </div>
+
+
+              {/* Fechas y días */}
+              <div className="mobile-record-grid">
+
+                <div>
+                  <span className="mobile-record-label">
+                    Entrada
+                  </span>
+
+                  <strong>
+                    {new Intl.DateTimeFormat("es-CR", {
+                      day: "2-digit",
+                      month: "2-digit",
+                      year: "numeric",
+                    }).format(
+                      new Date(
+                        `${estadia.fecha_entrada}T00:00:00`
+                      )
+                    )}
+                  </strong>
+                </div>
+
+
+                <div>
+                  <span className="mobile-record-label">
+                    Salida
+                  </span>
+
+                  <strong>
+                    {new Intl.DateTimeFormat("es-CR", {
+                      day: "2-digit",
+                      month: "2-digit",
+                      year: "numeric",
+                    }).format(
+                      new Date(
+                        `${estadia.fecha_salida}T00:00:00`
+                      )
+                    )}
+                  </strong>
+                </div>
+
+
+              
+              </div>
+
+
+     
+
+            </div>
+          ))}
+
+        </div>
+      )}
+
+    </div>
   </div>
+</div>{/* FIN MOBILE */}
+    </div>
 )}
 
 {/* MODAL ESTADIAS */}

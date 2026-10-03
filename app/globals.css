@@ -3208,3 +3208,78 @@ padding: 3px;
     min-width: 620px;
   }
 }
+
+
+
+.mobile-card {
+  padding: 14px;
+  margin-bottom: 12px;
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  background: var(--card-background);
+  color: var(--text-color);
+  cursor: pointer;
+}
+
+.mobile-card:active {
+  transform: scale(0.98);
+}
+
+
+/* Perrito + tipo */
+
+.mobile-card-top {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  align-items: center;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.mobile-card-top strong {
+  font-size: 16px;
+}
+
+.mobile-card-top span {
+  text-align: right;
+  font-size: 14px;
+}
+
+
+/* Datos en dos columnas */
+
+.mobile-card-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px 18px;
+  padding: 10px 0;
+}
+
+.mobile-card-grid > div {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+}
+
+.mobile-card-grid span {
+  font-size: 13px;
+  opacity: 0.75;
+}
+
+.mobile-card-grid strong {
+  font-size: 14px;
+  text-align: right;
+}
+
+
+/* Ver ficha */
+
+.mobile-card-footer {
+  padding-top: 9px;
+  border-top: 1px solid var(--border-color);
+  text-align: right;
+  font-size: 13px;
+  opacity: 0.8;
+}
