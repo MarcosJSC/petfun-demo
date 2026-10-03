@@ -2595,10 +2595,7 @@ if (desparasitacionesFiltradas) {
               >
                 <div>
                   <strong className="mobile-record-title">
-                    🐶 {estadia.perritos?.nombre || "—"}
-                             <span className="mobile-record-label">
-                     - {estadia.tipos_estadia?.nombre || "—"} 
-                  </span>
+                    🐶 {estadia.perritos?.nombre || "—"}                    
                   </strong>
           
                 </div>
@@ -2606,11 +2603,13 @@ if (desparasitacionesFiltradas) {
                 <div style={{ alignItems: "flex-end" }}>
                   <span className="mobile-record-label">
                   <strong>
-                    T. {estadia.dias_totales} R. {estadia.dias_restantes}  
+                    {estadia.tipos_estadia?.nombre || "—"} - T: {estadia.dias_totales} R: {estadia.dias_restantes}  
                   </strong>
                    </span>
                 </div>
               </div>
+
+           
 
 
               {/* Fechas y días */}
