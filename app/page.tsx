@@ -1510,7 +1510,7 @@ if (desparasitacionesFiltradas) {
                       className="clickable-row"
                       onClick={() => {
                         window.location.href =
-                          `/perritos/${estadia.perrito_id}`;
+                        `/estadias/${estadia.id}`;
                       }}
                     >
                       <td>
@@ -1591,8 +1591,8 @@ if (desparasitacionesFiltradas) {
                     key={estadia.id}
                     className="mobile-record-card"
                     onClick={() => {
-                      window.location.href =
-                        `/perritos/${estadia.perrito_id}`;
+                       window.location.href =
+                        `/estadias/${estadia.id}`;
                     }}
                   >
 
@@ -1600,7 +1600,7 @@ if (desparasitacionesFiltradas) {
                     <div
                       className="mobile-record-grid"
                       style={{
-                        marginBottom: "14px",
+                        marginBottom: "1px",
                       }}
                     >
 
@@ -1659,10 +1659,7 @@ if (desparasitacionesFiltradas) {
                     </div>
 
 
-                    {/* Acción */}
-                    <div className="mobile-record-action">
-                      Ver ficha del perrito →
-                    </div>
+                
 
                   </div>
                 )
@@ -1743,7 +1740,7 @@ if (desparasitacionesFiltradas) {
                       className="clickable-row"
                       onClick={() => {
                         window.location.href =
-                          `/perritos/${estadia.perrito_id}`;
+                        `/estadias/${estadia.id}`;
                       }}
                     >
                       <td>
@@ -1824,8 +1821,8 @@ if (desparasitacionesFiltradas) {
                     key={estadia.id}
                     className="mobile-record-card"
                     onClick={() => {
-                      window.location.href =
-                        `/perritos/${estadia.perrito_id}`;
+                   window.location.href =
+                        `/estadias/${estadia.id}`;
                     }}
                   >
 
@@ -1833,7 +1830,7 @@ if (desparasitacionesFiltradas) {
                     <div
                       className="mobile-record-grid"
                       style={{
-                        marginBottom: "14px",
+                        marginBottom: "1px",
                       }}
                     >
 
@@ -1892,10 +1889,7 @@ if (desparasitacionesFiltradas) {
                     </div>
 
 
-                    {/* Acción */}
-                    <div className="mobile-record-action">
-                      Ver ficha del perrito →
-                    </div>
+              
 
                   </div>
                 )
@@ -1924,90 +1918,219 @@ if (desparasitacionesFiltradas) {
       }
     }}
   >
-    <div className="modal">
 
-      <div className="modal-header">
-        <h2>
-          Entradas Mañana
-        </h2>
+    {/* =========================
+        VERSIÓN DESKTOP
+    ========================= */}
 
-        <button
-          type="button"
-          className="icon-button"
-          onClick={() =>
-            setMostrarEntradasM(false)
-          }
-        >
-          ×
-        </button>
+    <div className="desktop-only">
+      <div className="modal">
+
+        <div className="modal-header">
+          <h2>
+            Entradas Mañana
+          </h2>
+
+          <button
+            type="button"
+            className="icon-button"
+            onClick={() =>
+              setMostrarEntradasM(false)
+            }
+          >
+            ×
+          </button>
+        </div>
+
+        <div className="modal-body">
+
+          {detalleEntradasM.length === 0 ? (
+            <div className="empty-state">
+              No hay entradas programadas para mañana.
+            </div>
+          ) : (
+            <table className="data-table">
+
+              <thead>
+                <tr>
+                  <th>Perrito</th>
+                  <th>Tipo</th>
+                  <th>Hora entrada</th>
+                  <th>Estado</th>
+                </tr>
+              </thead>
+
+              <tbody>
+                {detalleEntradasM.map(
+                  (estadia) => (
+                    <tr
+                      key={estadia.id}
+                      className="clickable-row"
+                      onClick={() => {
+                         window.location.href =
+                        `/estadias/${estadia.id}`;
+                      }}
+                    >
+                      <td>
+                        <strong>
+                          🐶{" "}
+                          {estadia.perritos?.nombre ||
+                            "—"}
+                        </strong>
+                      </td>
+
+                      <td>
+                        {estadia.tipos_estadia
+                          ?.nombre || "—"}
+                      </td>
+
+                      <td>
+                        {estadia.hora_entrada
+                          ? estadia.hora_entrada.slice(
+                              0,
+                              5
+                            )
+                          : "—"}
+                      </td>
+
+                      <td>
+                        {estadia.estados_estadia
+                          ?.nombre || "—"}
+                      </td>
+                    </tr>
+                  )
+                )}
+              </tbody>
+
+            </table>
+          )}
+
+        </div>
+
       </div>
+    </div>
 
-      <div className="modal-body">
 
-        {detalleEntradasM.length === 0 ? (
-          <div className="empty-state">
-            No hay entradas programadas para mañana.
-          </div>
-        ) : (
-          <table className="data-table">
+    {/* =========================
+        VERSIÓN MÓVIL
+    ========================= */}
 
-            <thead>
-              <tr>
-                <th>Perrito</th>
-                <th>Tipo</th>
-                <th>Hora entrada</th>
-                <th>Estado</th>
-              </tr>
-            </thead>
+    <div className="mobile-only">
+      <div className="modal">
 
-            <tbody>
+        <div className="modal-header">
+          <h2>
+            Entradas Mañana
+          </h2>
+
+          <button
+            type="button"
+            className="icon-button"
+            onClick={() =>
+              setMostrarEntradasM(false)
+            }
+          >
+            ×
+          </button>
+        </div>
+
+        <div className="modal-body">
+
+          {detalleEntradasM.length === 0 ? (
+            <div className="empty-state">
+              No hay entradas programadas para mañana.
+            </div>
+          ) : (
+            <div className="mobile-list">
+
               {detalleEntradasM.map(
                 (estadia) => (
-                  <tr
+                  <div
                     key={estadia.id}
-                    className="clickable-row"
+                    className="mobile-record-card"
                     onClick={() => {
-                      window.location.href =
-                        `/perritos/${estadia.perrito_id}`;
+                       window.location.href =
+                        `/estadias/${estadia.id}`;
                     }}
                   >
-                    <td>
-                      <strong>
-                        🐶{" "}
-                        {estadia.perritos?.nombre ||
-                          "—"}
-                      </strong>
-                    </td>
 
-                    <td>
-                      {estadia.tipos_estadia
-                        ?.nombre || "—"}
-                    </td>
+                    {/* Perrito + tipo */}
+                    <div
+                      className="mobile-record-grid"
+                      style={{
+                        marginBottom: "1px",
+                      }}
+                    >
 
-                    <td>
-                      {estadia.hora_entrada
-                        ? estadia.hora_entrada.slice(
-                            0,
-                            5
-                          )
-                        : "—"}
-                    </td>
+                      <div>
+                        <strong className="mobile-record-title">
+                          🐶{" "}
+                          {estadia.perritos?.nombre ||
+                            "—"}
+                        </strong>
+                      </div>
 
-                    <td>
-                      {estadia.estados_estadia
-                        ?.nombre || "—"}
-                    </td>
-                  </tr>
+                      <div
+                        style={{
+                          alignItems: "flex-end",
+                        }}
+                      >
+                        <strong>
+                          {estadia.tipos_estadia
+                            ?.nombre || "—"}
+                        </strong>
+                      </div>
+
+                    </div>
+
+
+                    {/* Hora + estado */}
+                    <div className="mobile-record-grid">
+
+                      <div>
+                        <span className="mobile-record-label">
+                          Hora de entrada
+                        </span>
+
+                        <strong>
+                          {estadia.hora_entrada
+                            ? estadia.hora_entrada.slice(
+                                0,
+                                5
+                              )
+                            : "—"}
+                        </strong>
+                      </div>
+
+
+                      <div>
+                        <span className="mobile-record-label">
+                          Estado
+                        </span>
+
+                        <strong>
+                          {estadia.estados_estadia
+                            ?.nombre || "—"}
+                        </strong>
+                      </div>
+
+                    </div>
+
+
+              
+
+                  </div>
                 )
               )}
-            </tbody>
 
-          </table>
-        )}
+            </div>
+          )}
+
+        </div>
 
       </div>
-
     </div>
+
   </div>
 )}
 
@@ -2015,6 +2138,7 @@ if (desparasitacionesFiltradas) {
 {/* FIN MODAL ENTRADAS MAÑANA */}
 
 {/* MODAL SALIDAS MAÑANA */}
+
 
 {mostrarSalidasM && (
   <div
@@ -2025,93 +2149,221 @@ if (desparasitacionesFiltradas) {
       }
     }}
   >
-    <div className="modal">
 
-      <div className="modal-header">
-        <h2>
-          Salidas Mañana
-        </h2>
+    {/* =========================
+        VERSIÓN DESKTOP
+    ========================= */}
 
-        <button
-          type="button"
-          className="icon-button"
-          onClick={() =>
-            setMostrarSalidasM(false)
-          }
-        >
-          ×
-        </button>
+    <div className="desktop-only">
+      <div className="modal">
+
+        <div className="modal-header">
+          <h2>
+            Salidas Mañana
+          </h2>
+
+          <button
+            type="button"
+            className="icon-button"
+            onClick={() =>
+              setMostrarSalidasM(false)
+            }
+          >
+            ×
+          </button>
+        </div>
+
+        <div className="modal-body">
+
+          {detalleSalidasM.length === 0 ? (
+            <div className="empty-state">
+              No hay salidas programadas para mañana.
+            </div>
+          ) : (
+            <table className="data-table">
+
+              <thead>
+                <tr>
+                  <th>Perrito</th>
+                  <th>Tipo</th>
+                  <th>Hora salida</th>
+                  <th>Estado</th>
+                </tr>
+              </thead>
+
+              <tbody>
+                {detalleSalidasM.map(
+                  (estadia) => (
+                    <tr
+                      key={estadia.id}
+                      className="clickable-row"
+                      onClick={() => {
+                         window.location.href =
+                        `/estadias/${estadia.id}`;
+                      }}
+                    >
+                      <td>
+                        <strong>
+                          🐶{" "}
+                          {estadia.perritos?.nombre ||
+                            "—"}
+                        </strong>
+                      </td>
+
+                      <td>
+                        {estadia.tipos_estadia
+                          ?.nombre || "—"}
+                      </td>
+
+                      <td>
+                        {estadia.hora_salida
+                          ? estadia.hora_salida.slice(
+                              0,
+                              5
+                            )
+                          : "—"}
+                      </td>
+
+                      <td>
+                        {estadia.estados_estadia
+                          ?.nombre || "—"}
+                      </td>
+                    </tr>
+                  )
+                )}
+              </tbody>
+
+            </table>
+          )}
+
+        </div>
+
       </div>
+    </div>
 
-      <div className="modal-body">
 
-        {detalleSalidasM.length === 0 ? (
-          <div className="empty-state">
-            No hay salidas programadas para mañana.
-          </div>
-        ) : (
-          <table className="data-table">
+    {/* =========================
+        VERSIÓN MÓVIL
+    ========================= */}
 
-            <thead>
-              <tr>
-                <th>Perrito</th>
-                <th>Tipo</th>
-                <th>Hora entrada</th>
-                <th>Estado</th>
-              </tr>
-            </thead>
+    <div className="mobile-only">
+      <div className="modal">
 
-            <tbody>
+        <div className="modal-header">
+          <h2>
+            Salidas Mañana
+          </h2>
+
+          <button
+            type="button"
+            className="icon-button"
+            onClick={() =>
+              setMostrarSalidasM(false)
+            }
+          >
+            ×
+          </button>
+        </div>
+
+        <div className="modal-body">
+
+          {detalleSalidasM.length === 0 ? (
+            <div className="empty-state">
+              No hay salidas programadas para mañana.
+            </div>
+          ) : (
+            <div className="mobile-list">
+
               {detalleSalidasM.map(
                 (estadia) => (
-                  <tr
+                  <div
                     key={estadia.id}
-                    className="clickable-row"
+                    className="mobile-record-card"
                     onClick={() => {
-                      window.location.href =
-                        `/perritos/${estadia.perrito_id}`;
+                       window.location.href =
+                        `/estadias/${estadia.id}`;
                     }}
                   >
-                    <td>
-                      <strong>
-                        🐶{" "}
-                        {estadia.perritos?.nombre ||
-                          "—"}
-                      </strong>
-                    </td>
 
-                    <td>
-                      {estadia.tipos_estadia
-                        ?.nombre || "—"}
-                    </td>
+                    {/* Perrito + tipo */}
+                    <div
+                      className="mobile-record-grid"
+                      style={{
+                        marginBottom: "1px",
+                      }}
+                    >
 
-                    <td>
-                      {estadia.hora_entrada
-                        ? estadia.hora_entrada.slice(
-                            0,
-                            5
-                          )
-                        : "—"}
-                    </td>
+                      <div>
+                        <strong className="mobile-record-title">
+                          🐶{" "}
+                          {estadia.perritos?.nombre ||
+                            "—"}
+                        </strong>
+                      </div>
 
-                    <td>
-                      {estadia.estados_estadia
-                        ?.nombre || "—"}
-                    </td>
-                  </tr>
+                      <div
+                        style={{
+                          alignItems: "flex-end",
+                        }}
+                      >
+                        <strong>
+                          {estadia.tipos_estadia
+                            ?.nombre || "—"}
+                        </strong>
+                      </div>
+
+                    </div>
+
+
+                    {/* Hora + estado */}
+                    <div className="mobile-record-grid">
+
+                      <div>
+                        <span className="mobile-record-label">
+                          Hora de salida
+                        </span>
+
+                        <strong>
+                          {estadia.hora_salida
+                            ? estadia.hora_salida.slice(
+                                0,
+                                5
+                              )
+                            : "—"}
+                        </strong>
+                      </div>
+
+
+                      <div>
+                        <span className="mobile-record-label">
+                          Estado
+                        </span>
+
+                        <strong>
+                          {estadia.estados_estadia
+                            ?.nombre || "—"}
+                        </strong>
+                      </div>
+
+                    </div>
+
+
+              
+
+                  </div>
                 )
               )}
-            </tbody>
 
-          </table>
-        )}
+            </div>
+          )}
+
+        </div>
 
       </div>
-
     </div>
+
   </div>
 )}
-
 
 {/* FIN MODAL SALIDAS MAÑANA */}
 
@@ -2756,8 +3008,8 @@ if (desparasitacionesFiltradas) {
                     key={estadia.id}
                     className="clickable-row"
                     onClick={() => {
-                      window.location.href =
-                        `/perritos/${estadia.perrito_id}`;
+                     window.location.href =
+                    `/estadias/${estadia.id}`;
                     }}
                   >
                     <td>
@@ -2848,8 +3100,8 @@ if (desparasitacionesFiltradas) {
               key={estadia.id}
               className="mobile-record-card"
               onClick={() => {
-                window.location.href =
-                  `/perritos/${estadia.perrito_id}`;
+               window.location.href =
+                `/estadias/${estadia.id}`;
               }}
             >
 
