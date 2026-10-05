@@ -244,6 +244,20 @@ function obtenerEstiloTipo(
  const hoy = new Date();
   hoy.setHours(0, 0, 0, 0);
 
+  const horaActual = new Intl.DateTimeFormat("es-CR", {
+  hour: "2-digit",
+  minute: "2-digit",
+}).format(new Date());
+
+const fechaHoraActual = new Intl.DateTimeFormat("es-CR", {
+  day: "2-digit",
+  month: "2-digit",
+  year: "numeric",
+  /*hour: "2-digit",
+  minute: "2-digit",*/
+  timeZone: "America/Costa_Rica",
+}).format(new Date());
+
 // ========================================
 // CARGA DEL DASHBOARD
 // ========================================
@@ -343,7 +357,9 @@ let consultaEstadias =
         nombre
       )
     `)
-     .or(`fecha_entrada.gte.${hoyTexto_d},fecha_salida.gte.${hoyTexto_d}`)
+    .or(`fecha_entrada.gte.${hoyTexto_d},fecha_salida.gte.${hoyTexto_d}`)
+    .order("dias_restantes", { ascending: true })
+    .order("nombre", { ascending: true, referencedTable: "perritos" });
     ;
 
 if (
@@ -1034,7 +1050,7 @@ if (desparasitacionesFiltradas) {
       </h1>
 
       <p className="page-description">
-        Resumen general de PetFunCR
+         Resumen general de PetFunCR al {fechaHoraActual}
       </p>
       
 <section style={{ marginBottom: "32px" }}>
