@@ -231,6 +231,7 @@ const [cargando, setCargando] =
         nombre
       )   
     `)
+    .order("fecha_entrada", { ascending: true })
     .neq(
       "estados_estadia.nombre",
       "Cancelada"
