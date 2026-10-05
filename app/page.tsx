@@ -3159,7 +3159,7 @@ if (desparasitacionesFiltradas) {
                             alignItems: "center",
                             padding: "5px 9px",
                             borderRadius: "999px",
-                            fontSize: "12px",
+                            fontSize: "11px",
                             fontWeight: 600,
 
                             background:
