@@ -3153,38 +3153,14 @@ if (desparasitacionesFiltradas) {
                 </div>
 
                 <div style={{ alignItems: "flex-end" }}>
-                 <span
-                          style={{
-                            display: "inline-flex",
-                            alignItems: "center",
-                            padding: "5px 9px",
-                            borderRadius: "999px",
-                            fontSize: "11px",
-                            fontWeight: 600,
-
-                            background:
-                              obtenerEstiloTipo(
-                                estadia.tipos_estadia?.nombre
-                              ).background,
-
-                            color:
-                              obtenerEstiloTipo(
-                                estadia.tipos_estadia?.nombre
-                              ).color,
-                          }}
-                        >
-                           {estadia.tipos_estadia?.nombre || "—"} - T: {estadia.dias_totales} R: {estadia.dias_restantes}  
-                        </span>
-
-
-
-
+                  <span className="mobile-record-label">
+                  <strong>
+                    {estadia.tipos_estadia?.nombre || "—"} - T: {estadia.dias_totales} R: {estadia.dias_restantes}  
+                  </strong>
+                   </span>
                 </div>
               </div>
-
-           
-
-
+ 
               {/* Fechas y días */}
               <div className="mobile-record-grid">
 
