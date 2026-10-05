@@ -204,6 +204,41 @@ const [
   setMostrarProximosCumpleaneros,
 ] = useState(false);
 
+
+function obtenerEstiloTipo(
+  tipo: string | undefined
+) {
+  if (tipo === "Hotel") {
+    return {
+      background: "rgba(124, 58, 237, 0.14)",
+      color: "#8b5cf6",
+    };
+  }
+
+  if (tipo === "Guardería") {
+    return {
+      background: "rgba(34, 197, 94, 0.14)",
+      color: "#22c55e",
+    };
+  }
+
+  if (tipo === "Mixta") {
+    return {
+      background: "rgba(59, 130, 246, 0.14)",
+      color: "#3b82f6",
+    };
+  }
+
+  return {
+    background:
+      "var(--color-surface-secondary)",
+    color: "var(--color-text)",
+  };
+}
+
+/*OBTENER ESTILO*/
+
+
 // FECHA ACTUAL
 
  const hoy = new Date();
@@ -3118,11 +3153,32 @@ if (desparasitacionesFiltradas) {
                 </div>
 
                 <div style={{ alignItems: "flex-end" }}>
-                  <span className="mobile-record-label">
-                  <strong>
-                    {estadia.tipos_estadia?.nombre || "—"} - T: {estadia.dias_totales} R: {estadia.dias_restantes}  
-                  </strong>
-                   </span>
+                 <span
+                          style={{
+                            display: "inline-flex",
+                            alignItems: "center",
+                            padding: "5px 9px",
+                            borderRadius: "999px",
+                            fontSize: "12px",
+                            fontWeight: 600,
+
+                            background:
+                              obtenerEstiloTipo(
+                                estadia.tipos_estadia?.nombre
+                              ).background,
+
+                            color:
+                              obtenerEstiloTipo(
+                                estadia.tipos_estadia?.nombre
+                              ).color,
+                          }}
+                        >
+                           {estadia.tipos_estadia?.nombre || "—"} - T: {estadia.dias_totales} R: {estadia.dias_restantes}  
+                        </span>
+
+
+
+
                 </div>
               </div>
 

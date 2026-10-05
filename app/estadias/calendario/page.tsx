@@ -952,8 +952,6 @@ onClick={(e) => {
       </section>
 
  
-        
-
 {mostrarDetalleDia && (
   <div
     className="modal-backdrop"
@@ -963,193 +961,409 @@ onClick={(e) => {
       }
     }}
   >
-    <div className="modal">
 
-      <div className="modal-header">
-        <h2>
-          Ocupación del día
-        </h2>
+    {/* ========================================
+        VERSIÓN DESKTOP
+    ======================================== */}
 
-        <button
-          type="button"
-          className="icon-button"
-          onClick={() =>
-            setMostrarDetalleDia(false)
-          }
-        >
-          ×
-        </button>
-      </div>
+    <div className="desktop-only">
+      <div className="modal">
 
-      <div className="modal-body">
+        <div className="modal-header">
+          <h2>
+            Ocupación del día
+          </h2>
 
-        <div
-          style={{
-            marginBottom: "16px",
-            color:
-              "var(--color-text-secondary)",
-          }}
-        >
-     
-
-  {/* controles: ← Hoy → + mes */}
-
- 
-
-  {/* leyenda */}
-
-  {/* calendario */}
-
-
-          {fechaDetalle
-            ? new Intl.DateTimeFormat(
-                "es-CR",
-                {
-                  day: "2-digit",
-                  month: "long",
-                  year: "numeric",
-                }
-              ).format(
-                new Date(
-                  `${fechaDetalle}T00:00:00`
-                )
-              )
-            : ""}
+          <button
+            type="button"
+            className="icon-button"
+            onClick={() =>
+              setMostrarDetalleDia(false)
+            }
+          >
+            ×
+          </button>
         </div>
 
-        <div
-  style={{
-    display: "flex",
-    justifyContent: "flex-end",
-    marginBottom: "14px",
-  }}
->
+        <div className="modal-body">
 
-{puede("estadias.crear") && (
-  <button
-    type="button"
-    className="primary-button"
-    onClick={() => {
-      window.location.href =
-        `/estadias?nueva=${fechaDetalle}`;
-    }}
-  >
-    + Nuevo hospedaje este día
-  </button>
-  )}
-</div>
-
-
-
-
-        {estadiasDetalle.length === 0 ? (
-          <div className="empty-state">
-            No hay hospedajes ese día.
-          </div>
-        ) : (
-          <table className="data-table">
-
-            <thead>
-              <tr>
-                <th>Perrito</th>
-                <th>Tipo</th>
-                <th>Entrada</th>
-                <th>Salida</th>
-                <th>Sucursal</th>
-              </tr>
-            </thead>
-
-            <tbody>
-              {estadiasDetalle.map(
-                (estadia) => (
-                  <tr
-                    key={estadia.id}
-                    className="clickable-row"
-            onClick={() => {
-  window.location.href =
-    `/estadias/${estadia.id}`;
-}}
-                  >
-                    <td>
-                      <strong>
-                        🐶{" "}
-                        {estadia.perritos?.nombre ||
-                          "—"}
-                      </strong>
-                    </td>
-
-<td>
-  <span
-    style={{
-      display: "inline-flex",
-      alignItems: "center",
-      padding: "5px 9px",
-      borderRadius: "999px",
-      fontSize: "12px",
-      fontWeight: 600,
-
-      background:
-        obtenerEstiloTipo(
-          estadia.tipos_estadia?.nombre
-        ).background,
-
-      color:
-        obtenerEstiloTipo(
-          estadia.tipos_estadia?.nombre
-        ).color,
-    }}
-  >
-    {estadia.tipos_estadia
-      ?.nombre || "—"}
-  </span>
-</td>
-
-                    <td>
-                      {new Intl.DateTimeFormat(
-                        "es-CR",
-                        {
-                          day: "2-digit",
-                          month: "2-digit",
-                          year: "numeric",
-                        }
-                      ).format(
-                        new Date(
-                          `${estadia.fecha_entrada}T00:00:00`
-                        )
-                      )}
-                    </td>
-
-                    <td>
-                      {new Intl.DateTimeFormat(
-                        "es-CR",
-                        {
-                          day: "2-digit",
-                          month: "2-digit",
-                          year: "numeric",
-                        }
-                      ).format(
-                        new Date(
-                          `${estadia.fecha_salida}T00:00:00`
-                        )
-                      )}
-                    </td>
-    <td>
-  <span className="branch-status active">
-    {estadia.sucursales?.nombre || "—"}
-  </span>
-</td>
-                  </tr>
+          <div
+            style={{
+              marginBottom: "16px",
+              color:
+                "var(--color-text-secondary)",
+            }}
+          >
+            {fechaDetalle
+              ? new Intl.DateTimeFormat(
+                  "es-CR",
+                  {
+                    day: "2-digit",
+                    month: "long",
+                    year: "numeric",
+                  }
+                ).format(
+                  new Date(
+                    `${fechaDetalle}T00:00:00`
+                  )
                 )
-              )}
-            </tbody>
+              : ""}
+          </div>
 
-          </table>
-        )}
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "flex-end",
+              marginBottom: "14px",
+            }}
+          >
+            {puede("estadias.crear") && (
+              <button
+                type="button"
+                className="primary-button"
+                onClick={() => {
+                  window.location.href =
+                    `/estadias?nueva=${fechaDetalle}`;
+                }}
+              >
+                + Nuevo hospedaje este día
+              </button>
+            )}
+          </div>
 
+          {estadiasDetalle.length === 0 ? (
+            <div className="empty-state">
+              No hay hospedajes ese día.
+            </div>
+          ) : (
+            <table className="data-table">
+
+              <thead>
+                <tr>
+                  <th>Perrito</th>
+                  <th>Tipo</th>
+                  <th>Entrada</th>
+                  <th>Salida</th>
+                  <th>Sucursal</th>
+                </tr>
+              </thead>
+
+              <tbody>
+                {estadiasDetalle.map(
+                  (estadia) => (
+                    <tr
+                      key={estadia.id}
+                      className="clickable-row"
+                      onClick={() => {
+                        window.location.href =
+                          `/estadias/${estadia.id}`;
+                      }}
+                    >
+
+                      <td>
+                        <strong>
+                          🐶{" "}
+                          {estadia.perritos?.nombre ||
+                            "—"}
+                        </strong>
+                      </td>
+
+                      <td>
+                        <span
+                          style={{
+                            display: "inline-flex",
+                            alignItems: "center",
+                            padding: "5px 9px",
+                            borderRadius: "999px",
+                            fontSize: "12px",
+                            fontWeight: 600,
+
+                            background:
+                              obtenerEstiloTipo(
+                                estadia.tipos_estadia?.nombre
+                              ).background,
+
+                            color:
+                              obtenerEstiloTipo(
+                                estadia.tipos_estadia?.nombre
+                              ).color,
+                          }}
+                        >
+                          {estadia.tipos_estadia
+                            ?.nombre || "—"}
+                        </span>
+                      </td>
+
+                      <td>
+                        {new Intl.DateTimeFormat(
+                          "es-CR",
+                          {
+                            day: "2-digit",
+                            month: "2-digit",
+                            year: "numeric",
+                          }
+                        ).format(
+                          new Date(
+                            `${estadia.fecha_entrada}T00:00:00`
+                          )
+                        )}
+                      </td>
+
+                      <td>
+                        {new Intl.DateTimeFormat(
+                          "es-CR",
+                          {
+                            day: "2-digit",
+                            month: "2-digit",
+                            year: "numeric",
+                          }
+                        ).format(
+                          new Date(
+                            `${estadia.fecha_salida}T00:00:00`
+                          )
+                        )}
+                      </td>
+
+                      <td>
+                        <span className="branch-status active">
+                          {estadia.sucursales?.nombre ||
+                            "—"}
+                        </span>
+                      </td>
+
+                    </tr>
+                  )
+                )}
+              </tbody>
+
+            </table>
+          )}
+
+        </div>
       </div>
     </div>
+
+
+    {/* ========================================
+        VERSIÓN MÓVIL
+    ======================================== */}
+
+    <div className="mobile-only">
+      <div className="modal">
+
+        <div className="modal-header">
+          <h2>
+            Ocupación del día
+          </h2>
+
+          <button
+            type="button"
+            className="icon-button"
+            onClick={() =>
+              setMostrarDetalleDia(false)
+            }
+          >
+            ×
+          </button>
+        </div>
+
+        <div className="modal-body">
+
+          <div
+            style={{
+              marginBottom: "10px",
+              color:
+                "var(--color-text-secondary)",
+            }}
+          >
+            {fechaDetalle
+              ? new Intl.DateTimeFormat(
+                  "es-CR",
+                  {
+                    day: "2-digit",
+                    month: "long",
+                    year: "numeric",
+                  }
+                ).format(
+                  new Date(
+                    `${fechaDetalle}T00:00:00`
+                  )
+                )
+              : ""}
+          </div>
+
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "flex-end",
+              marginBottom: "5px",
+            }}
+          >
+            {puede("estadias.crear") && (
+              <button
+                type="button"
+                className="primary-button"
+                onClick={() => {
+                  window.location.href =
+                    `/estadias?nueva=${fechaDetalle}`;
+                }}
+              >
+                + Nuevo hospedaje este día
+              </button>
+            )}
+          </div>
+
+          {estadiasDetalle.length === 0 ? (
+            <div className="empty-state">
+              No hay hospedajes ese día.
+            </div>
+          ) : (
+            <div className="mobile-list">
+
+              {estadiasDetalle.map(
+                (estadia) => (
+                  <div
+                    key={estadia.id}
+                    className="mobile-record-card"
+                    onClick={() => {
+                      window.location.href =
+                        `/estadias/${estadia.id}`;
+                    }}
+                  >
+
+                    {/* Perrito + tipo */}
+                    <div
+                      className="mobile-record-grid"
+                      style={{
+                        marginBottom: "1px",
+                      }}
+                    >
+
+                      <div>
+                        <strong className="mobile-record-title">
+                          🐶{" "}
+                          {estadia.perritos?.nombre ||
+                            "—"}
+                        </strong>
+                      </div>
+
+                      <div
+                        style={{
+                          alignItems: "flex-end",
+                        }}
+                      >
+                        <span
+                          style={{
+                            display: "inline-flex",
+                            alignItems: "center",
+                            padding: "5px 9px",
+                            borderRadius: "999px",
+                            fontSize: "12px",
+                            fontWeight: 600,
+
+                            background:
+                              obtenerEstiloTipo(
+                                estadia.tipos_estadia?.nombre
+                              ).background,
+
+                            color:
+                              obtenerEstiloTipo(
+                                estadia.tipos_estadia?.nombre
+                              ).color,
+                          }}
+                        >
+                          {estadia.tipos_estadia
+                            ?.nombre || "—"}
+                        </span>
+                      </div>
+
+                    </div>
+
+
+                    {/* Entrada + salida */}
+                    <div className="mobile-record-grid">
+
+                      <div>
+                        <span className="mobile-record-label">
+                          Entrada
+                        </span>
+
+                        <strong>
+                          {new Intl.DateTimeFormat(
+                            "es-CR",
+                            {
+                              day: "2-digit",
+                              month: "2-digit",
+                              year: "numeric",
+                            }
+                          ).format(
+                            new Date(
+                              `${estadia.fecha_entrada}T00:00:00`
+                            )
+                          )}
+                        </strong>
+                      </div>
+
+
+                      <div>
+                        <span className="mobile-record-label">
+                          Salida
+                        </span>
+
+                        <strong>
+                          {new Intl.DateTimeFormat(
+                            "es-CR",
+                            {
+                              day: "2-digit",
+                              month: "2-digit",
+                              year: "numeric",
+                            }
+                          ).format(
+                            new Date(
+                              `${estadia.fecha_salida}T00:00:00`
+                            )
+                          )}
+                        </strong>
+                      </div>
+
+
+                      {/* Sucursal 
+                      <div className="mobile-record-full">
+
+                        <span className="mobile-record-label">
+                          Sucursal
+                        </span>
+
+                        <div>
+                          <span className="branch-status active">
+                            {estadia.sucursales?.nombre ||
+                              "—"}
+                          </span>
+                        </div>
+
+                      </div>*/}
+
+                    </div>
+
+
+                    {/* Acción 
+                    <div className="mobile-record-action">
+                      Ver ficha del perrito →
+                    </div>*/}
+
+                  </div>
+                )
+              )}
+
+            </div>
+          )}
+
+        </div>
+      </div>
+    </div>
+
   </div>
-)}
+)}        
 
     </main>
   );
