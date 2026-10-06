@@ -371,6 +371,20 @@ textarea {
   outline: none;
 }
 
+.search-input-modal {
+  width: 100%;
+  max-width: none;
+    padding: 10px 12px;
+
+  border: 1px solid var(--color-border);
+  border-radius: 9px;
+
+  background: var(--color-surface-secondary);
+  color: var(--color-text);
+
+  outline: none;
+}
+
 .search-input:focus {
   border-color: var(--color-primary);
 }

@@ -68,6 +68,24 @@ function PerritosContent() {
   const [propietarios, setPropietarios] =
     useState<Propietario[]>([]);
 
+const [busquedaPropietario, setBusquedaPropietario] =
+  useState("");
+
+const [mostrarPropietarios, setMostrarPropietarios] =
+  useState(false);
+
+  const propietariosFiltrados = propietarios.filter(
+  (propietario) => {
+    const nombreCompleto =
+      `${propietario.nombre} ${propietario.apellidos}`.toLowerCase();
+
+    return nombreCompleto.includes(
+      busquedaPropietario.toLowerCase()
+    );
+  }
+);
+
+
   const [razas, setRazas] =
     useState<Raza[]>([]);
 
@@ -101,6 +119,7 @@ const [precioGuarderia, setPrecioGuarderia] =
   const [busqueda, setBusqueda] =
     useState("");
 
+
   const [mensaje, setMensaje] =
     useState("");
 
@@ -112,6 +131,9 @@ const [precioGuarderia, setPrecioGuarderia] =
 
   const [fotosPerritos, setFotosPerritos] =
   useState<Record<number, string>>({});
+
+
+  
 
 const registrosPorPagina = 7;
 
@@ -372,6 +394,8 @@ useEffect(() => {
     setRazaId("");
     setPrecioHotel("");
 setPrecioGuarderia("");
+setBusquedaPropietario("");
+
 
     if (propietarioDesdeUrl) {
       setPropietarioId(propietarioDesdeUrl);
@@ -519,6 +543,8 @@ sucursal_id:
 
     await cargarPerritos();
   }
+
+ 
 
 const perritosFiltrados =
   useMemo(() => {
@@ -955,44 +981,54 @@ const perritosPaginados =
               <form
                 onSubmit={guardarPerrito}
               >
+ 
 
                 <div className="form-grid">
 
+
                   <div className="form-group full">
 
-                    <label className="form-label">
-                      Propietario *
-                    </label>
 
-                    <select
-                      className="form-select"
-                      value={propietarioId}
-                      onChange={(e) =>
-                        setPropietarioId(
-                          e.target.value
-                        )
-                      }
-                      required
-                    >
-                      <option value="">
-                        Selecciona propietario
-                      </option>
 
-                      {propietarios.map(
-                        (propietario) => (
+  <input
+  className="search-input-modal"
+  placeholder="Buscar propietario..."
+  value={busquedaPropietario}
+  onChange={(e) =>
+    setBusquedaPropietario(e.target.value)
+  }
+/>
 
-                          <option
-                            key={propietario.id}
-                            value={propietario.id}
-                          >
-                            {propietario.nombre}{" "}
-                            {propietario.apellidos}
-                          </option>
+  
 
-                        )
-                      )}
+<label className="form-label">
+  Propietario *
+</label>
 
-                    </select>
+<select
+  className="form-select"
+  value={propietarioId}
+  onChange={(e) =>
+    setPropietarioId(e.target.value)
+  }
+  required
+>
+  <option value="">
+    Selecciona propietario
+  </option>
+
+  {propietariosFiltrados.map(
+    (propietario) => (
+      <option
+        key={propietario.id}
+        value={propietario.id}
+      >
+        {propietario.nombre}{" "}
+        {propietario.apellidos}
+      </option>
+    )
+  )}
+</select>
 
                   </div>
 
