@@ -113,7 +113,7 @@ const [precioGuarderia, setPrecioGuarderia] =
   const [fotosPerritos, setFotosPerritos] =
   useState<Record<number, string>>({});
 
-const registrosPorPagina = 8;
+const registrosPorPagina = 7;
 
 const {
   puede,
@@ -609,8 +609,7 @@ const perritosPaginados =
           </h1>
 
           <p className="page-description">
-            Administra los perritos registrados
-            en PetFunCR.
+            Administra los perritos registrados en PetFunCR.
           </p>
         </div>
 

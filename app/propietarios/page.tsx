@@ -321,7 +321,7 @@ return (
 const [paginaActual, setPaginaActual] =
   useState(1);
 
-const registrosPorPagina = 8;
+const registrosPorPagina = 11;
 
 const totalPaginas =
   Math.max(

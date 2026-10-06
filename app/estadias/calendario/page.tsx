@@ -705,8 +705,8 @@ onClick={(e) => {
       obtenerEstiloTipo(
         estadia.tipos_estadia?.nombre
       ).background,
-
-      color: "white",
+      /*color: "black",*/
+      color: "var(--color-text)",
 /*
     color:
       obtenerEstiloTipo(
