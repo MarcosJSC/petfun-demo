@@ -3297,3 +3297,1670 @@ padding: 3px;
   font-size: 13px;
   opacity: 0.8;
 }
+
+
+/* =========================================
+   PÁGINA PÚBLICA DE RESERVAS PETFUNCR
+   ========================================= */
+
+.reserva-publica {
+  min-height: 100vh;
+  padding: 0 24px 28px;
+  color: var(--color-text);
+  background: var(--color-background);
+}
+
+.reserva-publica-header {
+  width: min(1240px, 100%);
+  min-height: 88px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.reserva-publica-marca {
+  display: inline-flex;
+  align-items: center;
+  gap: 13px;
+  color: var(--color-text);
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.reserva-publica-marca img {
+  display: block;
+  width: 62px;
+  height: 62px;
+  object-fit: contain;
+}
+
+.reserva-publica-marca span {
+  color: var(--color-text-secondary);
+  font-size: 13px;
+}
+
+.reserva-publica-acceso {
+  padding: 11px 18px;
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  color: var(--color-text);
+  text-decoration: none;
+  font-weight: 600;
+  transition: background 0.2s ease;
+}
+
+.reserva-publica-acceso:hover {
+  background: var(--color-surface-secondary);
+}
+
+.carrusel-reservas {
+  position: relative;
+  width: min(1240px, 100%);
+  margin: 0 auto;
+  overflow: hidden;
+  border-radius: 24px;
+  background: var(--color-surface);
+  box-shadow: 0 12px 35px rgba(30, 20, 50, 0.12);
+}
+
+.carrusel-imagen {
+  position: relative;
+  min-height: 320px;
+  aspect-ratio: 16 / 7;
+  overflow: hidden;
+  background: var(--color-surface-secondary);
+}
+
+.carrusel-imagen > img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  animation: carrusel-aparecer 0.5s ease;
+}
+
+.carrusel-velo {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    90deg,
+    rgba(25, 20, 35, 0.82) 0%,
+    rgba(25, 20, 35, 0.58) 43%,
+    rgba(25, 20, 35, 0.06) 100%
+  );
+}
+
+.carrusel-contenido {
+  position: absolute;
+  top: 50%;
+  left: clamp(28px, 6%, 76px);
+  width: min(490px, 65%);
+  color: #fff;
+  transform: translateY(-50%);
+  animation: carrusel-texto 0.45s ease;
+}
+
+.carrusel-etiqueta {
+  display: inline-block;
+  margin-bottom: 16px;
+  padding: 7px 12px;
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  border-radius: 30px;
+  background: rgba(255, 255, 255, 0.12);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+}
+
+.carrusel-contenido h1 {
+  margin: 0 0 15px;
+  color: #fff;
+  font-size: clamp(30px, 4vw, 52px);
+  line-height: 1.08;
+  letter-spacing: -1.3px;
+}
+
+.carrusel-contenido p {
+  max-width: 420px;
+  margin: 0 0 25px;
+  color: rgba(255, 255, 255, 0.94);
+  font-size: clamp(14px, 1.5vw, 18px);
+  line-height: 1.65;
+}
+
+.carrusel-boton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  min-height: 47px;
+  padding: 12px 21px;
+  border-radius: 12px;
+  background: var(--color-primary);
+  color: #fff;
+  text-decoration: none;
+  font-weight: 700;
+  transition: transform 0.2s ease, background 0.2s ease;
+}
+
+.carrusel-boton:hover {
+  transform: translateY(-2px);
+  background: var(--color-primary-hover);
+}
+
+.carrusel-flecha {
+  position: absolute;
+  top: 50%;
+  z-index: 2;
+  display: grid;
+  width: 43px;
+  height: 43px;
+  place-items: center;
+  padding: 0;
+  border: 1px solid rgba(255, 255, 255, 0.65);
+  border-radius: 50%;
+  background: rgba(25, 20, 35, 0.4);
+  color: #fff;
+  font-size: 32px;
+  line-height: 1;
+  cursor: pointer;
+  transform: translateY(-50%);
+  transition: background 0.2s ease;
+}
+
+.carrusel-flecha:hover {
+  background: var(--color-primary);
+}
+
+.carrusel-anterior {
+  left: 14px;
+}
+
+.carrusel-siguiente {
+  right: 14px;
+}
+
+.carrusel-indicadores {
+  position: absolute;
+  right: 0;
+  bottom: 18px;
+  left: 0;
+  z-index: 3;
+  display: flex;
+  justify-content: center;
+  gap: 9px;
+}
+
+.carrusel-indicador {
+  width: 9px;
+  height: 9px;
+  padding: 0;
+  border: 0;
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.65);
+  cursor: pointer;
+  transition: width 0.25s ease, background 0.25s ease;
+}
+
+.carrusel-indicador.activo {
+  width: 27px;
+  background: #fff;
+}
+
+.reserva-introduccion {
+  width: min(850px, 100%);
+  margin: 55px auto 60px;
+  text-align: center;
+}
+
+.reserva-icono {
+  display: inline-grid;
+  width: 56px;
+  height: 56px;
+  place-items: center;
+  border-radius: 18px;
+  background: var(--color-primary-soft);
+  font-size: 27px;
+}
+
+.reserva-introduccion h2 {
+  margin: 18px 0 10px;
+  color: var(--color-text);
+  font-size: clamp(24px, 3vw, 34px);
+  line-height: 1.25;
+}
+
+.reserva-introduccion > p {
+  max-width: 580px;
+  margin: 0 auto;
+  color: var(--color-text-secondary);
+  font-size: 16px;
+  line-height: 1.7;
+}
+
+.reserva-proximamente {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  margin-top: 24px;
+  padding: 12px 17px;
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  background: var(--color-surface);
+  color: var(--color-text-secondary);
+  font-size: 14px;
+}
+
+.reserva-publica-footer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 20px 0;
+  border-top: 1px solid var(--color-border);
+  color: var(--color-text-secondary);
+  font-size: 13px;
+  text-align: center;
+}
+
+.reserva-publica-footer img {
+  width: 21px;
+  height: 21px;
+  object-fit: contain;
+}
+
+@keyframes carrusel-aparecer {
+  from { opacity: 0.65; }
+  to { opacity: 1; }
+}
+
+@keyframes carrusel-texto {
+  from {
+    opacity: 0;
+    transform: translate(10px, -50%);
+  }
+  to {
+    opacity: 1;
+    transform: translate(0, -50%);
+  }
+}
+
+@media (max-width: 700px) {
+  .reserva-publica {
+    padding: 0 12px 20px;
+  }
+
+  .reserva-publica-header {
+    min-height: 72px;
+    gap: 10px;
+  }
+
+  .reserva-publica-marca {
+    gap: 8px;
+  }
+
+  .reserva-publica-marca img {
+    width: 48px;
+    height: 48px;
+  }
+
+  .reserva-publica-marca span {
+    max-width: 115px;
+    font-size: 11px;
+    line-height: 1.35;
+  }
+
+  .reserva-publica-acceso {
+    padding: 9px 12px;
+    font-size: 13px;
+  }
+
+  .carrusel-reservas {
+    border-radius: 18px;
+  }
+
+  .carrusel-imagen {
+    min-height: 490px;
+    aspect-ratio: 4 / 5;
+  }
+
+  .carrusel-imagen > img {
+    object-position: center;
+  }
+
+  .carrusel-velo {
+    background: linear-gradient(
+      180deg,
+      rgba(25, 20, 35, 0.02) 0%,
+      rgba(25, 20, 35, 0.08) 30%,
+      rgba(25, 20, 35, 0.86) 65%,
+      rgba(25, 20, 35, 0.94) 100%
+    );
+  }
+
+  .carrusel-contenido {
+    top: auto;
+    bottom: 52px;
+    left: 23px;
+    width: calc(100% - 46px);
+    transform: none;
+  }
+
+  .carrusel-contenido h1 {
+    font-size: clamp(29px, 8vw, 38px);
+    letter-spacing: -0.6px;
+  }
+
+  .carrusel-contenido p {
+    margin-bottom: 19px;
+    font-size: 14px;
+    line-height: 1.55;
+  }
+
+  .carrusel-etiqueta {
+    margin-bottom: 11px;
+    font-size: 10px;
+  }
+
+  .carrusel-boton {
+    min-height: 44px;
+    padding: 11px 15px;
+    font-size: 13px;
+  }
+
+  .carrusel-flecha {
+    top: 40%;
+    width: 36px;
+    height: 36px;
+    font-size: 27px;
+  }
+
+  .carrusel-anterior {
+    left: 9px;
+  }
+
+  .carrusel-siguiente {
+    right: 9px;
+  }
+
+  .carrusel-indicadores {
+    bottom: 18px;
+  }
+
+  .reserva-introduccion {
+    margin: 40px auto 45px;
+  }
+
+  .reserva-introduccion > p {
+    font-size: 14px;
+  }
+
+  .reserva-proximamente {
+    max-width: 100%;
+    padding: 11px 13px;
+    font-size: 12px;
+  }
+
+  .reserva-publica-footer {
+    flex-wrap: wrap;
+    font-size: 12px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .carrusel-imagen > img,
+  .carrusel-contenido {
+    animation: none;
+  }
+
+  .carrusel-boton,
+  .carrusel-indicador {
+    transition: none;
+  }
+}
+
+
+/* ==========================================
+   PORTADA PÚBLICA DE RESERVAS PETFUNCR
+   ========================================== */
+
+.publica-reservas {
+  width: 100%;
+  min-height: 100vh;
+  padding: 0 clamp(14px, 3vw, 42px) 24px;
+  background: var(--color-background);
+  color: var(--color-text);
+}
+
+.publica-header {
+  width: min(1380px, 100%);
+  min-height: 82px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.publica-marca {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+  text-decoration: none;
+}
+
+.publica-marca img {
+  width: 58px;
+  height: 58px;
+  object-fit: contain;
+}
+
+.publica-marca span {
+  color: var(--color-text-secondary);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+
+.publica-mis-reservas {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 12px;
+  margin-top: 24px;
+  padding: 16px;
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  background: var(--color-surface);
+  color: var(--color-text);
+  font-size: 14px;
+}
+
+
+.publica-mis-reservas:hover {
+  border-color: var(--color-primary);
+  background: var(--color-primary-soft);
+}
+
+.publica-hero {
+  width: min(1380px, 100%);
+  margin: 8px auto 0;
+  display: grid;
+  grid-template-columns: minmax(0, 0.92fr) minmax(0, 1.08fr);
+  align-items: stretch;
+  gap: clamp(16px, 2.4vw, 32px);
+}
+
+.publica-reserva-card {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  padding: clamp(25px, 3.2vw, 48px);
+  border: 1px solid var(--color-border);
+  border-radius: 24px;
+  background: var(--color-surface);
+  box-shadow: var(--shadow-card);
+}
+
+.publica-sobrelinea {
+  color: var(--color-primary);
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 1.4px;
+  line-height: 1.5;
+}
+
+.publica-patita {
+  display: grid;
+  width: 45px;
+  height: 45px;
+  margin: 10px 0 10px;
+  place-items: center;
+  border-radius: 17px;
+  background: var(--color-primary-soft);
+  font-size: 22px;
+}
+
+.publica-reserva-card h1 {
+  max-width: 540px;
+  margin: 0;
+  color: var(--color-text);
+  font-size: clamp(30px, 3.1vw, 46px);
+  font-weight: 800;
+  line-height: 1.12;
+  letter-spacing: -1.1px;
+  overflow-wrap: break-word;
+}
+
+.publica-intro {
+  max-width: 470px;
+  margin: 18px 0 24px;
+  color: var(--color-text-secondary);
+  font-size: 16px;
+  line-height: 1.75;
+}
+
+.publica-boton-reservar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  width: 100%;
+  min-height: 58px;
+  padding: 15px 20px;
+  border: 0;
+  border-radius: 14px;
+  background: var(--color-primary);
+  color: #fff;
+  font-size: 17px;
+  font-weight: 800;
+  cursor: pointer;
+  box-shadow: 0 8px 20px rgba(109, 63, 209, 0.22);
+  transition: transform 0.2s ease, background 0.2s ease;
+}
+
+.publica-boton-reservar:hover {
+  transform: translateY(-2px);
+  background: var(--color-primary-hover);
+}
+
+.publica-boton-reservar:focus-visible,
+.publica-flecha:focus-visible,
+.publica-indicador:focus-visible {
+  outline: 3px solid var(--color-secondary);
+  outline-offset: 3px;
+}
+
+.publica-enlace-consulta {
+  margin-top: 13px;
+  padding: 6px 0;
+  border: 0;
+  background: transparent;
+  color: var(--color-primary);
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.publica-enlace-consulta:hover {
+  text-decoration: underline;
+}
+
+.publica-beneficios {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+  width: 100%;
+  margin-top: 28px;
+  padding-top: 22px;
+  border-top: 1px solid var(--color-border);
+}
+
+.publica-beneficios > div {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+  text-align: center;
+}
+
+.publica-beneficios span {
+  display: grid;
+  width: 39px;
+  height: 39px;
+  place-items: center;
+  border-radius: 13px;
+  background: var(--color-primary-soft);
+  font-size: 19px;
+}
+
+.publica-beneficios small {
+  color: var(--color-text-secondary);
+  font-size: 11px;
+  line-height: 1.4;
+}
+
+.publica-carrusel {
+  position: relative;
+  min-width: 0;
+  align-self: stretch;
+  overflow: hidden;
+  border: 1px solid var(--color-border);
+  border-radius: 24px;
+  background: var(--color-surface);
+  box-shadow: var(--shadow-card);
+}
+
+.publica-carrusel-foto {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  min-height: 440px;
+  aspect-ratio: 4 / 5;
+  overflow: hidden;
+  background: var(--color-surface-secondary);
+}
+
+.publica-carrusel-foto > img {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  animation: publica-fade 0.45s ease;
+}
+
+.publica-carrusel-sombra {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(
+    180deg,
+    rgba(20, 15, 30, 0.15) 0%,
+    transparent 24%,
+    transparent 75%,
+    rgba(20, 15, 30, 0.2) 100%
+  );
+}
+
+.publica-carrusel-etiqueta {
+  position: absolute;
+  top: 18px;
+  left: 18px;
+  max-width: calc(100% - 36px);
+  padding: 8px 12px;
+  border: 1px solid rgba(255, 255, 255, 0.55);
+  border-radius: 30px;
+  background: rgba(30, 24, 42, 0.56);
+  color: #fff;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 1.1px;
+  backdrop-filter: blur(8px);
+}
+
+.publica-flecha {
+  position: absolute;
+  top: 50%;
+  z-index: 2;
+  display: grid;
+  width: 40px;
+  height: 40px;
+  place-items: center;
+  padding: 0 0 4px;
+  border: 1px solid rgba(255, 255, 255, 0.65);
+  border-radius: 50%;
+  background: rgba(30, 24, 42, 0.45);
+  color: #fff;
+  font-size: 30px;
+  line-height: 1;
+  cursor: pointer;
+  transform: translateY(-50%);
+  transition: background 0.2s ease;
+}
+
+.publica-flecha:hover {
+  background: var(--color-primary);
+}
+
+.publica-flecha-anterior {
+  left: 12px;
+}
+
+.publica-flecha-siguiente {
+  right: 12px;
+}
+
+.publica-indicadores {
+  position: absolute;
+  right: 0;
+  bottom: 18px;
+  left: 0;
+  z-index: 2;
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+}
+
+.publica-indicador {
+  width: 9px;
+  height: 9px;
+  padding: 0;
+  border: 0;
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.65);
+  cursor: pointer;
+  transition: width 0.2s ease;
+}
+
+.publica-indicador.activo {
+  width: 25px;
+  background: #fff;
+}
+
+.publica-seccion-formulario {
+  width: min(900px, 100%);
+  margin: 64px auto 0;
+  scroll-margin-top: 24px;
+}
+
+.publica-formulario-card {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: start;
+  gap: 20px;
+  padding: clamp(22px, 4vw, 38px);
+  border: 1px solid var(--color-border);
+  border-radius: 22px;
+  background: var(--color-surface);
+  box-shadow: var(--shadow-card);
+}
+
+.publica-formulario-icono {
+  display: grid;
+  width: 52px;
+  height: 52px;
+  place-items: center;
+  border-radius: 16px;
+  background: var(--color-primary-soft);
+  font-size: 25px;
+}
+
+.publica-formulario-card h2,
+.publica-consultar h2 {
+  margin: 8px 0 10px;
+  color: var(--color-text);
+  font-size: clamp(23px, 3vw, 30px);
+  line-height: 1.25;
+}
+
+.publica-formulario-card p,
+.publica-consultar p {
+  margin: 0;
+  color: var(--color-text-secondary);
+  font-size: 15px;
+  line-height: 1.7;
+}
+
+.publica-aviso-proximamente {
+  grid-column: 2;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 13px 15px;
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  background: var(--color-background);
+  color: var(--color-text-secondary);
+  font-size: 13px;
+}
+
+.publica-consultar {
+  width: min(900px, 100%);
+  margin: 20px auto 50px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  padding: 26px 30px;
+  border-radius: 20px;
+  background: var(--color-primary-soft);
+  scroll-margin-top: 24px;
+}
+
+.publica-consultar h2 {
+  margin-top: 0;
+  font-size: 21px;
+}
+
+.publica-consultar p {
+  max-width: 650px;
+  font-size: 14px;
+}
+
+.publica-consultar-icono {
+  flex: 0 0 auto;
+  font-size: 32px;
+}
+
+.publica-footer {
+  width: min(1380px, 100%);
+  min-height: 68px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  border-top: 1px solid var(--color-border);
+  color: var(--color-text-secondary);
+  font-size: 12px;
+  text-align: center;
+}
+
+.publica-footer img {
+  width: 34px;
+  height: 34px;
+  object-fit: contain;
+}
+
+@keyframes publica-fade {
+  from { opacity: 0.7; }
+  to { opacity: 1; }
+}
+
+@media (min-width: 1100px) {
+  .publica-carrusel-foto {
+    min-height: 560px;
+    aspect-ratio: auto;
+  }
+}
+
+@media (max-width: 800px) {
+  .publica-hero {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .publica-reserva-card {
+    order: 1;
+  }
+
+  .publica-carrusel {
+    order: 2;
+  }
+
+  .publica-reserva-card h1 {
+    max-width: 600px;
+    font-size: clamp(32px, 6vw, 44px);
+  }
+
+  .publica-carrusel-foto {
+    min-height: 360px;
+    aspect-ratio: 16 / 10;
+  }
+
+  .publica-seccion-formulario {
+    margin-top: 35px;
+  }
+}
+
+@media (max-width: 520px) {
+  .publica-reservas {
+    padding: 0 12px 18px;
+  }
+
+  .publica-header {
+    min-height: 70px;
+  }
+
+  .publica-marca {
+    gap: 8px;
+  }
+
+  .publica-marca img {
+    width: 46px;
+    height: 46px;
+  }
+
+  .publica-marca span {
+    max-width: 105px;
+    font-size: 10px;
+    line-height: 1.4;
+  }
+
+  
+
+  .publica-hero {
+    margin-top: 4px;
+    gap: 15px;
+  }
+
+  .publica-reserva-card {
+    padding: 23px 20px;
+    border-radius: 19px;
+  }
+
+  .publica-patita {
+    width: 35px;
+    height: 35px;
+    margin: 10px 0 10px;
+    font-size: 20px;
+  }
+
+  .publica-reserva-card h1 {
+    font-size: clamp(30px, 8vw, 37px);
+    letter-spacing: -0.7px;
+  }
+
+  .publica-intro {
+    margin: 14px 0 21px;
+    font-size: 14px;
+    line-height: 1.65;
+  }
+
+  .publica-boton-reservar {
+    min-height: 54px;
+    font-size: 16px;
+  }
+
+  .publica-beneficios {
+    gap: 7px;
+    margin-top: 22px;
+    padding-top: 18px;
+  }
+
+  .publica-beneficios small {
+    font-size: 10px;
+  }
+
+  .publica-carrusel {
+    border-radius: 19px;
+  }
+
+  .publica-carrusel-foto {
+    min-height: 270px;
+    aspect-ratio: 4 / 3;
+  }
+
+  .publica-carrusel-etiqueta {
+    top: 12px;
+    left: 12px;
+    font-size: 9px;
+  }
+
+  .publica-flecha {
+    width: 34px;
+    height: 34px;
+    font-size: 25px;
+  }
+
+  .publica-flecha-anterior {
+    left: 8px;
+  }
+
+  .publica-flecha-siguiente {
+    right: 8px;
+  }
+
+  .publica-seccion-formulario {
+    margin-top: 35px;
+  }
+
+  .publica-formulario-card {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 14px;
+    padding: 22px 19px;
+    border-radius: 18px;
+  }
+
+  .publica-formulario-icono {
+    width: 44px;
+    height: 44px;
+    font-size: 22px;
+  }
+
+  .publica-formulario-card p {
+    font-size: 14px;
+  }
+
+  .publica-aviso-proximamente {
+    grid-column: 1;
+    font-size: 12px;
+    line-height: 1.5;
+  }
+
+  .publica-consultar {
+    margin: 16px auto 35px;
+    padding: 21px 18px;
+    gap: 12px;
+  }
+
+  .publica-consultar h2 {
+    font-size: 19px;
+  }
+
+  .publica-consultar p {
+    font-size: 13px;
+  }
+
+  .publica-consultar-icono {
+    font-size: 25px;
+  }
+
+  .publica-footer {
+    font-size: 11px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .publica-carrusel-foto > img {
+    animation: none;
+  }
+
+  .publica-boton-reservar,
+  .publica-flecha,
+  .publica-indicador {
+    transition: none;
+  }
+}
+
+
+/* Selector de tema compartido por la web pública y administrativa */
+
+.theme-control {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  min-height: 40px;
+  padding: 0 10px;
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  background: var(--color-surface);
+  color: var(--color-text);
+}
+
+.theme-control-icon {
+  font-size: 15px;
+  line-height: 1;
+}
+
+.theme-select {
+  max-width: 125px;
+  min-width: 0;
+  padding: 8px 2px;
+  border: 0;
+  outline-offset: 3px;
+  background: transparent;
+  color: var(--color-text);
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.theme-select option {
+  background: var(--color-surface);
+  color: var(--color-text);
+}
+
+.publica-header-acciones {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+@media (max-width: 520px) {
+  .publica-header-acciones {
+    gap: 6px;
+  }
+
+  .theme-control {
+    min-height: 36px;
+    gap: 4px;
+    padding: 0 6px;
+    border-radius: 10px;
+  }
+
+  .theme-select {
+    max-width: 91px;
+    padding: 7px 0;
+    font-size: 11px;
+  }
+}
+
+
+.publica-acceso-form {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
+  margin-top: 8px;
+}
+
+.publica-acceso-form label {
+  color: var(--color-text);
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.publica-acceso-form input {
+  width: 100%;
+  min-height: 50px;
+  padding: 12px 14px;
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  outline-offset: 2px;
+  background: var(--color-background);
+  color: var(--color-text);
+  font: inherit;
+}
+
+.publica-acceso-form input:focus {
+  border-color: var(--color-primary);
+  outline: 2px solid var(--color-primary-soft);
+}
+
+.publica-acceso-form .publica-boton-reservar {
+  margin-top: 6px;
+}
+
+.publica-acceso-form .publica-boton-reservar:disabled {
+  opacity: 0.65;
+  cursor: wait;
+  transform: none;
+}
+
+.publica-error-acceso {
+  grid-column: 1 / -1;
+  margin: 12px 0 0;
+  color: #dc2626;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.publica-perritos-encontrados {
+  grid-column: 1 / -1;
+  width: 100%;
+  margin-top: 12px;
+  padding: 18px;
+  border: 1px solid var(--color-border);
+  border-radius: 14px;
+  background: var(--color-background);
+}
+
+.publica-perritos-encontrados h3 {
+  margin: 0 0 10px;
+  color: var(--color-text);
+  font-size: 17px;
+}
+
+.publica-perritos-encontrados p {
+  margin: 8px 0;
+  font-size: 13px;
+}
+
+.publica-perritos-encontrados ul {
+  display: grid;
+  gap: 8px;
+  margin: 14px 0;
+  padding: 0;
+  list-style: none;
+}
+
+.publica-perritos-encontrados li {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px;
+  border: 1px solid var(--color-border);
+  border-radius: 10px;
+  background: var(--color-surface);
+  color: var(--color-text);
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.publica-pendiente-siguiente {
+  color: var(--color-text-secondary);
+}
+
+
+/* Selección de perritos en reservas públicas */
+
+.publica-lista-seleccion {
+  display: grid;
+  gap: 10px;
+  margin: 16px 0 10px;
+}
+
+.publica-perrito-opcion {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 62px;
+  padding: 12px 14px;
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  background: var(--color-surface);
+  color: var(--color-text);
+  cursor: pointer;
+  transition: border-color 160ms ease, background 160ms ease;
+}
+
+.publica-perrito-opcion.seleccionado {
+  border-color: var(--color-primary);
+  background: var(--color-primary-soft);
+}
+
+.publica-perrito-opcion input {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+  accent-color: var(--color-primary);
+  cursor: pointer;
+}
+
+.publica-perrito-emoji {
+  font-size: 22px;
+}
+
+.publica-perrito-nombre {
+  flex: 1;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.publica-perrito-check {
+  color: var(--color-primary);
+  font-size: 20px;
+  font-weight: 800;
+}
+
+.publica-contador-seleccion {
+  margin: 8px 0 14px;
+  color: var(--color-text-secondary);
+  font-size: 13px;
+}
+
+.publica-perritos-encontrados .publica-boton-reservar {
+  width: 100%;
+  margin-top: 8px;
+}
+
+.publica-perritos-encontrados .publica-boton-reservar:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.publica-seleccion-confirmada {
+  margin-top: 16px;
+  padding: 14px;
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  background: var(--color-surface);
+  color: var(--color-text);
+}
+
+.publica-seleccion-confirmada strong {
+  font-size: 14px;
+}
+
+.publica-seleccion-confirmada p {
+  margin-bottom: 0;
+  color: var(--color-text-secondary);
+  line-height: 1.6;
+}
+
+
+/* =========================================
+   FORMULARIO PÚBLICO DE RESERVAS
+   Campos de servicio, fechas y turno
+   ========================================= */
+
+.publica-campos-reserva {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px 16px;
+  margin-top: 18px;
+}
+
+.publica-campos-reserva label {
+  display: block;
+  align-self: end;
+  color: var(--color-text);
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.publica-campos-reserva input[type="date"],
+.publica-campos-reserva select {
+  box-sizing: border-box;
+  width: 100%;
+  min-width: 0;
+  min-height: 46px;
+  padding: 10px 12px;
+  border: 1px solid var(--color-border);
+  border-radius: 10px;
+  background-color: var(--color-surface);
+  color: var(--color-text);
+  font: inherit;
+  font-size: 0.95rem;
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.publica-campos-reserva input[type="date"] {
+  color-scheme: light;
+}
+
+html[data-theme="dark"] .publica-campos-reserva input[type="date"] {
+  color-scheme: dark;
+}
+
+.publica-campos-reserva input[type="date"]:focus,
+.publica-campos-reserva select:focus {
+  outline: none;
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px var(--color-primary-soft);
+}
+
+.publica-campos-reserva input:disabled,
+.publica-campos-reserva select:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.publica-campos-reserva > button {
+  grid-column: 1 / -1;
+  width: 100%;
+  margin-top: 8px;
+}
+
+.publica-seleccion-confirmada [role="status"] {
+  margin-top: 16px;
+  line-height: 1.6;
+}
+
+.publica-seleccion-confirmada [role="status"] ul {
+  padding-left: 22px;
+}
+
+.publica-seleccion-confirmada [role="status"] li {
+  margin-bottom: 6px;
+}
+
+@media (max-width: 600px) {
+  .publica-campos-reserva {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 8px;
+  }
+
+  .publica-campos-reserva > button {
+    grid-column: auto;
+  }
+}
+
+
+.publica-resumen-reserva {
+  margin-top: 20px;
+  padding: 20px;
+  border: 1px solid var(--color-border);
+  border-radius: 14px;
+  background: var(--color-surface);
+  color: var(--color-text);
+}
+
+.publica-resumen-reserva h3 {
+  margin-top: 0;
+  margin-bottom: 16px;
+}
+
+.publica-resumen-reserva p {
+  line-height: 1.6;
+}
+
+.publica-resumen-reserva ul {
+  padding-left: 22px;
+}
+
+.publica-resumen-reserva label {
+  display: block;
+  margin-top: 16px;
+  margin-bottom: 8px;
+  font-weight: 600;
+}
+
+.publica-resumen-reserva textarea {
+  box-sizing: border-box;
+  width: 100%;
+  min-height: 90px;
+  padding: 12px;
+  border: 1px solid var(--color-border);
+  border-radius: 10px;
+  background: var(--color-surface);
+  color: var(--color-text);
+  font: inherit;
+  resize: vertical;
+}
+
+.publica-resumen-reserva textarea:focus {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+
+.publica-consultar-reservas {
+  margin-top: 16px;
+}
+
+
+
+
+.publica-lista-reservas {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 16px;
+  width: 100%;
+}
+
+
+
+.publica-reserva-item {
+  padding: 20px;
+  border: 1px solid var(--color-border);
+  border-radius: 14px;
+  background: var(--color-surface);
+  color: var(--color-text);
+  overflow-wrap: anywhere;
+}
+
+.publica-reserva-item h4 {
+  margin: 0 0 18px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid var(--color-border);
+  color: var(--color-primary);
+  font-size: 15px;
+  line-height: 1.4;
+}
+
+.publica-reserva-item p {
+  margin: 12px 0;
+  line-height: 1.6;
+}
+
+.publica-reserva-item ul {
+  padding-left: 22px;
+  margin-top: 8px;
+}
+
+.publica-reserva-item li {
+  padding-left: 3px;
+  margin-bottom: 5px;
+}
+
+
+
+/* Botones secundarios para editar pasos de la reserva */
+.publica-paso-editar {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 38px;
+  padding: 9px 16px;
+  border: 1px solid var(--color-border);
+  border-radius: 10px;
+  background: transparent;
+  color: var(--color-text);
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.2s ease, border-color 0.2s ease;
+}
+
+.publica-paso-editar:hover {
+  background: var(--color-surface);
+  border-color: var(--color-primary);
+}
+
+.publica-paso-editar:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 3px;
+}
+
+
+/* Botón de nueva reserva en la confirmación */
+.publica-resumen-reserva > .publica-boton-reservar {
+  display: inline-flex;
+  width: auto;
+  min-height: 42px;
+  padding: 10px 18px;
+  gap: 10px;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 700;
+  box-shadow: none;
+}
+
+
+
+.publica-resumen-reserva[role="status"] {
+  width: 100%;
+  max-width: 900px;
+  box-sizing: border-box;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+
+.publica-reserva-encabezado {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 18px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.publica-reserva-encabezado h4 {
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  overflow-wrap: anywhere;
+}
+
+.publica-reserva-estado {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 5px 10px;
+  border-radius: 999px;
+  background: var(--color-primary-soft);
+  color: var(--color-primary);
+  font-size: 12px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+
+.publica-reserva-datos {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0 24px;
+  margin-bottom: 18px;
+}
+
+.publica-reserva-datos p {
+  margin: 10px 0;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+@media (max-width: 480px) {
+  .publica-reserva-datos {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0;
+  }
+}
+
+
+
+.publica-boton-cancelar {
+  margin: 12px auto 0;
+  padding: 10px 16px;
+  border: 1px solid #d97777;
+  border-radius: 10px;
+  background: transparent;
+  color: #e99a9a;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s ease;
+  display: block;
+}
+
+.publica-boton-cancelar:hover:not(:disabled) {
+  background: rgb(217 119 119 / 12%);
+}
+
+.publica-boton-cancelar:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+
+.publica-header-boton-reservas {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  box-sizing: border-box;
+  min-height: 40px;
+  padding: 10px 14px;
+  border: 1px solid #34343d;
+  border-radius: 12px;
+  background: #1b1b20;
+  color: #f5f5f5;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1.2;
+  text-decoration: none;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background 0.2s ease, border-color 0.2s ease;
+}
+
+.publica-header-boton-reservas:hover {
+  background: #26262d;
+  border-color: #50505b;
+  text-decoration: none;
+}
+
+.publica-header-boton-reservas:focus-visible {
+  outline: 2px solid #b89a70;
+  outline-offset: 3px;
+}
+
+.publica-header-boton-reservas span {
+  display: inline-flex;
+  align-items: center;
+  line-height: 1;
+}

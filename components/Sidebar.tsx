@@ -48,6 +48,12 @@ const opciones = [
     permiso: "estadias.ver",
   },
   {
+    nombre: "Reservas",
+    ruta: "/reservas",
+    icono: "🏨",
+    permiso: "reservas.ver",
+  },
+  {
     nombre: "Reportes",
     ruta: "/reportes",
     icono: "📊",

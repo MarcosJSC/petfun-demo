@@ -33,7 +33,10 @@ export type Permiso =
   | "reportes.ver"
   | "configuracion.ver"
   | "usuarios.administrar"
-  | "sucursales.administrar";
+  | "sucursales.administrar"
+  | "reservas.ver"
+  | "reservas.gestionar";
+  
 
 
 const permisosPorRol: Record<
@@ -70,6 +73,8 @@ superadmin: [
   "configuracion.ver",
   "usuarios.administrar",
   "sucursales.administrar",
+  "reservas.ver",
+  "reservas.gestionar",
 ],
 
 administrador: [
@@ -99,6 +104,8 @@ administrador: [
   "desparasitaciones.eliminar",
 
   "reportes.ver",
+  "reservas.ver",
+  "reservas.gestionar",
 ],
 
 operador: [
@@ -123,6 +130,8 @@ operador: [
   "desparasitaciones.editar",
 
   "reportes.ver",
+  "reservas.ver",
+  "reservas.gestionar",
 ],
 
 consulta: [
@@ -133,6 +142,7 @@ consulta: [
   "desparasitaciones.ver",
 
   "reportes.ver",
+   "reservas.ver",
 ],
 
 };

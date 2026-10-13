@@ -22,7 +22,8 @@ export default function AppShell({
 
     const rutaPublica =
   pathname === "/login" ||
-  pathname === "/actualizar-password";
+  pathname === "/actualizar-password" ||
+  pathname === "/reservar";
 
   useEffect(() => {
     let activo = true;
@@ -103,9 +104,9 @@ if (!session && !rutaPublica) {
     } =
       supabase.auth.onAuthStateChange(
         (_event, session) => {
-          if (!session && !esLogin) {
-            router.replace("/login");
-          }
+       if (!session && !rutaPublica) {
+  router.replace("/login");
+}
 
           if (session && esLogin) {
             router.replace("/");

@@ -1,60 +1,110 @@
+
 "use client";
 
 import { useEffect, useState } from "react";
 
-type Tema = "light" | "dark";
+type PreferenciaTema = "system" | "light" | "dark";
+type TemaAplicado = "light" | "dark";
+
+function obtenerTemaSistema(): TemaAplicado {
+  return window.matchMedia("(prefers-color-scheme: dark)").matches
+    ? "dark"
+    : "light";
+}
 
 export default function ThemeToggle() {
-  const [tema, setTema] = useState<Tema>("light");
+  const [preferencia, setPreferencia] =
+    useState<PreferenciaTema>("system");
   const [cargado, setCargado] = useState(false);
 
   useEffect(() => {
-    const temaGuardado = localStorage.getItem("petfun-tema") as Tema | null;
+    const guardado = localStorage.getItem("petfun-tema");
 
-    const temaSistema = window.matchMedia(
-      "(prefers-color-scheme: dark)"
-    ).matches
-      ? "dark"
-      : "light";
+    const inicial: PreferenciaTema =
+      guardado === "light" || guardado === "dark" || guardado === "system"
+        ? guardado
+        : "system";
 
-    const temaInicial = temaGuardado || temaSistema;
-
-    setTema(temaInicial);
-    document.documentElement.setAttribute("data-theme", temaInicial);
-
+    setPreferencia(inicial);
     setCargado(true);
+
+    const media = window.matchMedia("(prefers-color-scheme: dark)");
+
+    function aplicarTema() {
+      const tema: TemaAplicado =
+        inicial === "system"
+          ? obtenerTemaSistema()
+          : inicial;
+
+      document.documentElement.setAttribute("data-theme", tema);
+      document.documentElement.style.colorScheme = tema;
+    }
+
+    function sincronizarTema() {
+      const preferenciaActual =
+        localStorage.getItem("petfun-tema") || "system";
+
+      if (preferenciaActual === "system") {
+        const tema = obtenerTemaSistema();
+        document.documentElement.setAttribute("data-theme", tema);
+        document.documentElement.style.colorScheme = tema;
+      }
+    }
+
+    aplicarTema();
+    media.addEventListener("change", sincronizarTema);
+
+    return () => {
+      media.removeEventListener("change", sincronizarTema);
+    };
   }, []);
 
-  function cambiarTema() {
-    const nuevoTema: Tema = tema === "light" ? "dark" : "light";
+  function cambiarPreferencia(nueva: PreferenciaTema) {
+    setPreferencia(nueva);
+    localStorage.setItem("petfun-tema", nueva);
 
-    setTema(nuevoTema);
+    const tema: TemaAplicado =
+      nueva === "system" ? obtenerTemaSistema() : nueva;
 
-    document.documentElement.setAttribute(
-      "data-theme",
-      nuevoTema
-    );
-
-    localStorage.setItem("petfun-tema", nuevoTema);
+    document.documentElement.setAttribute("data-theme", tema);
+    document.documentElement.style.colorScheme = tema;
   }
 
   if (!cargado) {
     return (
-      <button className="theme-button" disabled>
+      <button
+        className="theme-button"
+        type="button"
+        disabled
+        aria-label="Cargando preferencias de apariencia"
+      >
         Apariencia
       </button>
     );
   }
 
   return (
-    <button
-      className="theme-button"
-      onClick={cambiarTema}
-      type="button"
-    >
-      {tema === "light"
-        ? "🌙 Modo oscuro"
-        : "☀️ Modo claro"}
-    </button>
+    <label className="theme-control">
+      <span className="theme-control-icon" aria-hidden="true">
+        {preferencia === "system"
+          ? "💡"
+          : preferencia === "dark"
+            ? "🌙"
+            : "☀️"}
+      </span>
+
+      <select
+        className="theme-select"
+        aria-label="Preferencia de apariencia"
+        value={preferencia}
+        onChange={(evento) =>
+          cambiarPreferencia(evento.target.value as PreferenciaTema)
+        }
+      >
+        <option value="system">Tema</option>
+        <option value="light">Claro</option>
+        <option value="dark">Oscuro</option>
+      </select>
+    </label>
   );
 }
