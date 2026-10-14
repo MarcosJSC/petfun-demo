@@ -16,6 +16,24 @@ export async function GET(request: NextRequest) {
 
     const { usuario } = resultado;
 
+    // La sucursal seleccionada en el panel solo puede restringir la consulta;
+    // nunca concede acceso a una sucursal que el usuario no tenga asignada.
+    const valorSucursal = request.nextUrl.searchParams.get("sucursalId");
+    let sucursalSolicitada: number | null = null;
+
+    if (valorSucursal !== null && valorSucursal !== "global") {
+      const idParseado = Number(valorSucursal);
+
+      if (!Number.isSafeInteger(idParseado) || idParseado <= 0) {
+        return NextResponse.json(
+          { error: "La sucursal seleccionada no es válida." },
+          { status: 400 }
+        );
+      }
+
+      sucursalSolicitada = idParseado;
+    }
+
     // 2. Consultar reservas sin incluir credenciales ni datos innecesarios.
     let consulta = supabaseAdmin
       .from("reservas")
@@ -69,10 +87,26 @@ export async function GET(request: NextRequest) {
         });
       }
 
+      if (
+        sucursalSolicitada !== null &&
+        !usuario.sucursalesIds.includes(sucursalSolicitada)
+      ) {
+        return NextResponse.json(
+          { error: "No tienes acceso a la sucursal seleccionada." },
+          { status: 403 }
+        );
+      }
+
       consulta = consulta.in(
         "sucursal_id",
         usuario.sucursalesIds
       );
+    }
+
+    // El superadministrador puede consultar todas o filtrar una sucursal.
+    // Los demás usuarios ya quedaron limitados a sus sucursales autorizadas.
+    if (sucursalSolicitada !== null) {
+      consulta = consulta.eq("sucursal_id", sucursalSolicitada);
     }
 
     const { data, error } = await consulta;

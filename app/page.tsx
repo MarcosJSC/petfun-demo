@@ -21,6 +21,10 @@ export default function Home() {
   const [totalPerritos, setTotalPerritos] =
     useState(0);
 
+  // Reservas que esperan aprobación
+  const [reservasPendientes, setReservasPendientes] =
+    useState(0);
+
    const {
   sucursalActivaId,
 } = useSucursalActiva();
@@ -319,6 +323,53 @@ if (
 const {
   count: perritosCount,
 } = await consultaPerritos;
+
+// Cargar las reservas pendientes usando el mismo endpoint autenticado
+// que utiliza el módulo de Reservas.
+try {
+  const {
+    data: { session },
+    error: errorSesion,
+  } = await supabase.auth.getSession();
+
+  if (errorSesion) {
+    throw errorSesion;
+  }
+
+  if (!session?.access_token) {
+    throw new Error("No hay una sesión activa para consultar las reservas.");
+  }
+
+  const sucursalParam = sucursalActivaId ?? "global";
+  const respuestaReservas = await fetch(
+    `/api/admin/reservas?sucursalId=${sucursalParam}`,
+    {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${session.access_token}`,
+      },
+      cache: "no-store",
+    }
+  );
+
+  const datosReservas = await respuestaReservas.json();
+
+  if (!respuestaReservas.ok) {
+    throw new Error(
+      datosReservas.error ?? "No se pudieron cargar las reservas pendientes."
+    );
+  }
+
+  const reservasCargadas = datosReservas.reservas ?? [];
+  const reservasPendientesFiltradas = reservasCargadas.filter(
+    (reserva: { estado: string }) => reserva.estado === "Pendiente"
+  );
+
+  setReservasPendientes(reservasPendientesFiltradas.length);
+} catch (error) {
+  console.error("Error cargando reservas pendientes en el dashboard:", error);
+  setReservasPendientes(0);
+}
 
 const hoy_d = new Date();
 hoy.setHours(0, 0, 0, 0);
@@ -1078,7 +1129,7 @@ if (desparasitacionesFiltradas) {
   */}
  <div className="dashboard-grid dashboard-summary-grid">
 
-   
+ 
 
    <button
   type="button"
@@ -1366,7 +1417,45 @@ if (desparasitacionesFiltradas) {
       <div className="card-value">
         {totalPerritos}
       </div>
+
+
+
     </div>
+
+      <button
+     type="button"
+     className="card"
+     onClick={() => {
+       window.location.href = "/reservas";
+     }}
+     style={{
+       textAlign: "left",
+       cursor: "pointer",
+       border: "none",
+       color: "inherit",
+     }}
+   >
+     <div className="card-label">
+       🗓️ Reservas Pend.
+     </div>
+
+     <div
+       className="card-value"
+       style={{ color: "var(--color-text)" }}
+     >
+       {reservasPendientes}
+     </div>
+
+     <div
+       style={{
+         marginTop: "8px",
+         fontSize: "13px",
+         color: "var(--color-text-secondary)",
+       }}
+     >
+       Ver reservas →
+     </div>
+   </button>
 
   </div>
 

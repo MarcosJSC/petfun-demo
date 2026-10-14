@@ -183,7 +183,7 @@ export async function POST(request: Request) {
       error: errorPropietario,
     } = await supabaseAdmin
       .from("propietarios")
-      .select("id, sucursal_id")
+      .select("id, sucursal_id, nombre")
       .eq("codigo_reserva", codigo)
       .maybeSingle();
 
@@ -220,7 +220,7 @@ export async function POST(request: Request) {
       error: errorPerritos,
     } = await supabaseAdmin
       .from("perritos")
-      .select("id")
+      .select("id, nombre")
       .eq("propietario_id", propietario.id)
       .eq("sucursal_id", propietario.sucursal_id)
       .eq("activo", true)
@@ -333,19 +333,26 @@ export async function POST(request: Request) {
     // Notificar al administrador sin afectar la reserva si falla el correo.
     await enviarNotificacionReserva({
       asunto: `Nueva solicitud de reserva: ${reserva.numero_reserva}`,
-      mensaje: [
-        "Se ha recibido una nueva solicitud de reserva en PetFunCR.",
-        "",
-        `Número de reserva: ${reserva.numero_reserva}`,
-        `Estado: ${reserva.estado}`,
-        `Fecha de entrada: ${fechaEntrada}`,
-        `Fecha de salida: ${fechaSalida}`,
-        `Turno de entrada: ${turnoEntrada}`,
-        `Tipo de estadía: ${tipoEstadiaId === 1 ? "Hotel" : "Guardería"}`,
-        `Cantidad de perritos: ${perritosIds.length}`,
-        "",
-        "Ingresa al panel administrativo de PetFunCR para revisar la solicitud.",
-      ].join("\n"),
+
+mensaje: [
+  "Se ha recibido una nueva solicitud de reserva en PetFunCR.",
+  "",
+  `Número de reserva: ${reserva.numero_reserva}`,
+  `Estado: ${reserva.estado}`,
+  `Propietario: ${propietario.nombre}`,
+  "",
+  "Perritos seleccionados:",
+  ...(perritos ?? []).map((perrito) => `- ${perrito.nombre}`),
+  "",
+  `Fecha de entrada: ${fechaEntrada}`,
+  `Fecha de salida: ${fechaSalida}`,
+  `Turno de entrada: ${turnoEntrada}`,
+  `Tipo de estadía: ${tipoEstadiaId === 1 ? "Hotel" : "Guardería"}`,
+  `Cantidad de perritos: ${perritosIds.length}`,
+  "",
+  "Ingresa al panel administrativo de PetFunCR para revisar la solicitud.",
+].join("\n"),
+
     });
 
 
