@@ -1203,7 +1203,7 @@ if (desparasitacionesFiltradas) {
          color: "var(--color-text-secondary)",
        }}
      >
-       Ver reservas →
+       Ver detalles →
      </div>
    </button>
 
