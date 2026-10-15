@@ -1130,7 +1130,7 @@ if (desparasitacionesFiltradas) {
  <div className="dashboard-grid dashboard-summary-grid">
 
  
-
+ {/* 
    <button
   type="button"
   className="card"
@@ -1166,6 +1166,81 @@ if (desparasitacionesFiltradas) {
     Ver detalles →
   </div>
 </button>
+*/}
+
+
+
+
+
+<button
+     type="button"
+     className="card"
+     onClick={() => {
+       setMostrarHospedadosHoy(true)
+     }}
+     style={{
+       textAlign: "left",
+       cursor: "pointer",
+       border: "none",
+       color: "inherit",
+     }}
+   >
+     <div className="card-label">
+       📅 Hospedados hoy
+     </div>
+
+     <div
+       className="card-value"
+       style={{ color: "var(--color-text)" }}
+     >
+       {hospedadosHoy}
+     </div>
+
+     <div
+       style={{
+         marginTop: "8px",
+         fontSize: "13px",
+         color: "var(--color-text-secondary)",
+       }}
+     >
+       Ver reservas →
+     </div>
+   </button>
+
+ <button
+     type="button"
+     className="card"
+     onClick={() => {
+       window.location.href = "/reservas";
+     }}
+     style={{
+       textAlign: "left",
+       cursor: "pointer",
+       border: "none",
+       color: "inherit",
+     }}
+   >
+     <div className="card-label">
+       🗓️ Reservas Pend.
+     </div>
+
+     <div
+       className="card-value"
+       style={{ color: "var(--color-text)" }}
+     >
+       {reservasPendientes}
+     </div>
+
+     <div
+       style={{
+         marginTop: "8px",
+         fontSize: "13px",
+         color: "var(--color-text-secondary)",
+       }}
+     >
+       Ver reservas →
+     </div>
+   </button>
 
 
 <button
@@ -1422,40 +1497,7 @@ if (desparasitacionesFiltradas) {
 
     </div>
 
-      <button
-     type="button"
-     className="card"
-     onClick={() => {
-       window.location.href = "/reservas";
-     }}
-     style={{
-       textAlign: "left",
-       cursor: "pointer",
-       border: "none",
-       color: "inherit",
-     }}
-   >
-     <div className="card-label">
-       🗓️ Reservas Pend.
-     </div>
-
-     <div
-       className="card-value"
-       style={{ color: "var(--color-text)" }}
-     >
-       {reservasPendientes}
-     </div>
-
-     <div
-       style={{
-         marginTop: "8px",
-         fontSize: "13px",
-         color: "var(--color-text-secondary)",
-       }}
-     >
-       Ver reservas →
-     </div>
-   </button>
+     
 
   </div>
 

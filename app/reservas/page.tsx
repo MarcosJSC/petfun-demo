@@ -895,6 +895,7 @@ export default function ReservasPage() {
           </div>
 
           <div className="page-header-actions">
+           <p>
             <button
               type="button"
               className="secondary-button"
@@ -903,6 +904,7 @@ export default function ReservasPage() {
             >
               {cargando ? "Actualizando..." : "↻ Actualizar"}
             </button>
+            </p>
           </div>
         </div>
 

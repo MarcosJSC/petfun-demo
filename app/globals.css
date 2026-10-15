@@ -220,7 +220,7 @@ textarea {
 .page-description {
   color: var(--color-text-secondary);
   margin-top: 0;
-  margin-bottom: 20px;
+  margin-bottom: 15px;
 }
 
 /* Botón para cambiar tema */
@@ -1452,10 +1452,10 @@ padding: 3px;
   }
 
   /* Hospedados hoy ocupa las dos columnas */
-  .dashboard-grid.dashboard-summary-grid
+  /*.dashboard-grid.dashboard-summary-grid
     > :first-child {
     grid-column: 1 / -1;
-  }
+  }*/
 
    /* Mantiene el color correcto en modo oscuro */
   .dashboard-grid.dashboard-summary-grid > button {
