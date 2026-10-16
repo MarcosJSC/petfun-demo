@@ -12,8 +12,8 @@ const imagenes = [
   },
   {
     src: "https://zepzmjitngvjuzzzodfj.supabase.co/storage/v1/object/public/branding/carrusel/navidad-pocos-espacios.png",
-    alt: "Consulta los espacios disponibles para Navidad en PetFunCR",
-    etiqueta: "PLANIFICÁ CON TIEMPO",
+    alt: "Recuerda mantener las vacunas y desparacitaciones al día",
+    etiqueta: "VACUNAS Y DESPARACITACIONES",
   },
 ];
 
@@ -136,6 +136,30 @@ if (pasoReserva === 2 || (pasoReserva === 3 && !seleccionConfirmada)) {
 
     return () => window.cancelAnimationFrame(frame);
 }, [codigoValidado, pasoReserva, seleccionConfirmada, solicitudCreada, resultadoValidacion]);
+
+  // Después de consultar, lleva al cliente directamente a sus resultados.
+  // Como hay vistas separadas para escritorio y móvil, desplazamos la visible.
+  useEffect(() => {
+    if (!consultaRealizada) return;
+
+    const frame = window.requestAnimationFrame(() => {
+      const objetivos = Array.from(
+        document.querySelectorAll<HTMLElement>(
+          ".publica-reservas-desktop .publica-mis-reservas, .publica-reservas-mobile .publica-mis-reservas"
+        )
+      );
+      const objetivoVisible = objetivos.find(
+        (elemento) => elemento.getClientRects().length > 0
+      );
+
+      objetivoVisible?.scrollIntoView({
+        behavior: "smooth",
+        block: "start",
+      });
+    });
+
+    return () => window.cancelAnimationFrame(frame);
+  }, [consultaRealizada]);
 
   function anterior() {
     setIndice((actual) => (actual - 1 + imagenes.length) % imagenes.length);
@@ -477,7 +501,9 @@ async function cancelarReserva(numeroReserva: string) {
 
         /* Evita que el paso enfocado quede pegado al borde superior. */
         .publica-perritos-encontrados,
-        .publica-campos-reserva {
+        .publica-campos-reserva,
+        .publica-reservas-desktop .publica-mis-reservas,
+        .publica-reservas-mobile .publica-mis-reservas {
           scroll-margin-top: 18px;
         }
 
@@ -503,7 +529,7 @@ async function cancelarReserva(numeroReserva: string) {
     aria-label="PetFunCR"
   >
     <img src={LOGO} alt="PetFunCR" />
-    <span>Hotel y Guardería Canina</span>
+    <h3>Hotel y Guardería Canina PetFunCR</h3>
   </a>
 
   <div className="publica-header-acciones">
@@ -1358,7 +1384,7 @@ async function cancelarReserva(numeroReserva: string) {
     aria-label="PetFunCR"
   >
     <img src={LOGO} alt="PetFunCR" />
-    <span>PetFunCR Hotel 🐶</span>
+    <h4>PetFunCR Hotel 🐶</h4>
   </a>
 
   <div className="publica-header-acciones">
