@@ -587,9 +587,13 @@ async function cerrarSesion() {
   Cerrar sesión
 </button>
 
+  <div className="publica-header-acciones" style={{ display: "flex", justifyContent: "center" }}>
+    <ThemeToggle /></div>
+{/*
 <div style={{ display: "flex", justifyContent: "center" }}>
   <ThemeToggle />
 </div>
+*/}
 
       </aside>
 

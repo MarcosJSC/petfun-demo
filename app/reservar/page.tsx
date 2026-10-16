@@ -108,11 +108,15 @@ const [solicitudCreada, setSolicitudCreada] = useState<{
 
     let selectorObjetivo: string | null = null;
 
-    if (pasoReserva === 2 || (pasoReserva === 3 && !seleccionConfirmada)) {
-      selectorObjetivo = ".publica-perritos-encontrados";
-    } else if (pasoReserva === 3 && seleccionConfirmada) {
-      selectorObjetivo = ".publica-campos-reserva";
-    }
+ 
+if (pasoReserva === 2 || (pasoReserva === 3 && !seleccionConfirmada)) {
+  selectorObjetivo = ".publica-perritos-encontrados";
+} else if (pasoReserva === 3 && seleccionConfirmada) {
+  selectorObjetivo = ".publica-campos-reserva";
+} else if (pasoReserva === 4 && resultadoValidacion?.valido) {
+  selectorObjetivo = ".publica-resumen-reserva";
+}
+
 
     if (!selectorObjetivo) return;
 
@@ -131,7 +135,7 @@ const [solicitudCreada, setSolicitudCreada] = useState<{
     });
 
     return () => window.cancelAnimationFrame(frame);
-  }, [codigoValidado, pasoReserva, seleccionConfirmada, solicitudCreada]);
+}, [codigoValidado, pasoReserva, seleccionConfirmada, solicitudCreada, resultadoValidacion]);
 
   function anterior() {
     setIndice((actual) => (actual - 1 + imagenes.length) % imagenes.length);
@@ -982,7 +986,11 @@ async function cancelarReserva(numeroReserva: string) {
   pasoReserva === 4 &&
   !solicitudCreada && (
   <div className="publica-resumen-reserva">
-    <h3>Resumen de tu solicitud</h3>
+ {/*  <h3>Resumen de tu solicitud</h3> */} 
+     <span className="publica-sobrelineapref">
+        Resumen de tu solicitud
+      </span>
+      <p></p>
 
 
 <button
@@ -1835,7 +1843,11 @@ async function cancelarReserva(numeroReserva: string) {
   pasoReserva === 4 &&
   !solicitudCreada && (
   <div className="publica-resumen-reserva">
-    <h3>Resumen de tu solicitud</h3>
+  {/*  <h3>Resumen de tu solicitud</h3> */}
+        <span className="publica-sobrelineapref">
+        Resumen de tu solicitud
+      </span>
+      <p></p>
 
 
 <button
