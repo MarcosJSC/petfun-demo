@@ -1,110 +1,77 @@
-
 "use client";
 
 import { useEffect, useState } from "react";
 
-type PreferenciaTema = "system" | "light" | "dark";
-type TemaAplicado = "light" | "dark";
+type Tema = "light" | "dark";
 
-function obtenerTemaSistema(): TemaAplicado {
-  return window.matchMedia("(prefers-color-scheme: dark)").matches
-    ? "dark"
-    : "light";
-}
+const estiloIcono = {
+  width: "38px",
+  minWidth: "38px",
+  height: "38px",
+  padding: 0,
+  display: "inline-flex",
+  alignItems: "center",
+  justifyContent: "center",
+  fontSize: "20px",
+  lineHeight: 1,
+  flexShrink: 0,
+} as const;
 
 export default function ThemeToggle() {
-  const [preferencia, setPreferencia] =
-    useState<PreferenciaTema>("system");
+  const [tema, setTema] = useState<Tema>("light");
   const [cargado, setCargado] = useState(false);
 
   useEffect(() => {
-    const guardado = localStorage.getItem("petfun-tema");
+    const temaGuardado = localStorage.getItem("petfun-tema") as Tema | null;
 
-    const inicial: PreferenciaTema =
-      guardado === "light" || guardado === "dark" || guardado === "system"
-        ? guardado
-        : "system";
+    const temaSistema = window.matchMedia(
+      "(prefers-color-scheme: dark)"
+    ).matches
+      ? "dark"
+      : "light";
 
-    setPreferencia(inicial);
+    const temaInicial = temaGuardado || temaSistema;
+
+    setTema(temaInicial);
+    document.documentElement.setAttribute("data-theme", temaInicial);
     setCargado(true);
-
-    const media = window.matchMedia("(prefers-color-scheme: dark)");
-
-    function aplicarTema() {
-      const tema: TemaAplicado =
-        inicial === "system"
-          ? obtenerTemaSistema()
-          : inicial;
-
-      document.documentElement.setAttribute("data-theme", tema);
-      document.documentElement.style.colorScheme = tema;
-    }
-
-    function sincronizarTema() {
-      const preferenciaActual =
-        localStorage.getItem("petfun-tema") || "system";
-
-      if (preferenciaActual === "system") {
-        const tema = obtenerTemaSistema();
-        document.documentElement.setAttribute("data-theme", tema);
-        document.documentElement.style.colorScheme = tema;
-      }
-    }
-
-    aplicarTema();
-    media.addEventListener("change", sincronizarTema);
-
-    return () => {
-      media.removeEventListener("change", sincronizarTema);
-    };
   }, []);
 
-  function cambiarPreferencia(nueva: PreferenciaTema) {
-    setPreferencia(nueva);
-    localStorage.setItem("petfun-tema", nueva);
+  function cambiarTema() {
+    const nuevoTema: Tema = tema === "light" ? "dark" : "light";
 
-    const tema: TemaAplicado =
-      nueva === "system" ? obtenerTemaSistema() : nueva;
-
-    document.documentElement.setAttribute("data-theme", tema);
-    document.documentElement.style.colorScheme = tema;
+    setTema(nuevoTema);
+    document.documentElement.setAttribute("data-theme", nuevoTema);
+    localStorage.setItem("petfun-tema", nuevoTema);
   }
 
   if (!cargado) {
     return (
       <button
-        className="theme-button"
+        className="theme-button theme-button-icon"
         type="button"
         disabled
-        aria-label="Cargando preferencias de apariencia"
+        aria-label="Cargando tema"
+        title="Cargando tema"
+        style={estiloIcono}
       >
-        Apariencia
+        🌙
       </button>
     );
   }
 
-  return (
-    <label className="theme-control">
-      <span className="theme-control-icon" aria-hidden="true">
-        {preferencia === "system"
-          ? "💡"
-          : preferencia === "dark"
-            ? "🌙"
-            : "☀️"}
-      </span>
+  const etiqueta = tema === "light" ? "Cambiar a modo oscuro" : "Cambiar a modo claro";
 
-      <select
-        className="theme-select"
-        aria-label="Preferencia de apariencia"
-        value={preferencia}
-        onChange={(evento) =>
-          cambiarPreferencia(evento.target.value as PreferenciaTema)
-        }
-      >
-        <option value="system">Tema</option>
-        <option value="light">Claro</option>
-        <option value="dark">Oscuro</option>
-      </select>
-    </label>
+  return (
+    <button
+      className="theme-button theme-button-icon"
+      onClick={cambiarTema}
+      type="button"
+      aria-label={etiqueta}
+      title={etiqueta}
+      style={estiloIcono}
+    >
+      {tema === "light" ? "🌙" : "☀️"}
+    </button>
   );
 }

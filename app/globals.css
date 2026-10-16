@@ -243,6 +243,23 @@ textarea {
     border-color 0.2s ease;
 }
 
+
+.publica-header-acciones .theme-button {
+  width: 40px;
+  height: 40px;
+  min-width: 40px;
+  min-height: 40px;
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+
 .theme-button:hover {
   border-color: var(--color-primary);
 }
@@ -3818,6 +3835,13 @@ padding: 3px;
   line-height: 1.5;
 }
 
+.publica-sobrelineapref {
+  color: var(--color-primary);
+  font-size: 17px;
+  font-weight: 800; 
+  line-height: 1.5;
+}
+
 .publica-patita {
   display: grid;
   width: 45px;
@@ -4398,8 +4422,10 @@ padding: 3px;
   align-items: center;
   justify-content: flex-end;
   gap: 10px;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
 }
+
+
 
 @media (max-width: 520px) {
   .publica-header-acciones {
