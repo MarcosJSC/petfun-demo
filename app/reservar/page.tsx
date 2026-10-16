@@ -1326,12 +1326,12 @@ async function cancelarReserva(numeroReserva: string) {
                 <li key={perrito.id}>{perrito.nombre}</li>
               ))}
             </ul>
-
+{/* 
             <p>
               <strong>Monto estimado:</strong>{" "}
               ₡{Number(reserva.montoEstimado ?? 0).toLocaleString("es-CR")}
             </p>
-
+*/}
             {reserva.observacionesCliente && (
               <p>
                 <strong>Tus observaciones:</strong>{" "}
@@ -2184,12 +2184,12 @@ async function cancelarReserva(numeroReserva: string) {
                 <li key={perrito.id}>{perrito.nombre}</li>
               ))}
             </ul>
-
+{/*
             <p>
               <strong>Monto estimado:</strong>{" "}
               ₡{Number(reserva.montoEstimado ?? 0).toLocaleString("es-CR")}
             </p>
-
+*/}
             {reserva.observacionesCliente && (
               <p>
                 <strong>Tus observaciones:</strong>{" "}
