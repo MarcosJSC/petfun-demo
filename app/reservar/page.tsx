@@ -6,12 +6,12 @@ import ThemeToggle from "@/components/ThemeToggle";
 
 const imagenes = [
   {
-    src: "https://zepzmjitngvjuzzzodfj.supabase.co/storage/v1/object/public/branding/carrusel/navidad-booking-abierto.png",
+    src: "https://zepzmjitngvjuzzzodfj.supabase.co/storage/v1/object/public/branding/carrusel/navidad-booking-abierto.webp",
     alt: "Reservas navideñas abiertas en PetFunCR",
     etiqueta: "TEMPORADA NAVIDEÑA",
   },
   {
-    src: "https://zepzmjitngvjuzzzodfj.supabase.co/storage/v1/object/public/branding/carrusel/navidad-pocos-espacios.png",
+    src: "https://zepzmjitngvjuzzzodfj.supabase.co/storage/v1/object/public/branding/carrusel/navidad-pocos-espacios.webp",
     alt: "Recuerda mantener las vacunas y desparacitaciones al día",
     etiqueta: "VACUNAS Y DESPARACITACIONES",
   },
