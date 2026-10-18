@@ -779,6 +779,86 @@ export default function ReservasPage() {
     }
   }
 
+  async function cancelarReserva() {
+    if (!reservaSeleccionada) return;
+
+    if (!puede("reservas.gestionar")) {
+      setTipoMensaje("error");
+      setMensaje("Tu perfil no tiene permiso para cancelar reservas.");
+      return;
+    }
+
+    if (!["Pendiente", "Aprobada"].includes(reservaSeleccionada.estado)) {
+      setTipoMensaje("error");
+      setMensaje("Esta reserva ya no se puede cancelar desde su estado actual. Actualizá la lista.");
+      return;
+    }
+
+    const numero = reservaSeleccionada.numero_reserva;
+    const propietario = nombrePropietario(reservaSeleccionada);
+    const confirmacion =
+      `¿Confirmás cancelar la reserva ${numero} de ${propietario}?\n\n` +
+      "La reserva quedará Cancelada y dejará de bloquear las fechas para nuevas solicitudes. " +
+      "Las estadías asociadas no se eliminarán ni modificarán; podrás gestionarlas manualmente.";
+
+    if (!window.confirm(confirmacion)) return;
+
+    setProcesandoId(reservaSeleccionada.id);
+    setMensaje("");
+
+    try {
+      const {
+        data: { session },
+        error: errorSesion,
+      } = await supabase.auth.getSession();
+
+      if (errorSesion || !session?.access_token) {
+        throw new Error("Tu sesión no está activa. Iniciá sesión nuevamente.");
+      }
+
+      const respuesta = await fetch("/api/admin/reservas/cancelar", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${session.access_token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          reservaId: reservaSeleccionada.id,
+          observacionesAdmin: observacionesAdmin.trim(),
+        }),
+        cache: "no-store",
+      });
+
+      const datos: RespuestaAPI = await respuesta.json();
+
+      if (!respuesta.ok) {
+        throw new Error(datos.error ?? "No se pudo cancelar la reserva.");
+      }
+
+      setTipoMensaje("exito");
+      setMensaje(datos.mensaje ?? "Reserva cancelada correctamente. Las estadías asociadas se conservaron.");
+      setReservaSeleccionada(null);
+      setObservacionesAdmin("");
+      setConfirmarAprobacion(false);
+      setConfirmarRechazo(false);
+      setMostrarConfirmacion(false);
+      setMensajeCompartir("");
+      setEnlaceWhatsApp("");
+
+      await cargarReservas();
+    } catch (error) {
+      console.error("Error al cancelar reserva:", error);
+      setTipoMensaje("error");
+      setMensaje(
+        error instanceof Error
+          ? error.message
+          : "Ocurrió un error al cancelar la reserva."
+      );
+    } finally {
+      setProcesandoId(null);
+    }
+  }
+
   async function ejecutarAccion(
     accion: "aprobar" | "rechazar"
   ) {
@@ -1604,6 +1684,41 @@ export default function ReservasPage() {
                     </button>
                   </div>
                 )}
+
+                {
+                  ["Pendiente", "Aprobada"].includes(reservaSeleccionada.estado) &&
+                  puede("reservas.gestionar") && (
+                    <div
+                      style={{
+                        marginTop: 22,
+                        padding: 14,
+                        borderRadius: 12,
+                        border: "1px solid rgba(220, 38, 38, 0.30)",
+                        background: "rgba(220, 38, 38, 0.06)",
+                      }}
+                    >
+                      <div style={{ fontWeight: 700, marginBottom: 6, color: "#DC2626" }}>
+                        Cancelar reserva
+                      </div>
+                      <p style={{ marginTop: 0, marginBottom: 12, color: "var(--color-text-secondary)" }}>
+                        Podés cancelar una solicitud pendiente o una reserva aprobada si el cliente necesita cambiar las fechas. La estadía asociada, si existe, se conservará y podrás administrarla manualmente.
+                      </p>
+                      <button
+                        type="button"
+                        className="secondary-button"
+                        onClick={() => void cancelarReserva()}
+                        disabled={procesandoId !== null}
+                        style={{
+                          backgroundColor: "#DC2626",
+                          border: "1px solid #DC2626",
+                          color: "#FFFFFF",
+                        }}
+                      >
+                        {procesandoId === reservaSeleccionada.id ? "Cancelando..." : "Cancelar reserva"}
+                      </button>
+                    </div>
+                  )
+                }
 
                 <div className="modal-footer">
                   <button

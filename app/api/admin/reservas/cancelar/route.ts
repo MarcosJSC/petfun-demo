@@ -1,4 +1,3 @@
-
 import { NextRequest, NextResponse } from "next/server";
 import { supabaseAdmin } from "@/lib/supabaseAdmin";
 import { autorizarReserva } from "@/lib/reservas/autorizarReserva";
@@ -33,7 +32,6 @@ export async function POST(request: NextRequest) {
     }
 
     const reservaId = body.reservaId;
-
     const observacionesAdmin =
       typeof body.observacionesAdmin === "string"
         ? body.observacionesAdmin.trim()
@@ -52,28 +50,23 @@ export async function POST(request: NextRequest) {
 
     if (observacionesAdmin.length > 2000) {
       return NextResponse.json(
-        {
-          error:
-            "Las observaciones no pueden superar 2000 caracteres.",
-        },
+        { error: "Las observaciones no pueden superar 2000 caracteres." },
         { status: 400 }
       );
     }
 
     // 3. Consultar la reserva para verificar el acceso a la sucursal.
-    const { data: reserva, error: errorReserva } =
-      await supabaseAdmin
-        .from("reservas")
-        .select("id, sucursal_id, estado")
-        .eq("id", reservaId)
-        .maybeSingle();
+    const { data: reserva, error: errorReserva } = await supabaseAdmin
+      .from("reservas")
+      .select("id, sucursal_id, estado")
+      .eq("id", reservaId)
+      .maybeSingle();
 
     if (errorReserva) {
       console.error(
         "Error consultando reserva para cancelar:",
         errorReserva.message
       );
-
       return NextResponse.json(
         { error: "No se pudo consultar la reserva." },
         { status: 500 }
@@ -93,27 +86,25 @@ export async function POST(request: NextRequest) {
       !usuario.sucursalesIds.includes(Number(reserva.sucursal_id))
     ) {
       return NextResponse.json(
-        {
-          error:
-            "No tienes acceso a la sucursal de esta reserva.",
-        },
+        { error: "No tienes acceso a la sucursal de esta reserva." },
         { status: 403 }
       );
     }
 
-    // 5. Comprobación preliminar para dar una respuesta clara.
-    // La función SQL vuelve a validar el estado bajo bloqueo.
-    if (reserva.estado !== "Pendiente") {
+    // 5. Comprobación preliminar. La función SQL vuelve a validar
+    // el estado definitivo bajo bloqueo de fila.
+    if (!["Pendiente", "Aprobada"].includes(reserva.estado)) {
       return NextResponse.json(
         {
           error:
-            `La reserva no está pendiente. Estado actual: ${reserva.estado}.`,
+            `La reserva no se puede cancelar desde su estado actual: ${reserva.estado}.`,
         },
         { status: 409 }
       );
     }
 
     // 6. Cancelar mediante la función SQL transaccional.
+    // La función solo cambia la reserva; no elimina ni modifica estadías.
     const { data: resultadoCancelacion, error: errorCancelacion } =
       await supabaseAdmin.rpc("cancelar_reserva_publica", {
         p_reserva_id: reservaId,
@@ -129,14 +120,14 @@ export async function POST(request: NextRequest) {
       const mensaje = errorCancelacion.message.toLowerCase();
 
       if (
-        mensaje.includes("no está pendiente") ||
-        mensaje.includes("no esta pendiente") ||
-        mensaje.includes("estado actual")
+        mensaje.includes("no se puede cancelar") ||
+        mensaje.includes("estado actual") ||
+        mensaje.includes("no fue posible cancelar")
       ) {
         return NextResponse.json(
           {
             error:
-              "La reserva ya no está pendiente. Actualizá la lista y verificá su estado.",
+              "La reserva cambió de estado o ya no se puede cancelar. Actualizá la lista y verificá su estado.",
           },
           { status: 409 }
         );
@@ -151,10 +142,14 @@ export async function POST(request: NextRequest) {
 
       if (mensaje.includes("observaciones")) {
         return NextResponse.json(
-          {
-            error:
-              "Las observaciones no pueden superar 2000 caracteres.",
-          },
+          { error: "Las observaciones no pueden superar 2000 caracteres." },
+          { status: 400 }
+        );
+      }
+
+      if (mensaje.includes("identificador")) {
+        return NextResponse.json(
+          { error: "El identificador de la reserva no es válido." },
           { status: 400 }
         );
       }
@@ -174,9 +169,7 @@ export async function POST(request: NextRequest) {
       },
       {
         status: 200,
-        headers: {
-          "Cache-Control": "no-store",
-        },
+        headers: { "Cache-Control": "no-store" },
       }
     );
   } catch (error) {
@@ -186,10 +179,7 @@ export async function POST(request: NextRequest) {
     );
 
     return NextResponse.json(
-      {
-        error:
-          "Ocurrió un error inesperado al cancelar la reserva.",
-      },
+      { error: "Ocurrió un error inesperado al cancelar la reserva." },
       { status: 500 }
     );
   }

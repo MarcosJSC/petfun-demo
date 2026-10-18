@@ -20,6 +20,7 @@ type Propietario = {
   nombre: string;
   apellidos: string | null;
   cedula: string | null;
+  codigo_reserva: string | null;
   telefono: string | null;
   whatsapp: string | null;
   correo: string | null;
@@ -58,6 +59,7 @@ export default function PropietariosPage() {
 
   const [cedula, setCedula] =
   useState("");
+  const [codigoReserva, setCodigoReserva] = useState("");
 
   const [observaciones, setObservaciones] =
     useState("");
@@ -107,6 +109,7 @@ useEffect(() => {
         nombre,
         apellidos,
         cedula,
+        codigo_reserva,
         telefono,
         whatsapp,
         correo,
@@ -153,7 +156,8 @@ useEffect(() => {
     setTelefono("");
     setWhatsapp("");
     setCorreo("");
-    setCedula(""); 
+    setCedula("");
+    setCodigoReserva("");
     setContactoEmergenciaNombre("");
     setContactoEmergenciaTelefono("");
 
@@ -183,6 +187,42 @@ useEffect(() => {
 
     setGuardando(true);
     setMensaje("");
+
+    const codigoReservaLimpio = codigoReserva.trim().toUpperCase();
+
+    // El código es opcional, pero si se escribe debe respetar el formato público.
+    if (
+      codigoReservaLimpio &&
+      !/^PF-[A-Z0-9]{5,12}$/.test(codigoReservaLimpio)
+    ) {
+      setMensaje(
+        "El código debe comenzar con PF- y continuar con entre 5 y 12 letras o números. Ejemplo: PF-MAX2026."
+      );
+      setGuardando(false);
+      return;
+    }
+
+    // Comprobación previa para evitar asignar un código que ya esté en uso.
+    if (codigoReservaLimpio) {
+      const { data: propietarioConCodigo, error: errorCodigo } = await supabase
+        .from("propietarios")
+        .select("id")
+        .eq("codigo_reserva", codigoReservaLimpio)
+        .maybeSingle();
+
+      if (errorCodigo) {
+        console.error("Error comprobando código de reserva:", errorCodigo);
+        setMensaje("No se pudo comprobar si el código de reserva está disponible.");
+        setGuardando(false);
+        return;
+      }
+
+      if (propietarioConCodigo) {
+        setMensaje("Ese código de reserva ya está asignado a otro propietario.");
+        setGuardando(false);
+        return;
+      }
+    }
 
 let sucursalIdPropietario:
   number | null = null;
@@ -241,6 +281,7 @@ if (!esSuperadmin) {
         whatsapp: whatsapp || null,
         correo: correo || null,
         cedula: cedula.trim() || null,
+        codigo_reserva: codigoReservaLimpio || null,
         contacto_emergencia_nombre:
           contactoEmergenciaNombre || null,
 
@@ -263,6 +304,11 @@ if (!esSuperadmin) {
     hint: error.hint,
   });
 
+      setMensaje(
+        error.code === "23505"
+          ? "Ese código de reserva ya está asignado a otro propietario."
+          : "No se pudo guardar el propietario. Revisá los datos e intentá nuevamente."
+      );
       return;
     }
 
@@ -291,6 +337,7 @@ if (!esSuperadmin) {
             ${propietario.nombre}
             ${propietario.apellidos ?? ""}
              ${propietario.cedula ?? ""}
+            ${propietario.codigo_reserva ?? ""}
             ${propietario.telefono ?? ""}
             ${propietario.whatsapp ?? ""}
             ${propietario.correo ?? ""}
@@ -431,6 +478,7 @@ const propietariosPaginados =
         <thead>
           <tr>
             <th>Nombre</th>
+            <th>Código de reserva</th>
             <th>Teléfono</th>
             <th>WhatsApp</th>
             <th>Correo</th>
@@ -454,6 +502,10 @@ const propietariosPaginados =
                     {propietario.nombre}{" "}
                     {propietario.apellidos}
                   </strong>
+                </td>
+
+                <td>
+                  {propietario.codigo_reserva || "—"}
                 </td>
 
                 <td>
@@ -502,6 +554,16 @@ const propietariosPaginados =
               </div>
 
               <div className="mobile-record-grid">
+
+                <div className="mobile-record-full">
+                  <span className="mobile-record-label">
+                    Código de reserva
+                  </span>
+
+                  <strong>
+                    {propietario.codigo_reserva || "Sin asignar"}
+                  </strong>
+                </div>
 
                 <div>
                   <span className="mobile-record-label">
@@ -733,6 +795,28 @@ const propietariosPaginados =
                       }
                     />
 
+                  </div>
+
+                  <div className="form-group">
+                    <label className="form-label">
+                      Código de reserva
+                    </label>
+
+                    <input
+                      className="form-input"
+                      value={codigoReserva}
+                      onChange={(e) =>
+                        setCodigoReserva(e.target.value.toUpperCase())
+                      }
+                      placeholder="Ej: PF-MAX2026"
+                      maxLength={15}
+                      autoComplete="off"
+                      spellCheck={false}
+                    />
+
+                    <small>
+                      Opcional. Formato: PF- seguido de 5 a 12 letras o números.
+                    </small>
                   </div>
 
                   <div className="form-group full">

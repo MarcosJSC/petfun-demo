@@ -16,6 +16,7 @@ type Propietario = {
   contacto_emergencia_nombre: string | null;
   contacto_emergencia_telefono: string | null;
   observaciones: string | null;
+  codigo_reserva: string | null;
 
   sucursal_id: number;
 
@@ -80,6 +81,9 @@ export default function PropietarioDetallePage() {
   const [observaciones, setObservaciones] =
     useState("");
 
+  const [codigoReserva, setCodigoReserva] = useState("");
+  const [errorCodigoReserva, setErrorCodigoReserva] = useState("");
+
  const [cedula, setCedula] =
   useState("");   
 
@@ -100,6 +104,7 @@ export default function PropietarioDetallePage() {
         contacto_emergencia_nombre,
         contacto_emergencia_telefono,
         observaciones,
+        codigo_reserva,
         sucursal_id,
         sucursales (
       id,
@@ -135,6 +140,7 @@ export default function PropietarioDetallePage() {
     );
 
     setObservaciones(data.observaciones ?? "");
+    setCodigoReserva(data.codigo_reserva ?? "");
   }
 
   async function cargarPerritos() {
@@ -180,8 +186,50 @@ export default function PropietarioDetallePage() {
   ) {
     e.preventDefault();
 
+    const codigoReservaLimpio = codigoReserva.trim().toUpperCase();
+    setErrorCodigoReserva("");
+
+    // Formato utilizado por las rutas públicas de reservas: PF- + 5 a 12 caracteres alfanuméricos.
+    if (
+      codigoReservaLimpio &&
+      !/^PF-[A-Z0-9]{5,12}$/.test(codigoReservaLimpio)
+    ) {
+      setErrorCodigoReserva(
+        "El código debe comenzar con PF- y contener de 5 a 12 letras o números después del guion. Ejemplo: PF-MAX2026."
+      );
+      return;
+    }
+
     setGuardando(true);
     setMensaje("");
+
+    // Comprobación preventiva para evitar asignar un código que ya pertenezca a otro propietario.
+    // La unicidad definitiva también debe protegerse en Supabase con una restricción/índice único.
+    if (codigoReservaLimpio) {
+      const { data: codigoExistente, error: errorConsultaCodigo } =
+        await supabase
+          .from("propietarios")
+          .select("id")
+          .ilike("codigo_reserva", codigoReservaLimpio)
+          .neq("id", propietarioId)
+          .limit(1)
+          .maybeSingle();
+
+      if (errorConsultaCodigo) {
+        console.error("Error verificando código de reserva:", errorConsultaCodigo);
+        setGuardando(false);
+        setErrorCodigoReserva(
+          "No se pudo comprobar si el código de reserva está disponible. No se guardaron los cambios."
+        );
+        return;
+      }
+
+      if (codigoExistente) {
+        setGuardando(false);
+        setErrorCodigoReserva("Ese código de reserva ya está asignado a otro propietario.");
+        return;
+      }
+    }
 
     const { error } = await supabase
       .from("propietarios")
@@ -192,6 +240,7 @@ export default function PropietarioDetallePage() {
         telefono: telefono || null,
         whatsapp: whatsapp || null,
         correo: correo || null,
+        codigo_reserva: codigoReservaLimpio || null,
 
         contacto_emergencia_nombre:
           contactoEmergenciaNombre || null,
@@ -208,9 +257,17 @@ export default function PropietarioDetallePage() {
 
     if (error) {
       console.error(error);
-      setMensaje(
-        "No se pudieron guardar los cambios."
-      );
+      const errorRelacionadoCodigoReserva =
+        error.code === "23505" &&
+        `${error.message} ${error.details ?? ""}`
+          .toLowerCase()
+          .includes("codigo_reserva");
+
+      if (errorRelacionadoCodigoReserva) {
+        setErrorCodigoReserva("Ese código de reserva ya está asignado a otro propietario.");
+      } else {
+        setMensaje("No se pudieron guardar los cambios.");
+      }
       return;
     }
 
@@ -407,6 +464,16 @@ export default function PropietarioDetallePage() {
             {perritos.length}
           </div>
         </div>
+
+<div className="card">
+  <div className="card-label">
+    Código de reserva
+  </div>
+
+  <strong>
+    {propietario.codigo_reserva || "Sin asignar"}
+  </strong>
+</div>
 
 <div className="card">
   <div className="card-label">
@@ -718,6 +785,32 @@ export default function PropietarioDetallePage() {
 
 </div>
 
+                  <div className="form-group">
+                    <label className="form-label" htmlFor="codigo-reserva">
+                      Código de reserva (opcional)
+                    </label>
+                    <input
+                      id="codigo-reserva"
+                      className="form-input"
+                      value={codigoReserva}
+                      onChange={(e) => {
+                        setCodigoReserva(e.target.value.toUpperCase());
+                        setErrorCodigoReserva("");
+                      }}
+                      placeholder="Ej: PF-MAX2026"
+                      maxLength={15}
+                      autoComplete="off"
+                      spellCheck={false}
+                    />
+                    <small style={{ display: "block", marginTop: 6, color: "var(--color-text-secondary)" }}>
+                      Debe iniciar con PF- y llevar de 5 a 12 letras o números. Dejalo vacío si no vas a habilitar reservas públicas para este propietario.
+                    </small>
+                    {errorCodigoReserva && (
+                      <p role="alert" style={{ color: "#dc2626", fontSize: 13, margin: "6px 0 0", lineHeight: 1.5 }}>
+                        {errorCodigoReserva}
+                      </p>
+                    )}
+                  </div>
 
                   <div className="form-group">
 

@@ -3,24 +3,21 @@
 
 import { useEffect, useState } from "react";
 import ThemeToggle from "@/components/ThemeToggle";
+import { supabase } from "@/lib/supabase";
 
-const imagenes = [
-  {
-    src: "https://zepzmjitngvjuzzzodfj.supabase.co/storage/v1/object/public/branding/carrusel/navidad-booking-abierto.webp",
-    alt: "Reservas navideñas abiertas en PetFunCR",
-    etiqueta: "TEMPORADA NAVIDEÑA",
-  },
-  {
-    src: "https://zepzmjitngvjuzzzodfj.supabase.co/storage/v1/object/public/branding/carrusel/navidad-pocos-espacios.webp",
-    alt: "Recuerda mantener las vacunas y desparacitaciones al día",
-    etiqueta: "VACUNAS Y DESPARACITACIONES",
-  },
-];
+type ImagenCarruselPublica = {
+  id: number | string;
+  src: string;
+  alt: string;
+  etiqueta: string;
+};
 
 const LOGO =
   "https://zepzmjitngvjuzzzodfj.supabase.co/storage/v1/object/public/branding/logo-petfuncr.png";
 
 export default function ReservarPage() {
+  const [imagenes, setImagenes] = useState<ImagenCarruselPublica[]>([]);
+  const [cargandoImagenesCarrusel, setCargandoImagenesCarrusel] = useState(true);
   const [indice, setIndice] = useState(0);
   const [pausado, setPausado] = useState(false);
     const [codigo, setCodigo] = useState("");
@@ -91,15 +88,62 @@ const [solicitudCreada, setSolicitudCreada] = useState<{
 
 
 
+  // Carga desde Supabase únicamente los anuncios activos, respetando su orden.
+  // La política RLS pública de la tabla limita la lectura a activo = true.
   useEffect(() => {
-    if (pausado) return;
+    let cancelado = false;
+
+    async function cargarCarruselPublico() {
+      try {
+        const { data, error } = await supabase
+          .from("carrusel_reservas_imagenes")
+          .select("id, imagen_url, alt_text, etiqueta, orden")
+          .eq("activo", true)
+          .order("orden", { ascending: true })
+          .order("id", { ascending: true });
+
+        if (error) throw error;
+
+        const imagenesActivas: ImagenCarruselPublica[] = (data ?? []).map(
+          (item) => ({
+            id: item.id,
+            src: item.imagen_url,
+            alt: item.alt_text?.trim() || item.etiqueta?.trim() || "Anuncio de PetFunCR",
+            etiqueta: item.etiqueta?.trim() || "",
+          })
+        );
+
+        if (!cancelado) {
+          setImagenes(imagenesActivas);
+          setIndice(0);
+        }
+      } catch (error) {
+        console.error("No se pudo cargar el carrusel público de PetFunCR:", error);
+        if (!cancelado) {
+          setImagenes([]);
+          setIndice(0);
+        }
+      } finally {
+        if (!cancelado) setCargandoImagenesCarrusel(false);
+      }
+    }
+
+    void cargarCarruselPublico();
+
+    return () => {
+      cancelado = true;
+    };
+  }, []);
+
+  useEffect(() => {
+    if (pausado || imagenes.length <= 1) return;
 
     const intervalo = window.setInterval(() => {
       setIndice((actual) => (actual + 1) % imagenes.length);
     }, 6000);
 
     return () => window.clearInterval(intervalo);
-  }, [pausado]);
+  }, [pausado, imagenes.length]);
 
   // Desplaza al usuario al siguiente paso después de cada confirmación.
   // La página contiene una vista desktop y otra móvil; seleccionamos la visible.
@@ -162,10 +206,12 @@ if (pasoReserva === 2 || (pasoReserva === 3 && !seleccionConfirmada)) {
   }, [consultaRealizada]);
 
   function anterior() {
+    if (imagenes.length <= 1) return;
     setIndice((actual) => (actual - 1 + imagenes.length) % imagenes.length);
   }
 
   function siguiente() {
+    if (imagenes.length <= 1) return;
     setIndice((actual) => (actual + 1) % imagenes.length);
   }
 
@@ -194,7 +240,7 @@ function formatearFecha(fecha: string) {
 }
 
 
-  const imagen = imagenes[indice];
+  const imagen = imagenes[indice] ?? null;
 
   
   async function validarCodigo() {
@@ -620,54 +666,73 @@ async function cancelarReserva(numeroReserva: string) {
             }
           }}
         >
-          <div className="publica-carrusel-foto">
-            <img
-              key={imagen.src}
-              src={imagen.src}
-              alt={imagen.alt}
-              fetchPriority={indice === 0 ? "high" : "auto"}
-              decoding="async"
-            />
+          {imagen ? (
+            <>
+              <div className="publica-carrusel-foto">
+                <img
+                  key={imagen.id}
+                  src={imagen.src}
+                  alt={imagen.alt}
+                  fetchPriority={indice === 0 ? "high" : "auto"}
+                  decoding="async"
+                />
 
-            <div className="publica-carrusel-sombra" />
+                <div className="publica-carrusel-sombra" />
 
-            <span className="publica-carrusel-etiqueta">
-              {imagen.etiqueta}
-            </span>
-          </div>
+                {imagen.etiqueta && (
+                  <span className="publica-carrusel-etiqueta">
+                    {imagen.etiqueta}
+                  </span>
+                )}
+              </div>
 
-          <button
-            type="button"
-            className="publica-flecha publica-flecha-anterior"
-            onClick={anterior}
-            aria-label="Anuncio anterior"
-          >
-            ‹
-          </button>
+              {imagenes.length > 1 && (
+                <>
+                  <button
+                    type="button"
+                    className="publica-flecha publica-flecha-anterior"
+                    onClick={anterior}
+                    aria-label="Anuncio anterior"
+                  >
+                    ‹
+                  </button>
 
-          <button
-            type="button"
-            className="publica-flecha publica-flecha-siguiente"
-            onClick={siguiente}
-            aria-label="Anuncio siguiente"
-          >
-            ›
-          </button>
+                  <button
+                    type="button"
+                    className="publica-flecha publica-flecha-siguiente"
+                    onClick={siguiente}
+                    aria-label="Anuncio siguiente"
+                  >
+                    ›
+                  </button>
 
-          <div className="publica-indicadores">
-            {imagenes.map((item, i) => (
-              <button
-                key={item.src}
-                type="button"
-                className={`publica-indicador ${
-                  indice === i ? "activo" : ""
-                }`}
-                onClick={() => setIndice(i)}
-                aria-label={`Mostrar anuncio ${i + 1}`}
-                aria-current={indice === i ? "true" : undefined}
-              />
-            ))}
-          </div>
+                  <div className="publica-indicadores">
+                    {imagenes.map((item, i) => (
+                      <button
+                        key={item.id}
+                        type="button"
+                        className={`publica-indicador ${
+                          indice === i ? "activo" : ""
+                        }`}
+                        onClick={() => setIndice(i)}
+                        aria-label={`Mostrar anuncio ${i + 1}`}
+                        aria-current={indice === i ? "true" : undefined}
+                      />
+                    ))}
+                  </div>
+                </>
+              )}
+            </>
+          ) : (
+            <div className="publica-carrusel-foto" role="status" aria-live="polite">
+              <div className="publica-carrusel-sombra" />
+              <span className="publica-carrusel-etiqueta">
+                {cargandoImagenesCarrusel
+                  ? "CARGANDO ANUNCIOS..."
+                  : "PRONTO COMPARTIREMOS NOVEDADES"}
+              </span>
+            </div>
+          )}
         </section>
       </section>
 
@@ -1140,7 +1205,7 @@ async function cancelarReserva(numeroReserva: string) {
       {solicitudCreada.numeroReserva}
     </p>
     <p>
-      Guardá este número para consultar el estado de tu solicitud.
+      Puedes consultar o cancelar el estado de la reserva con tu código del propietario.
 </p>
       
 <button
@@ -1477,54 +1542,73 @@ async function cancelarReserva(numeroReserva: string) {
             }
           }}
         >
-          <div className="publica-carrusel-foto">
-            <img
-              key={imagen.src}
-              src={imagen.src}
-              alt={imagen.alt}
-              fetchPriority={indice === 0 ? "high" : "auto"}
-              decoding="async"
-            />
+          {imagen ? (
+            <>
+              <div className="publica-carrusel-foto">
+                <img
+                  key={imagen.id}
+                  src={imagen.src}
+                  alt={imagen.alt}
+                  fetchPriority={indice === 0 ? "high" : "auto"}
+                  decoding="async"
+                />
 
-            <div className="publica-carrusel-sombra" />
+                <div className="publica-carrusel-sombra" />
 
-            <span className="publica-carrusel-etiqueta">
-              {imagen.etiqueta}
-            </span>
-          </div>
+                {imagen.etiqueta && (
+                  <span className="publica-carrusel-etiqueta">
+                    {imagen.etiqueta}
+                  </span>
+                )}
+              </div>
 
-          <button
-            type="button"
-            className="publica-flecha publica-flecha-anterior"
-            onClick={anterior}
-            aria-label="Anuncio anterior"
-          >
-            ‹
-          </button>
+              {imagenes.length > 1 && (
+                <>
+                  <button
+                    type="button"
+                    className="publica-flecha publica-flecha-anterior"
+                    onClick={anterior}
+                    aria-label="Anuncio anterior"
+                  >
+                    ‹
+                  </button>
 
-          <button
-            type="button"
-            className="publica-flecha publica-flecha-siguiente"
-            onClick={siguiente}
-            aria-label="Anuncio siguiente"
-          >
-            ›
-          </button>
+                  <button
+                    type="button"
+                    className="publica-flecha publica-flecha-siguiente"
+                    onClick={siguiente}
+                    aria-label="Anuncio siguiente"
+                  >
+                    ›
+                  </button>
 
-          <div className="publica-indicadores">
-            {imagenes.map((item, i) => (
-              <button
-                key={item.src}
-                type="button"
-                className={`publica-indicador ${
-                  indice === i ? "activo" : ""
-                }`}
-                onClick={() => setIndice(i)}
-                aria-label={`Mostrar anuncio ${i + 1}`}
-                aria-current={indice === i ? "true" : undefined}
-              />
-            ))}
-          </div>
+                  <div className="publica-indicadores">
+                    {imagenes.map((item, i) => (
+                      <button
+                        key={item.id}
+                        type="button"
+                        className={`publica-indicador ${
+                          indice === i ? "activo" : ""
+                        }`}
+                        onClick={() => setIndice(i)}
+                        aria-label={`Mostrar anuncio ${i + 1}`}
+                        aria-current={indice === i ? "true" : undefined}
+                      />
+                    ))}
+                  </div>
+                </>
+              )}
+            </>
+          ) : (
+            <div className="publica-carrusel-foto" role="status" aria-live="polite">
+              <div className="publica-carrusel-sombra" />
+              <span className="publica-carrusel-etiqueta">
+                {cargandoImagenesCarrusel
+                  ? "CARGANDO ANUNCIOS..."
+                  : "PRONTO COMPARTIREMOS NOVEDADES"}
+              </span>
+            </div>
+          )}
         </section>
       </section>
 
@@ -1998,7 +2082,7 @@ async function cancelarReserva(numeroReserva: string) {
       {solicitudCreada.numeroReserva}
     </p>
     <p>
-      Guardá este número para consultar el estado de tu solicitud.
+      Puedes consultar o cancelar el estado de la reserva con tu código del propietario
 </p>
       
 <button
