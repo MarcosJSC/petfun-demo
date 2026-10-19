@@ -25,7 +25,7 @@ import {
 const opciones = [
   {
     nombre: "Dashboard",
-    ruta: "/",
+    ruta: "/dashboard",
     icono: "▦",
     permiso: null,
   },
@@ -451,18 +451,11 @@ async function cerrarSesion() {
         );
       })
       .map((opcion) => {
-        const activo =
-       opcion.ruta === "/"
-    ? pathname === "/"
-    : opcion.ruta.startsWith(
-        "/estadias"
-      )
-      ? pathname.startsWith(
-          "/estadias"
-        )
-      : pathname.startsWith(
-          opcion.ruta
-        );
+       const activo = opcion.ruta.startsWith(
+  "/estadias"
+)
+  ? pathname.startsWith("/estadias")
+  : pathname.startsWith(opcion.ruta);
 
         return (
           <Link

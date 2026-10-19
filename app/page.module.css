@@ -1,0 +1,573 @@
+.page {
+  --petfun-purple: #6d3fd1;
+  --petfun-purple-dark: #51259c;
+  --petfun-ink: #38241d;
+  --petfun-muted: #665a53;
+  --petfun-cream: #fffaf4;
+  --petfun-description: #51463f;
+  --petfun-admin: #796b61;
+  --petfun-benefit-text: #3d2b24;
+  --petfun-section-border: rgba(115, 76, 48, 0.12);
+  --petfun-benefit-border: rgba(115, 76, 48, 0.18);
+  --petfun-benefit-border-mobile: rgba(115, 76, 48, 0.13);
+  --petfun-home-icon-bg: #f6e5d5;
+  --petfun-home-icon-color: #624331;
+  --petfun-icon-bg: #eee4ff;
+  --petfun-icon-color: #51259c;
+  --petfun-shield-icon-bg: #e7e1fb;
+  --petfun-heart-icon-bg: #f2dfdf;
+  --petfun-heart-icon-color: #663a78;
+  --petfun-footer: #8b7a6f;
+  --petfun-reassurance: #76695f;
+  --petfun-fade-strong: rgba(255, 250, 244, 0.99);
+  --petfun-fade-medium: rgba(255, 250, 244, 0.93);
+  --petfun-fade-soft: rgba(255, 250, 244, 0.7);
+  --petfun-fade-light: rgba(255, 250, 244, 0.15);
+  --petfun-fade-97: rgba(255, 250, 244, 0.97);
+  --petfun-fade-82: rgba(255, 250, 244, 0.82);
+  --petfun-fade-22: rgba(255, 250, 244, 0.22);
+  --petfun-fade-02: rgba(255, 250, 244, 0.02);
+  --petfun-fade-transparent: rgba(255, 250, 244, 0);
+  min-height: 100vh;
+  overflow: hidden;
+  background: var(--petfun-cream);
+  color: var(--petfun-ink);
+}
+
+:global(html[data-theme="dark"]) .page {
+  --petfun-purple: #9b88f2;
+  --petfun-purple-dark: #c0afff;
+  --petfun-ink: #f4f4f5;
+  --petfun-muted: #b4b1bd;
+  --petfun-cream: #151519;
+  --petfun-description: #d0ccd7;
+  --petfun-admin: #c0b8ca;
+  --petfun-benefit-text: #f4f4f5;
+  --petfun-section-border: rgba(255, 255, 255, 0.12);
+  --petfun-benefit-border: rgba(255, 255, 255, 0.14);
+  --petfun-benefit-border-mobile: rgba(255, 255, 255, 0.12);
+  --petfun-home-icon-bg: #352d28;
+  --petfun-home-icon-color: #f0c6a1;
+  --petfun-icon-bg: #302b4a;
+  --petfun-icon-color: #c0afff;
+  --petfun-shield-icon-bg: #302b4a;
+  --petfun-heart-icon-bg: #392b3a;
+  --petfun-heart-icon-color: #e4b5f3;
+  --petfun-footer: #a9a9b2;
+  --petfun-reassurance: #c0b8ca;
+  --petfun-fade-strong: rgba(21, 21, 25, 0.99);
+  --petfun-fade-medium: rgba(21, 21, 25, 0.93);
+  --petfun-fade-soft: rgba(21, 21, 25, 0.7);
+  --petfun-fade-light: rgba(21, 21, 25, 0.15);
+  --petfun-fade-97: rgba(21, 21, 25, 0.97);
+  --petfun-fade-82: rgba(21, 21, 25, 0.82);
+  --petfun-fade-22: rgba(21, 21, 25, 0.22);
+  --petfun-fade-02: rgba(21, 21, 25, 0.02);
+  --petfun-fade-transparent: rgba(21, 21, 25, 0);
+}
+
+.header {
+  position: relative;
+  z-index: 5;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  width: min(1440px, 100%);
+  min-height: 124px;
+  margin: 0 auto;
+  padding: 14px clamp(24px, 5vw, 76px);
+}
+
+.headerActions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 16px;
+  min-width: 0;
+}
+
+.themeToggle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+}
+
+/* El ThemeToggle compartido trae margen superior para el menú lateral.
+   En la cabecera pública lo anulamos para alinearlo con el acceso admin. */
+.themeToggle :global(.theme-button) {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  min-width: 40px;
+  min-height: 40px;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.brand {
+  display: inline-flex;
+  align-items: center;
+  flex: 0 0 auto;
+  border-radius: 16px;
+}
+
+.brand:focus-visible,
+.adminLink:focus-visible,
+.primaryButton:focus-visible {
+  outline: 3px solid #a98be8;
+  outline-offset: 4px;
+}
+
+.logo {
+  display: block;
+  width: 112px;
+  height: 96px;
+  object-fit: contain;
+}
+
+.adminLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 0 9px 12px;
+  color: var(--petfun-admin);
+  font-size: 13px;
+  font-weight: 500;
+  text-decoration: none;
+  transition: color 160ms ease;
+}
+
+.adminLink:hover {
+  color: var(--petfun-purple-dark);
+}
+
+.lockIcon {
+  width: 17px;
+  height: 17px;
+  flex: 0 0 auto;
+}
+
+.hero {
+  position: relative;
+  isolation: isolate;
+  min-height: 590px;
+  margin-top: -1px;
+  background: var(--petfun-cream);
+}
+
+.heroImage {
+  position: absolute;
+  z-index: -2;
+  inset: 0;
+  overflow: hidden;
+}
+
+.heroPhoto {
+  object-fit: cover;
+  object-position: center 51%;
+}
+
+.imageFade {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    90deg,
+    var(--petfun-cream) 0%,
+    var(--petfun-fade-strong) 25%,
+    var(--petfun-fade-medium) 34%,
+    var(--petfun-fade-soft) 43%,
+    var(--petfun-fade-light) 56%,
+    var(--petfun-fade-transparent) 66%
+  );
+}
+
+.heroInner {
+  display: flex;
+  align-items: center;
+  width: min(1440px, 100%);
+  min-height: 590px;
+  margin: 0 auto;
+  padding: 36px clamp(24px, 5vw, 76px) 64px;
+}
+
+.heroCopy {
+  width: min(510px, 48%);
+  padding-bottom: 4px;
+}
+
+.eyebrow {
+  margin: 0 0 18px;
+  color: var(--petfun-purple-dark);
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.17em;
+}
+
+.heroCopy h1 {
+  max-width: 540px;
+  margin: 0;
+  color: var(--petfun-purple-dark);
+  font-size: clamp(42px, 4.35vw, 66px);
+  font-weight: 850;
+  letter-spacing: -0.055em;
+  line-height: 1.03;
+}
+
+.heroCopy h1 span {
+  display: block;
+  margin-top: 8px;
+  color: var(--petfun-ink);
+}
+
+.description {
+  max-width: 460px;
+  margin: 24px 0 0;
+  color: var(--petfun-description);
+  font-size: clamp(16px, 1.3vw, 19px);
+  line-height: 1.65;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 14px;
+  margin-top: 30px;
+}
+
+.primaryButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 13px;
+  min-height: 60px;
+  padding: 0 23px;
+  border: 1px solid transparent;
+  border-radius: 999px;
+  background: linear-gradient(135deg, #743bd1, #57229e);
+  box-shadow: 0 10px 22px rgba(81, 37, 156, 0.2);
+  color: #fff;
+  font-size: 17px;
+  font-weight: 750;
+  text-decoration: none;
+  transition: transform 160ms ease, box-shadow 160ms ease, background 160ms ease;
+}
+
+.primaryButton:hover {
+  transform: translateY(-2px);
+  background: linear-gradient(135deg, #6530bd, #481a8c);
+  box-shadow: 0 13px 26px rgba(81, 37, 156, 0.25);
+}
+
+.calendarIcon {
+  width: 22px;
+  height: 22px;
+  flex: 0 0 auto;
+}
+
+.buttonArrow {
+  margin-left: 4px;
+  font-size: 24px;
+  font-weight: 400;
+  line-height: 1;
+}
+
+.reassurance {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 18px 0 0 4px;
+  color: var(--petfun-reassurance);
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.reassurance span {
+  color: var(--petfun-purple);
+  font-size: 14px;
+}
+
+.benefits {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  width: min(1320px, calc(100% - 64px));
+  margin: -4px auto 0;
+  padding: 28px 0 34px;
+  border-top: 1px solid var(--petfun-section-border);
+  background: var(--petfun-cream);
+}
+
+.benefit {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+  min-width: 0;
+  padding: 8px clamp(10px, 1.6vw, 26px);
+}
+
+.benefit + .benefit {
+  border-left: 1px solid var(--petfun-benefit-border);
+}
+
+.benefitIcon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  flex: 0 0 48px;
+  border-radius: 50%;
+  background: var(--petfun-icon-bg);
+  color: var(--petfun-icon-color);
+  font-size: 25px;
+  font-weight: 700;
+}
+
+.benefit:nth-child(1) .benefitIcon {
+  background: var(--petfun-home-icon-bg);
+  color: var(--petfun-home-icon-color);
+}
+
+.benefit:nth-child(3) .benefitIcon {
+  background: var(--petfun-shield-icon-bg);
+}
+
+.benefit:nth-child(4) .benefitIcon {
+  background: var(--petfun-heart-icon-bg);
+  color: var(--petfun-heart-icon-color);
+}
+
+.benefit h2 {
+  margin: 0;
+  color: var(--petfun-benefit-text);
+  font-size: 14px;
+  font-weight: 800;
+  line-height: 1.3;
+}
+
+.benefit p {
+  margin: 5px 0 0;
+  color: var(--petfun-muted);
+  font-size: 12px;
+  line-height: 1.45;
+}
+
+.footer {
+  padding: 0 24px 24px;
+  color: var(--petfun-footer);
+  text-align: center;
+  font-size: 12px;
+}
+
+.footer p {
+  margin: 0;
+}
+
+@media (min-width: 1600px) {
+  .heroCopy {
+    width: 510px;
+  }
+}
+
+@media (max-width: 980px) {
+  .header {
+    min-height: 106px;
+  }
+
+  .hero,
+  .heroInner {
+    min-height: 570px;
+  }
+
+  .heroPhoto {
+    object-position: 58% center;
+  }
+
+  .imageFade {
+    background: linear-gradient(
+      90deg,
+      var(--petfun-cream) 0%,
+      var(--petfun-fade-97) 28%,
+      var(--petfun-fade-82) 40%,
+      var(--petfun-fade-22) 59%,
+      var(--petfun-fade-02) 72%
+    );
+  }
+
+  .heroCopy {
+    width: min(490px, 58%);
+  }
+
+  .benefits {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    row-gap: 10px;
+    width: calc(100% - 40px);
+    padding-top: 22px;
+  }
+
+  .benefit:nth-child(3) {
+    border-left: 0;
+  }
+}
+
+@media (max-width: 640px) {
+  .header {
+    min-height: 86px;
+    gap: 10px;
+    padding: 10px 18px;
+  }
+
+  .logo {
+    width: 84px;
+    height: 70px;
+  }
+
+  .headerActions {
+    gap: 8px;
+  }
+
+  .themeToggle {
+    max-width: 140px;
+  }
+
+  .adminLink {
+    gap: 6px;
+    padding: 8px 0 8px 6px;
+    font-size: 11px;
+    white-space: nowrap;
+  }
+
+  .lockIcon {
+    width: 15px;
+    height: 15px;
+  }
+
+  .hero {
+    min-height: auto;
+    background: var(--petfun-cream);
+  }
+
+  .heroImage {
+    position: relative;
+    z-index: 0;
+    height: clamp(265px, 70vw, 380px);
+  }
+
+  .heroPhoto {
+    object-position: center center;
+  }
+
+  .imageFade {
+    background: linear-gradient(
+      180deg,
+      var(--petfun-fade-transparent) 70%,
+      var(--petfun-cream) 100%
+    );
+  }
+
+  .heroInner {
+    position: relative;
+    z-index: 1;
+    display: block;
+    min-height: 0;
+    margin-top: -1px;
+    padding: 6px 23px 32px;
+  }
+
+  .heroCopy {
+    width: 100%;
+    max-width: 540px;
+    margin: 0 auto;
+  }
+
+  .eyebrow {
+    margin-bottom: 12px;
+    font-size: 10px;
+    letter-spacing: 0.15em;
+  }
+
+  .heroCopy h1 {
+    max-width: 470px;
+    font-size: clamp(38px, 10.8vw, 52px);
+    line-height: 1.02;
+  }
+
+  .heroCopy h1 span {
+    margin-top: 5px;
+  }
+
+  .description {
+    margin-top: 16px;
+    font-size: 15px;
+    line-height: 1.58;
+  }
+
+  .actions {
+    margin-top: 22px;
+  }
+
+  .primaryButton {
+    width: 100%;
+    min-height: 56px;
+    padding: 0 18px;
+    font-size: 16px;
+  }
+
+  .reassurance {
+    align-items: flex-start;
+    margin-top: 14px;
+    font-size: 12px;
+  }
+
+  .benefits {
+    grid-template-columns: 1fr;
+    gap: 0;
+    width: calc(100% - 36px);
+    margin-top: 0;
+    padding: 16px 0 22px;
+  }
+
+  .benefit {
+    padding: 13px 2px;
+  }
+
+  .benefit + .benefit,
+  .benefit:nth-child(3) {
+    border-top: 1px solid var(--petfun-benefit-border-mobile);
+    border-left: 0;
+  }
+
+  .benefitIcon {
+    width: 44px;
+    height: 44px;
+    flex-basis: 44px;
+    font-size: 23px;
+  }
+
+  .benefit h2 {
+    font-size: 14px;
+  }
+
+  .benefit p {
+    font-size: 12px;
+  }
+
+  .footer {
+    padding-bottom: 20px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .adminLink,
+  .primaryButton {
+    transition: none;
+  }
+}

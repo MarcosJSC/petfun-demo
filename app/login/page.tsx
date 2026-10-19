@@ -46,7 +46,7 @@ useEffect(() => {
       await supabase.auth.getSession();
 
     if (session) {
-      router.replace("/");
+      router.replace("/dashboard");
     }
   }
 
@@ -90,7 +90,7 @@ async function iniciarSesion(
       return;
     }
 
-    router.replace("/");
+    router.replace("/dashboard");
     router.refresh();
 
   } catch (error) {
