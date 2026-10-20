@@ -1,0 +1,64 @@
+app/dashboard/page.tsx:34: trailing whitespace.
+[32m+[m[32m} = usePermisos();[m[41m [m
+app/dashboard/page.tsx:35: trailing whitespace.
+[32m+[m[41m    [m
+app/dashboard/page.tsx:58: trailing whitespace.
+[32m+[m[32m] = useState(0);[m[41m [m
+app/dashboard/page.tsx:133: trailing whitespace.
+[32m+[m[32m] = useState(false);[m[41m [m
+app/dashboard/page.tsx:147: trailing whitespace.
+[32m+[m[41m  [m
+app/dashboard/page.tsx:396: trailing whitespace.
+[32m+[m[32m      hora_salida,[m[41m   [m
+app/dashboard/page.tsx:455: trailing whitespace.
+[32m+[m[32m  }[];[m[41m    [m
+app/dashboard/page.tsx:670: trailing whitespace.
+[32m+[m[41m   [m
+app/dashboard/page.tsx:683: trailing whitespace.
+[32m+[m[41m    [m
+app/dashboard/page.tsx:685: trailing whitespace.
+[32m+[m[41m [m
+app/dashboard/page.tsx:772: trailing whitespace.
+[32m+[m[41m    [m
+app/dashboard/page.tsx:1100: trailing whitespace.
+[32m+[m[32m        Panel de Información[m[41m [m
+app/dashboard/page.tsx:1106: trailing whitespace.
+[32m+[m[41m      [m
+app/dashboard/page.tsx:1132: trailing whitespace.
+[32m+[m[41m [m
+app/dashboard/page.tsx:1133: trailing whitespace.
+[32m+[m[32m {/*[m[41m [m
+app/dashboard/page.tsx:1500: trailing whitespace.
+[32m+[m[41m     [m
+app/dashboard/page.tsx:1505: trailing whitespace.
+[32m+[m[41m  [m
+app/dashboard/page.tsx:1844: trailing whitespace.
+[32m+[m[41m                [m
+app/dashboard/page.tsx:2074: trailing whitespace.
+[32m+[m[41m              [m
+app/dashboard/page.tsx:2302: trailing whitespace.
+[32m+[m[41m              [m
+app/dashboard/page.tsx:2533: trailing whitespace.
+[32m+[m[41m              [m
+app/dashboard/page.tsx:3297: trailing whitespace.
+[32m+[m[32m                    🐶 {estadia.perritos?.nombre || "—"}[m[41m                    [m
+app/dashboard/page.tsx:3299: trailing whitespace.
+[32m+[m[41m          [m
+app/dashboard/page.tsx:3305: trailing whitespace.
+[32m+[m[32m                    {estadia.tipos_estadia?.nombre || "—"} - T: {estadia.dias_totales} R: {estadia.dias_restantes}[m[41m  [m
+app/dashboard/page.tsx:3310: trailing whitespace.
+[32m+[m[41m [m
+app/dashboard/page.tsx:3352: trailing whitespace.
+[32m+[m[41m              [m
+app/dashboard/page.tsx:3356: trailing whitespace.
+[32m+[m[41m     [m
+app/dashboard/page.tsx:3583: trailing whitespace.
+[32m+[m[41m  [m
+app/dashboard/page.tsx:3674: trailing whitespace.
+[32m+[m[41m         [m
+app/dashboard/page.tsx:3716: trailing whitespace.
+[32m+[m[41m          [m
+app/dashboard/page.tsx:3727: trailing whitespace.
+[32m+[m[41m  [m
+app/dashboard/page.tsx:3776: trailing whitespace.
+[32m+[m[41m    [m

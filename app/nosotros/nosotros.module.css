@@ -1,0 +1,729 @@
+.page {
+  --about-bg: #fffaf4;
+  --about-card: #ffffff;
+  --about-ink: #38241d;
+  --about-muted: #665a53;
+  --about-purple: #6d3fd1;
+  --about-purple-dark: #51259c;
+  --about-purple-soft: #f0e8ff;
+  --about-line: rgba(115, 76, 48, 0.15);
+  box-sizing: border-box;
+  min-height: 100vh;
+  padding-top: 100px;
+  overflow-x: clip;
+  background: var(--about-bg);
+  color: var(--about-ink);
+}
+
+:global(html[data-theme="dark"]) .page {
+  --about-bg: #151519;
+  --about-card: #201f25;
+  --about-ink: #f4f4f5;
+  --about-muted: #c0b8ca;
+  --about-purple: #b39cff;
+  --about-purple-dark: #c0afff;
+  --about-purple-soft: #302b4a;
+  --about-line: rgba(255, 255, 255, 0.13);
+}
+
+.hero {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(340px, 0.82fr);
+  align-items: center;
+  gap: clamp(35px, 5.5vw, 84px);
+  width: min(1280px, calc(100% - 64px));
+  min-height: 560px;
+  margin: 0 auto;
+  padding: 42px 0 62px;
+}
+
+.heroCopy {
+  position: relative;
+  z-index: 1;
+  max-width: 650px;
+  padding: 14px 0;
+}
+
+.eyebrow,
+.sectionEyebrow {
+  margin: 0 0 16px;
+  color: var(--about-purple);
+  font-size: 11px;
+  font-weight: 850;
+  letter-spacing: 0.17em;
+  line-height: 1.5;
+}
+
+.anniversary {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 20px;
+  padding: 8px 13px;
+  border: 1px solid color-mix(in srgb, var(--about-purple) 35%, transparent);
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--about-purple) 10%, var(--about-bg));
+  color: var(--about-purple-dark);
+  font-size: 12px;
+  font-weight: 750;
+}
+
+.anniversary span {
+  color: var(--about-purple);
+}
+
+.hero h1 {
+  max-width: 700px;
+  margin: 0;
+  color: var(--about-ink);
+  font-size: clamp(43px, 5vw, 70px);
+  font-weight: 850;
+  letter-spacing: -0.055em;
+  line-height: 1.02;
+}
+
+.hero h1 span {
+  display: block;
+  color: var(--about-purple);
+}
+
+.heroDescription {
+  max-width: 550px;
+  margin: 22px 0 27px;
+  color: var(--about-muted);
+  font-size: 17px;
+  line-height: 1.75;
+}
+
+.heroActions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 18px;
+}
+
+.primaryButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  min-height: 52px;
+  padding: 0 23px;
+  border: 1px solid transparent;
+  border-radius: 999px;
+  background: linear-gradient(135deg, #743bd1, #57229e);
+  box-shadow: 0 10px 24px rgba(81, 37, 156, 0.22);
+  color: #fff;
+  font-size: 14px;
+  font-weight: 750;
+  text-decoration: none;
+  transition: transform 160ms ease, box-shadow 160ms ease;
+}
+
+.primaryButton:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 13px 28px rgba(81, 37, 156, 0.3);
+}
+
+.primaryButton:focus-visible {
+  outline: 3px solid #bca5ff;
+  outline-offset: 4px;
+}
+
+.heroNote {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  color: var(--about-muted);
+  font-size: 12px;
+  font-weight: 650;
+}
+
+.heroNote span {
+  color: var(--about-purple);
+  font-size: 20px;
+}
+
+.heroVisual {
+  position: relative;
+  min-height: 465px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.photoHalo {
+  position: absolute;
+  top: 5%;
+  right: 2%;
+  width: 86%;
+  height: 88%;
+  border-radius: 48% 52% 42% 58% / 44% 43% 57% 56%;
+  background: color-mix(in srgb, var(--about-purple) 16%, transparent);
+  transform: rotate(7deg);
+}
+
+.heroPhotoFrame {
+  position: relative;
+  width: min(100%, 430px);
+  height: 460px;
+  overflow: hidden;
+  border: 7px solid var(--about-card);
+  border-radius: 46% 46% 28px 28px;
+  background: var(--about-card);
+  box-shadow: 0 25px 60px rgba(34, 22, 18, 0.18);
+}
+
+.heroPhoto {
+  object-fit: cover;
+  object-position: center 48%;
+}
+
+.photoBadge {
+  position: absolute;
+  right: -9px;
+  bottom: 30px;
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  max-width: calc(100% - 16px);
+  padding: 13px 17px;
+  border: 1px solid var(--about-line);
+  border-radius: 17px;
+  background: var(--about-card);
+  box-shadow: 0 12px 32px rgba(36, 24, 18, 0.13);
+  color: var(--about-ink);
+}
+
+.photoBadgeIcon {
+  display: grid;
+  width: 42px;
+  height: 42px;
+  flex: 0 0 42px;
+  place-items: center;
+  border-radius: 14px;
+  background: var(--about-purple-soft);
+  font-size: 23px;
+}
+
+.photoBadge strong,
+.photoBadge small {
+  display: block;
+}
+
+.photoBadge strong {
+  font-size: 13px;
+  font-weight: 850;
+}
+
+.photoBadge small {
+  margin-top: 3px;
+  color: var(--about-muted);
+  font-size: 11px;
+}
+
+.milestones {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(22px, 5vw, 74px);
+  padding: 25px 32px;
+  border-top: 1px solid var(--about-line);
+  border-bottom: 1px solid var(--about-line);
+  background: color-mix(in srgb, var(--about-bg) 88%, var(--about-purple) 12%);
+}
+
+.milestone {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  text-align: center;
+}
+
+.milestoneNumber {
+  color: var(--about-purple);
+  font-size: clamp(18px, 2.2vw, 25px);
+  font-weight: 850;
+  letter-spacing: -0.035em;
+}
+
+.milestoneLabel {
+  color: var(--about-muted);
+  font-size: 12px;
+}
+
+.milestoneDivider {
+  width: 1px;
+  height: 42px;
+  background: var(--about-line);
+}
+
+.story {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 0.9fr);
+  align-items: center;
+  gap: clamp(36px, 7vw, 94px);
+  width: min(1160px, calc(100% - 64px));
+  margin: 0 auto;
+  padding: 92px 0;
+}
+
+.storyCopy h2,
+.promise h2,
+.playCopy h2,
+.closing h2 {
+  margin: 0;
+  color: var(--about-ink);
+  font-size: clamp(30px, 3.4vw, 43px);
+  font-weight: 820;
+  letter-spacing: -0.04em;
+  line-height: 1.12;
+}
+
+.storyCopy p:not(.sectionEyebrow),
+.sectionHeading > p:not(.sectionEyebrow),
+.playCopy > p:not(.sectionEyebrow),
+.closing > p:not(.sectionEyebrow) {
+  color: var(--about-muted);
+  font-size: 16px;
+  line-height: 1.8;
+}
+
+.storyCopy p:not(.sectionEyebrow) {
+  margin: 20px 0 0;
+}
+
+.storySignature {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 28px;
+  padding-top: 22px;
+  border-top: 1px solid var(--about-line);
+}
+
+.signatureHeart {
+  display: grid;
+  width: 43px;
+  height: 43px;
+  flex: 0 0 43px;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--about-purple-soft);
+  color: var(--about-purple);
+  font-size: 27px;
+}
+
+.storySignature strong,
+.storySignature small {
+  display: block;
+}
+
+.storySignature strong {
+  color: var(--about-ink);
+  font-size: 14px;
+}
+
+.storySignature small {
+  margin-top: 4px;
+  color: var(--about-muted);
+  font-size: 12px;
+}
+
+.storyFigure {
+  margin: 0;
+}
+
+.storyImageWrap {
+  position: relative;
+  min-height: 440px;
+  overflow: hidden;
+  border: 1px solid var(--about-line);
+  border-radius: 25px;
+  background: var(--about-card);
+  box-shadow: 0 18px 45px rgba(39, 25, 19, 0.13);
+}
+
+.storyImage {
+  object-fit: cover;
+  object-position: center 45%;
+}
+
+.storyFigure figcaption {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 13px;
+  color: var(--about-muted);
+  font-size: 12px;
+}
+
+.storyFigure figcaption span {
+  color: var(--about-purple);
+  font-size: 17px;
+}
+
+.promise {
+  padding: 84px 32px 90px;
+  border-top: 1px solid var(--about-line);
+  border-bottom: 1px solid var(--about-line);
+  background: color-mix(in srgb, var(--about-bg) 90%, var(--about-purple) 10%);
+}
+
+.sectionHeading {
+  max-width: 790px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.promise .sectionEyebrow,
+.closing .sectionEyebrow {
+  color: var(--about-purple);
+}
+
+.promise h2 {
+  max-width: 760px;
+  margin: 0 auto;
+}
+
+.sectionHeading > p:not(.sectionEyebrow) {
+  max-width: 740px;
+  margin: 18px auto 0;
+}
+
+.valuesGrid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 20px;
+  width: min(1100px, 100%);
+  margin: 42px auto 0;
+}
+
+.valueCard {
+  padding: 28px 26px 30px;
+  border: 1px solid var(--about-line);
+  border-radius: 20px;
+  background: var(--about-card);
+  box-shadow: 0 8px 24px rgba(42, 28, 20, 0.04);
+}
+
+.valueIcon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  margin-bottom: 19px;
+  border-radius: 16px;
+  background: var(--about-purple-soft);
+  color: var(--about-purple);
+  font-size: 26px;
+  font-weight: 800;
+}
+
+.valueCard h3 {
+  margin: 0;
+  color: var(--about-ink);
+  font-size: 18px;
+  font-weight: 800;
+}
+
+.valueCard p {
+  margin: 10px 0 0;
+  color: var(--about-muted);
+  font-size: 14px;
+  line-height: 1.7;
+}
+
+.playSection {
+  display: grid;
+  grid-template-columns: minmax(0, 0.95fr) minmax(0, 1fr);
+  align-items: center;
+  gap: clamp(34px, 7vw, 88px);
+  width: min(1160px, calc(100% - 64px));
+  margin: 0 auto;
+  padding: 92px 0;
+}
+
+.playImageWrap {
+  position: relative;
+  min-height: 395px;
+  overflow: hidden;
+  border-radius: 25px;
+  background: var(--about-card);
+  box-shadow: 0 18px 45px rgba(39, 25, 19, 0.13);
+}
+
+.playImage {
+  object-fit: cover;
+  object-position: center 44%;
+}
+
+.imagePill {
+  position: absolute;
+  right: 14px;
+  bottom: 14px;
+  left: 14px;
+  padding: 13px 16px;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  border-radius: 14px;
+  background: rgba(20, 18, 24, 0.77);
+  color: #fff;
+  font-size: 13px;
+  font-weight: 750;
+  backdrop-filter: blur(10px);
+}
+
+.playCopy > p:not(.sectionEyebrow) {
+  margin: 19px 0 0;
+}
+
+.playCopy .playEmphasis {
+  padding-left: 17px;
+  border-left: 3px solid var(--about-purple);
+  color: var(--about-ink) !important;
+  font-weight: 700;
+}
+
+.closing {
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  padding: 78px 24px 84px;
+  border-top: 1px solid var(--about-line);
+  background: color-mix(in srgb, var(--about-bg) 86%, var(--about-purple) 14%);
+  text-align: center;
+}
+
+.closingDecor {
+  position: absolute;
+  top: -52px;
+  right: max(3vw, 18px);
+  color: color-mix(in srgb, var(--about-purple) 13%, transparent);
+  font-size: clamp(180px, 25vw, 340px);
+  line-height: 1;
+  pointer-events: none;
+}
+
+.closing > *:not(.closingDecor) {
+  position: relative;
+  max-width: 780px;
+}
+
+.closing h2 {
+  max-width: 760px;
+}
+
+.closing > p:not(.sectionEyebrow) {
+  margin: 18px auto 25px;
+}
+
+.footer {
+  padding: 22px 24px 28px;
+  border-top: 1px solid var(--about-line);
+  color: var(--about-muted);
+  text-align: center;
+  font-size: 12px;
+}
+
+.footer p {
+  margin: 4px 0;
+}
+
+@media (max-width: 1180px) {
+  .page {
+    padding-top: 82px;
+  }
+
+  .hero {
+    gap: 30px;
+    grid-template-columns: minmax(0, 1fr) minmax(280px, 0.8fr);
+    width: min(calc(100% - 48px), 1100px);
+  }
+
+  .heroPhotoFrame {
+    height: 410px;
+  }
+
+  .heroVisual {
+    min-height: 420px;
+  }
+
+  .photoBadge {
+    right: -2px;
+  }
+}
+
+@media (max-width: 760px) {
+  .hero {
+    grid-template-columns: 1fr;
+    gap: 18px;
+    width: calc(100% - 40px);
+    padding: 34px 0 47px;
+  }
+
+  .heroCopy {
+    padding-top: 2px;
+  }
+
+  .hero h1 {
+    font-size: clamp(40px, 10vw, 56px);
+  }
+
+  .heroDescription {
+    margin-top: 17px;
+    font-size: 15px;
+    line-height: 1.68;
+  }
+
+  .heroVisual {
+    min-height: 365px;
+    margin: 4px 8px 0;
+  }
+
+  .heroPhotoFrame {
+    width: min(88%, 360px);
+    height: 365px;
+    border-width: 5px;
+  }
+
+  .photoBadge {
+    right: -3px;
+    bottom: 12px;
+    padding: 10px 12px;
+  }
+
+  .milestones {
+    gap: 12px;
+    padding: 20px 12px;
+  }
+
+  .milestoneLabel {
+    max-width: 118px;
+    font-size: 10px;
+    line-height: 1.45;
+  }
+
+  .milestoneDivider {
+    height: 36px;
+  }
+
+  .story,
+  .playSection {
+    grid-template-columns: 1fr;
+    gap: 28px;
+    width: calc(100% - 40px);
+    padding: 60px 0;
+  }
+
+  .storyImageWrap {
+    min-height: 390px;
+  }
+
+  .promise {
+    padding: 60px 20px 65px;
+  }
+
+  .valuesGrid {
+    grid-template-columns: 1fr;
+    gap: 14px;
+    margin-top: 30px;
+  }
+
+  .valueCard {
+    padding: 23px;
+  }
+
+  .playImageWrap {
+    min-height: 360px;
+  }
+
+  .closing {
+    padding: 62px 22px 68px;
+  }
+}
+
+@media (max-width: 640px) {
+  .page {
+    padding-top: 74px;
+  }
+
+  .hero {
+    width: calc(100% - 32px);
+    padding-top: 28px;
+  }
+
+  .anniversary {
+    margin-bottom: 15px;
+    font-size: 11px;
+  }
+
+  .hero h1 {
+    font-size: clamp(39px, 10.5vw, 50px);
+  }
+
+  .heroActions {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 13px;
+  }
+
+  .heroNote {
+    font-size: 11px;
+  }
+
+  .heroVisual {
+    min-height: 320px;
+  }
+
+  .heroPhotoFrame {
+    height: 320px;
+    width: 87%;
+  }
+
+  .milestones {
+    gap: 8px;
+    padding-right: 8px;
+    padding-left: 8px;
+  }
+
+  .milestoneNumber {
+    font-size: 17px;
+  }
+
+  .milestoneLabel {
+    max-width: 100px;
+    font-size: 9px;
+  }
+
+  .storyImageWrap {
+    min-height: 330px;
+  }
+
+  .playImageWrap {
+    min-height: 310px;
+  }
+
+  .storyCopy h2,
+  .promise h2,
+  .playCopy h2,
+  .closing h2 {
+    font-size: clamp(29px, 8vw, 37px);
+  }
+
+  .storyCopy p:not(.sectionEyebrow),
+  .sectionHeading > p:not(.sectionEyebrow),
+  .playCopy > p:not(.sectionEyebrow),
+  .closing > p:not(.sectionEyebrow) {
+    font-size: 15px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .primaryButton {
+    transition: none;
+  }
+}

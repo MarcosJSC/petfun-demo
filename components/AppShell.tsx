@@ -21,7 +21,13 @@ export default function AppShell({
     pathname === "/" ||
     pathname === "/login" ||
     pathname === "/actualizar-password" ||
-    pathname === "/reservar";
+    pathname === "/reservar" ||
+    pathname === "/servicios" ||
+    pathname === "/instalaciones" ||
+    pathname === "/preguntas-frecuentes" ||
+    pathname === "/contacto" ||
+  pathname === "/nosotros";
+
 
   useEffect(() => {
     let activo = true;

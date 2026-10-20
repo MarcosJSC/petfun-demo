@@ -1,8 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import styles from "./page.module.css";
-import ThemeToggle from "@/components/ThemeToggle";
-import { LOGO_PETFUNCR_URL } from "@/lib/branding";
+import PublicHeader from "@/components/PublicHeader";
 
 const beneficios = [
   {
@@ -30,41 +29,9 @@ const beneficios = [
 export default function Home() {
   return (
     <div className={styles.page}>
-      <header className={styles.header}>
-        <Link href="/" className={styles.brand} aria-label="PetFunCR, página de inicio">
-          <img
-            src={LOGO_PETFUNCR_URL}
-            alt="Logo oficial de PetFunCR"
-            className={styles.logo}
-          />
-        </Link>
+      <PublicHeader />
 
-        <div className={styles.headerActions}>
-          <div className={styles.themeToggle}>
-            <ThemeToggle />
-          </div>
-
-          <Link href="/login" className={styles.adminLink}>
-            <svg
-              aria-hidden="true"
-              viewBox="0 0 24 24"
-              className={styles.lockIcon}
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="1.8"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            >
-              <rect x="4" y="10" width="16" height="11" rx="2" />
-              <path d="M8 10V7a4 4 0 0 1 8 0v3" />
-              <path d="M12 14v3" />
-            </svg>
-            <span>Acceso administrativo</span>
-          </Link>
-        </div>
-      </header>
-
-      <section className={styles.hero} aria-labelledby="hero-title">
+      <section id="inicio" className={styles.hero} aria-labelledby="hero-title">
         <div className={styles.heroImage} aria-hidden="true">
           <Image
             src="/images/petfun-hero.webp"

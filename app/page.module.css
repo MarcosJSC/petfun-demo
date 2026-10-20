@@ -29,7 +29,8 @@
   --petfun-fade-02: rgba(255, 250, 244, 0.02);
   --petfun-fade-transparent: rgba(255, 250, 244, 0);
   min-height: 100vh;
-  overflow: hidden;
+  box-sizing: border-box;
+  padding-top: 100px;
   background: var(--petfun-cream);
   color: var(--petfun-ink);
 }
@@ -377,6 +378,12 @@
   }
 }
 
+@media (max-width: 1180px) {
+  .page {
+    padding-top: 82px;
+  }
+}
+
 @media (max-width: 980px) {
   .header {
     min-height: 106px;
@@ -419,6 +426,10 @@
 }
 
 @media (max-width: 640px) {
+  .page {
+    padding-top: 74px;
+  }
+
   .header {
     min-height: 86px;
     gap: 10px;

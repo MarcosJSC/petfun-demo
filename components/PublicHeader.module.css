@@ -1,0 +1,345 @@
+.publicHeader {
+  --header-bg: rgba(255, 250, 244, 0.96);
+  --header-border: rgba(115, 76, 48, 0.15);
+  --header-text: #38241d;
+  --header-muted: #796b61;
+  --header-hover: #eee4ff;
+  position: fixed;
+  z-index: 1000;
+  inset: 0 0 auto;
+  width: 100%;
+  color: var(--header-text);
+  background: var(--header-bg);
+  border-bottom: 1px solid var(--header-border);
+  box-shadow: 0 5px 24px rgba(36, 24, 18, 0.06);
+  -webkit-backdrop-filter: blur(16px);
+  backdrop-filter: blur(16px);
+}
+
+:global(html[data-theme="dark"]) .publicHeader {
+  --header-bg: rgba(21, 21, 25, 0.96);
+  --header-border: rgba(255, 255, 255, 0.12);
+  --header-text: #f4f4f5;
+  --header-muted: #c0b8ca;
+  --header-hover: #302b4a;
+  box-shadow: 0 5px 24px rgba(0, 0, 0, 0.2);
+}
+
+.headerInner {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 22px;
+  width: min(1536px, 100%);
+  min-height: 100px;
+  margin: 0 auto;
+  padding: 8px clamp(18px, 3.4vw, 54px);
+  box-sizing: border-box;
+}
+
+.brand {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+  border-radius: 12px;
+}
+
+.brand:focus-visible,
+.navLink:focus-visible,
+.adminLink:focus-visible,
+.reserveButton:focus-visible,
+.menuButton:focus-visible,
+.mobileNavLink:focus-visible,
+.mobileAdminLink:focus-visible {
+  outline: 3px solid #a98be8;
+  outline-offset: 4px;
+}
+
+.logo {
+  display: block;
+  width: 98px;
+  height: 80px;
+  object-fit: contain;
+}
+
+.desktopNav {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(10px, 1.1vw, 18px);
+  min-width: 0;
+}
+
+.navLink {
+  padding: 10px 0;
+  color: var(--header-muted);
+  font-size: 13px;
+  font-weight: 650;
+  line-height: 1.2;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: color 160ms ease;
+}
+
+.navLink:hover {
+  color: #6d3fd1;
+}
+
+:global(html[data-theme="dark"]) .navLink:hover {
+  color: #c0afff;
+}
+
+.headerActions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 12px;
+  min-width: 0;
+}
+
+.themeToggle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+}
+
+/* Ajusta el botón compartido para que quede centrado en el encabezado público. */
+.themeToggle :global(.theme-button) {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  min-width: 40px;
+  min-height: 40px;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.adminLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 9px 0;
+  color: var(--header-muted);
+  font-size: 12px;
+  font-weight: 550;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: color 160ms ease;
+}
+
+.adminLink:hover,
+.mobileAdminLink:hover {
+  color: #6d3fd1;
+}
+
+.lockIcon {
+  width: 16px;
+  height: 16px;
+  flex: 0 0 auto;
+}
+
+.reserveButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 44px;
+  padding: 0 15px;
+  border: 1px solid transparent;
+  border-radius: 999px;
+  background: linear-gradient(135deg, #743bd1, #57229e);
+  box-shadow: 0 7px 17px rgba(81, 37, 156, 0.17);
+  color: #fff;
+  font-size: 13px;
+  font-weight: 750;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: transform 160ms ease, box-shadow 160ms ease;
+}
+
+.reserveButton:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 10px 20px rgba(81, 37, 156, 0.24);
+}
+
+.reserveArrow {
+  font-size: 19px;
+  font-weight: 400;
+  line-height: 1;
+}
+
+.menuButton {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  width: 42px;
+  height: 42px;
+  padding: 9px;
+  border: 1px solid var(--header-border);
+  border-radius: 12px;
+  background: transparent;
+  color: var(--header-text);
+  cursor: pointer;
+}
+
+.menuButton svg {
+  display: block;
+  width: 23px;
+  height: 23px;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.mobileNav {
+  display: none;
+}
+
+.mobileNavLink,
+.mobileAdminLink {
+  color: var(--header-text);
+  text-decoration: none;
+}
+
+.mobileChevron {
+  color: #8b70bb;
+  font-size: 24px;
+  line-height: 1;
+}
+
+@media (max-width: 1180px) {
+  .headerInner {
+    min-height: 82px;
+    gap: 14px;
+    padding-right: 22px;
+    padding-left: 22px;
+  }
+
+  .desktopNav,
+  .adminLink {
+    display: none;
+  }
+
+  .headerInner {
+    grid-template-columns: auto minmax(0, 1fr);
+  }
+
+  .headerActions {
+    gap: 10px;
+  }
+
+  .menuButton {
+    display: inline-flex;
+  }
+
+  .mobileNav {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    left: 0;
+    display: none;
+    flex-direction: column;
+    gap: 0;
+    max-height: calc(100dvh - 82px);
+    overflow-y: auto;
+    padding: 9px 22px 20px;
+    border-bottom: 1px solid var(--header-border);
+    background: var(--header-bg);
+    box-shadow: 0 16px 24px rgba(36, 24, 18, 0.11);
+    box-sizing: border-box;
+    -webkit-backdrop-filter: blur(16px);
+    backdrop-filter: blur(16px);
+  }
+
+  .mobileNavOpen {
+    display: flex;
+  }
+
+  .mobileNavLink {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    min-height: 48px;
+    padding: 9px 2px;
+    border-bottom: 1px solid var(--header-border);
+    font-size: 15px;
+    font-weight: 600;
+  }
+
+  .mobileNavLink:hover {
+    color: #6d3fd1;
+  }
+
+  .mobileAdminLink {
+    align-self: flex-start;
+    margin-top: 15px;
+    padding: 8px 2px;
+    color: var(--header-muted);
+    font-size: 13px;
+  }
+}
+
+@media (max-width: 640px) {
+  .headerInner {
+    min-height: 74px;
+    gap: 8px;
+    padding: 5px 13px;
+  }
+
+  .logo {
+    width: 74px;
+    height: 62px;
+  }
+
+  .headerActions {
+    gap: 7px;
+  }
+
+  .themeToggle :global(.theme-button) {
+    width: 36px;
+    height: 36px;
+    min-width: 36px;
+    min-height: 36px;
+  }
+
+  .reserveButton {
+    min-height: 39px;
+    gap: 5px;
+    padding: 0 11px;
+    font-size: 12px;
+  }
+
+  .reserveArrow {
+    display: none;
+  }
+
+  .menuButton {
+    width: 39px;
+    height: 39px;
+    padding: 8px;
+    border-radius: 11px;
+  }
+
+  .mobileNav {
+    max-height: calc(100dvh - 74px);
+    padding-right: 18px;
+    padding-left: 18px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .navLink,
+  .adminLink,
+  .reserveButton {
+    transition: none;
+  }
+}

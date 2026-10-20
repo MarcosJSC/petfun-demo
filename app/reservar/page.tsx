@@ -570,7 +570,7 @@ async function cancelarReserva(numeroReserva: string) {
   
 <header className="publica-header">
   <a
-    href="/reservar"
+    href="/"
     className="publica-marca"
     aria-label="PetFunCR"
   >
