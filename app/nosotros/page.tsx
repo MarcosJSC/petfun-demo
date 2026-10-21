@@ -44,9 +44,10 @@ export default function NosotrosPage() {
               descansar y recibir todo el cariño que merecen.
             </p>
             <div className={styles.heroActions}>
+              {/*
               <Link href="/reservar" className={styles.primaryButton}>
                 Reservar ahora <span aria-hidden="true">→</span>
-              </Link>
+              </Link>*/}
               <span className={styles.heroNote}>
                 <span aria-hidden="true">♡</span> Amor, cuidado y diversión
               </span>
@@ -190,9 +191,10 @@ export default function NosotrosPage() {
             En PetFunCR recibimos a cada perrito como a un pequeño miembro de la
             familia. ¡Esperamos compartir muchos momentos felices más!
           </p>
+          {/* 
           <Link href="/reservar" className={styles.primaryButton}>
             Reservar ahora <span aria-hidden="true">→</span>
-          </Link>
+          </Link>*/}
         </section>
       </main>
 

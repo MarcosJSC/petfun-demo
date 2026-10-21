@@ -81,9 +81,10 @@ export default function InstalacionesPage() {
               como en casa.
             </p>
             <div className={styles.heroActions}>
+            {/* 
               <Link href="/reservar" className={styles.primaryButton}>
                 Reservar ahora <span aria-hidden="true">→</span>
-              </Link>
+              </Link>*/}
               <a href="#convivencia" className={styles.secondaryLink}>
                 Conocé cómo conviven <span aria-hidden="true">↓</span>
               </a>
@@ -287,9 +288,11 @@ export default function InstalacionesPage() {
             Si querés que tu peludito conozca PetFunCR, revisá nuestro sistema de
             reservas y consultá la disponibilidad para su próxima estadía.
           </p>
+          {/*
           <Link href="/reservar" className={styles.primaryButton}>
             Reservar ahora <span aria-hidden="true">→</span>
           </Link>
+          */}
         </section>
       </main>
 

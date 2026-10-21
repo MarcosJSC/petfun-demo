@@ -248,9 +248,15 @@ export default function PreguntasFrecuentesPage() {
               y cómo reservar.
             </p>
             <div className={styles.heroActions}>
+              {/**              
               <Link href="/reservar" className={styles.primaryButton}>
                 Reservar ahora <span aria-hidden="true">→</span>
               </Link>
+               
+               */}
+               <a href="https://wa.me/50685689575" target="_blank" rel="noreferrer" className={styles.whatsappButton}>
+              Consultar por WhatsApp <span aria-hidden="true">↗</span>
+            </a>
               <a href="#faq-list" className={styles.secondaryLink}>
                 Explorar preguntas <span aria-hidden="true">↓</span>
               </a>

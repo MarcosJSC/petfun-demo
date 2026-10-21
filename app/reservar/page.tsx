@@ -2,7 +2,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import ThemeToggle from "@/components/ThemeToggle";
+import PublicHeader from "@/components/PublicHeader";
 import { supabase } from "@/lib/supabase";
 
 type ImagenCarruselPublica = {
@@ -535,6 +535,7 @@ async function cancelarReserva(numeroReserva: string) {
 
   return (
     <>
+      <PublicHeader />
       <style jsx global>{`
         /* Cada vista tiene su propio contenedor para personalizarla por separado. */
         .publica-reservas-desktop {
@@ -545,12 +546,61 @@ async function cancelarReserva(numeroReserva: string) {
           display: none;
         }
 
-        /* Evita que el paso enfocado quede pegado al borde superior. */
+        /* Deja espacio para el encabezado público fijo sin cambiar el diseño del formulario. */
+        .publica-reservas-desktop > .publica-reservas,
+        .publica-reservas-mobile > .publica-reservas {
+          padding-top: 100px;
+        }
+
+        /* Mantiene visibles los destinos de desplazamiento bajo el encabezado fijo. */
         .publica-perritos-encontrados,
         .publica-campos-reserva,
+        .publica-resumen-reserva,
         .publica-reservas-desktop .publica-mis-reservas,
-        .publica-reservas-mobile .publica-mis-reservas {
-          scroll-margin-top: 18px;
+        .publica-reservas-mobile .publica-mis-reservas,
+        #formulario-reserva,
+        #formulario-reserva-mobile,
+        #mis-reservas,
+        #mis-reservas-mobile {
+          scroll-margin-top: 116px;
+        }
+
+        @media (max-width: 1180px) {
+          .publica-reservas-desktop > .publica-reservas,
+          .publica-reservas-mobile > .publica-reservas {
+            padding-top: 82px;
+          }
+
+          .publica-perritos-encontrados,
+          .publica-campos-reserva,
+          .publica-resumen-reserva,
+          .publica-reservas-desktop .publica-mis-reservas,
+          .publica-reservas-mobile .publica-mis-reservas,
+          #formulario-reserva,
+          #formulario-reserva-mobile,
+          #mis-reservas,
+          #mis-reservas-mobile {
+            scroll-margin-top: 98px;
+          }
+        }
+
+        @media (max-width: 640px) {
+          .publica-reservas-desktop > .publica-reservas,
+          .publica-reservas-mobile > .publica-reservas {
+            padding-top: 74px;
+          }
+
+          .publica-perritos-encontrados,
+          .publica-campos-reserva,
+          .publica-resumen-reserva,
+          .publica-reservas-desktop .publica-mis-reservas,
+          .publica-reservas-mobile .publica-mis-reservas,
+          #formulario-reserva,
+          #formulario-reserva-mobile,
+          #mis-reservas,
+          #mis-reservas-mobile {
+            scroll-margin-top: 90px;
+          }
         }
 
         @media (max-width: 767px) {
@@ -568,28 +618,6 @@ async function cancelarReserva(numeroReserva: string) {
       <div className="publica-reservas-desktop">
 <main className="publica-reservas">
   
-<header className="publica-header">
-  <a
-    href="/"
-    className="publica-marca"
-    aria-label="PetFunCR"
-  >
-    <img src={LOGO} alt="PetFunCR" />
-    <h3>Hotel y Guardería Canina PetFunCR</h3>
-  </a>
-
-  <div className="publica-header-acciones">
-    <ThemeToggle />
-
-    <a
-      href="#mis-reservas"
-     className="publica-header-boton-reservas"
-    >
-      <span aria-hidden="true">📋</span>
-      Mis reservas
-    </a>
-  </div>
-</header>
 
 
       <section className="publica-hero">
@@ -1442,28 +1470,6 @@ async function cancelarReserva(numeroReserva: string) {
       <div className="publica-reservas-mobile">
 <main className="publica-reservas">
   
-<header className="publica-header">
-  <a
-    href="/reservar"
-    className="publica-marca"
-    aria-label="PetFunCR"
-  >
-    <img src={LOGO} alt="PetFunCR" />
-    <h4>PetFunCR Hotel 🐶</h4>
-  </a>
-
-  <div className="publica-header-acciones">
-    <ThemeToggle />
-
-    <a
-      href="#mis-reservas-mobile"
-     className="publica-header-boton-reservas"
-    >
-      <span aria-hidden="true">📋</span>
-      Mis reservas
-    </a>
-  </div>
-</header>
 
 
       <section className="publica-hero">

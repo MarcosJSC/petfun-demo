@@ -28,9 +28,9 @@
 
 .hero {
   display: grid;
-  grid-template-columns: minmax(0, 1.05fr) minmax(330px, 0.85fr);
+  grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr);
   align-items: center;
-  gap: clamp(36px, 6vw, 88px);
+  gap: clamp(28px, 4vw, 60px);
   width: min(1280px, calc(100% - 64px));
   min-height: 540px;
   margin: 0 auto;
@@ -104,43 +104,63 @@
 .heroNote { display: inline-flex; align-items: center; gap: 7px; color: var(--services-muted); font-size: 12px; font-weight: 650; }
 .heroNote span { color: var(--services-purple); font-size: 20px; }
 
-.heroVisual { position: relative; min-height: 465px; display: flex; align-items: center; justify-content: center; }
+.heroVisual {
+  position: relative;
+  min-height: 400px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
 .photoHalo {
   position: absolute;
-  top: 5%;
+  top: 8%;
   right: 2%;
-  width: 86%;
-  height: 88%;
-  border-radius: 48% 52% 42% 58% / 44% 43% 57% 56%;
-  background: color-mix(in srgb, var(--services-purple) 16%, transparent);
-  transform: rotate(7deg);
+  width: 50%;
+  height: 78%;
+  border-radius: 48% 52% 45% 55% / 38% 38% 62% 62%;
+  background: var(--services-purple-soft);
+  opacity: 0.9;
+  z-index: 0;
 }
+
 .heroPhotoFrame {
   position: relative;
-  width: min(100%, 430px);
-  height: 460px;
+  width: 100%;
+  max-width: 580px;
+  height: 380px;
   overflow: hidden;
-  border: 7px solid var(--services-card);
-  border-radius: 46% 46% 28px 28px;
+  border: 1px solid var(--services-line);
+  border-radius: 24px;
   background: var(--services-card);
-  box-shadow: 0 25px 60px rgba(34, 22, 18, 0.18);
+  box-shadow: 0 18px 45px rgba(34, 22, 18, 0.14);
 }
-.heroPhoto { object-fit: cover; object-position: center 48%; }
+.heroPhoto { object-fit: cover; object-position: center 38%; }
+
+
+/* Tarjeta flotante sobre la foto: escritorio */
 .photoBadge {
   position: absolute;
-  right: -8px;
-  bottom: 28px;
+  right: -12px;
+  bottom: 22px;
+  z-index: 3;
+
   display: flex;
   align-items: center;
   gap: 11px;
-  max-width: calc(100% - 16px);
-  padding: 13px 17px;
+
+  width: max-content;
+  max-width: calc(100% - 12px);
+  padding: 12px 15px;
+
   border: 1px solid var(--services-line);
-  border-radius: 17px;
+  border-radius: 16px;
   background: var(--services-card);
-  box-shadow: 0 12px 32px rgba(36, 24, 18, 0.13);
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.25);
+
   color: var(--services-ink);
 }
+
 .photoBadgeIcon { display: grid; width: 42px; height: 42px; flex: 0 0 42px; place-items: center; border-radius: 14px; background: var(--services-purple-soft); font-size: 23px; }
 .photoBadge strong, .photoBadge small { display: block; }
 .photoBadge strong { font-size: 13px; font-weight: 850; }
@@ -219,9 +239,18 @@
 
 @media (max-width: 1180px) {
   .page { padding-top: 82px; }
-  .hero { gap: 30px; grid-template-columns: minmax(0, 1fr) minmax(280px, .82fr); width: min(calc(100% - 48px), 1100px); }
+  .hero { gap: 30px; grid-template-columns: minmax(0, 1fr) minmax(400px, 1fr); width: min(calc(100% - 48px), 1100px); }
   .heroVisual { min-height: 420px; }
-  .heroPhotoFrame { height: 410px; }
+  .heroPhotoFrame {
+  position: relative;
+  width: min(100%, 500px);
+  height: 500px;
+  overflow: hidden;
+  border: 1px solid var(--services-line);
+  border-radius: 24px;
+  background: var(--services-card);
+  box-shadow: 0 18px 45px rgba(34, 22, 18, 0.14);
+}
   .photoBadge { right: -2px; }
   .services { width: calc(100% - 48px); gap: 20px; }
 }
@@ -237,10 +266,71 @@
   .heroActions { align-items: stretch; flex-direction: column; gap: 13px; }
   .primaryButton { min-height: 54px; }
   .heroNote { font-size: 11px; }
-  .heroVisual { min-height: 0; padding: 0 6px 18px; }
-  .photoHalo { top: 4%; right: 0; height: 90%; width: 92%; }
-  .heroPhotoFrame { width: 100%; height: clamp(300px, 92vw, 430px); border-width: 5px; border-radius: 40% 40% 22px 22px; }
-  .photoBadge { right: -3px; bottom: 0; padding: 11px 13px; }
+ .heroVisual {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  min-height: 0;
+  margin: 4px 0 0;
+  padding: 0 8px 18px;
+  box-sizing: border-box;
+}
+
+
+
+.photoHalo {
+  position: absolute;
+  top: 8%;
+  right: 2%;
+  width: 50%;
+  height: 78%;
+  border-radius: 48% 52% 45% 55% / 38% 38% 62% 62%;
+  background: var(--services-purple-soft);
+  opacity: 0.9;
+  z-index: 0;
+}
+
+
+.heroPhotoFrame {
+  position: relative;
+  width: 100%;
+  max-width: 330px;
+  height: 305px;
+  aspect-ratio: auto;
+  overflow: hidden;
+  border: 1px solid var(--services-line);
+  border-radius: 20px;
+  background: var(--services-card);
+  box-shadow: 0 18px 45px rgba(39, 25, 19, 0.13);
+}
+
+.heroPhoto {
+  object-fit: cover;
+  object-position: center 38%;
+}
+
+.photoBadge {
+  position: absolute;
+  right: 10px;
+  bottom: 22px;
+  z-index: 2;
+
+  display: flex;
+  align-items: center;
+  gap: 11px;
+
+  max-width: calc(100% - 32px);
+  padding: 10px 13px;
+
+  border: 1px solid var(--services-line);
+  border-radius: 14px;
+  background: var(--services-card);
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.25);
+
+  color: var(--services-ink);
+}
   .photoBadgeIcon { width: 38px; height: 38px; flex-basis: 38px; }
   .photoBadge strong { font-size: 12px; }
   .photoBadge small { font-size: 10px; }

@@ -59,9 +59,10 @@ export default function ServiciosPage() {
               acompañado, cuidado y querido.
             </p>
             <div className={styles.heroActions}>
+            {/* 
               <Link href="/reservar" className={styles.primaryButton}>
                 Reservar ahora <span aria-hidden="true">→</span>
-              </Link>
+              </Link>*/}
               <span className={styles.heroNote}>
                 <span aria-hidden="true">♡</span> Un segundo hogar para tu mejor amigo
               </span>
@@ -217,9 +218,10 @@ export default function ServiciosPage() {
           <p>
             Revisá nuestro sistema de reservas y contanos qué servicio necesitás para tu mejor amigo.
           </p>
+          {/* 
           <Link href="/reservar" className={styles.primaryButton}>
             Reservar ahora <span aria-hidden="true">→</span>
-          </Link>
+          </Link>*/}
         </section>
       </main>
 

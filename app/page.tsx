@@ -73,12 +73,12 @@ export default function Home() {
                   <rect x="3" y="5" width="18" height="16" rx="2" />
                   <path d="M16 3v4M8 3v4M3 10h18M8 14h.01M12 14h.01M16 14h.01M8 17h.01M12 17h.01" />
                 </svg>
-                <span>Reservar ahora</span>
+                <span>Área de clientes</span>
                 <span aria-hidden="true" className={styles.buttonArrow}>→</span>
               </Link>
             </div>
             <p className={styles.reassurance}>
-              <span aria-hidden="true">♥</span> Un lugar para jugar, descansar y sentirse querido.
+              <span aria-hidden="true">♥</span> Solicitá y consultá tus reservas de forma sencilla.
             </p>
           </div>
         </div>

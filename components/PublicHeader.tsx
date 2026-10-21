@@ -10,8 +10,9 @@ const navigationLinks = [
   { href: "/", label: "Inicio" },
   { href: "/nosotros", label: "Quiénes somos" },
   { href: "/servicios", label: "Servicios" },
-  { href: "/instalaciones", label: "Instalaciones" },
-  { href: "/preguntas-frecuentes", label: "Preguntas frecuentes" },
+  { href: "/reservar", label: "Reservas" },
+  { href: "/instalaciones", label: "Instalaciones" },  
+  { href: "/preguntas-frecuentes", label: "Preguntas frecuentes" },  
   { href: "/contacto", label: "Contacto" },
 ];
 
@@ -54,6 +55,7 @@ export default function PublicHeader() {
           </div>
 
           <Link href="/login" className={styles.adminLink}>
+          {/*
             <svg
               aria-hidden="true"
               viewBox="0 0 24 24"
@@ -68,15 +70,17 @@ export default function PublicHeader() {
               <path d="M8 10V7a4 4 0 0 1 8 0v3" />
               <path d="M12 14v3" />
             </svg>
-            <span>Acceso administrativo</span>
+            */}
+            <span>🔒</span>
           </Link>
-
+{/*
           <Link href="/reservar" className={styles.reserveButton}>
             <span>Reservar ahora</span>
             <span aria-hidden="true" className={styles.reserveArrow}>
               →
             </span>
           </Link>
+*/}
 
           <button
             type="button"
@@ -125,7 +129,7 @@ export default function PublicHeader() {
           onClick={closeMenu}
           tabIndex={menuOpen ? 0 : -1}
         >
-          Acceso administrativo
+          🔒
         </Link>
       </nav>
     </header>
