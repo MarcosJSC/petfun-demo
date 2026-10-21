@@ -356,6 +356,8 @@ async function cerrarSesion() {
     gap: "8px",
   }}
 >
+
+ <Link href="/" aria-label="Ir al PetFunCR">
   <img
     src={LOGO_PETFUNCR_URL}
     alt="PetFunCR"
@@ -366,6 +368,8 @@ async function cerrarSesion() {
       flexShrink: 0,
     }}
   />
+</Link>
+       
 
   <span>PetFunCR</span>
 </div>
@@ -403,6 +407,7 @@ async function cerrarSesion() {
     gap: "10px",
   }}
 >
+   <Link href="/" aria-label="Ir al PetFunCR">
   <img
     src={LOGO_PETFUNCR_URL}
     alt="PetFunCR"
@@ -413,7 +418,7 @@ async function cerrarSesion() {
       flexShrink: 0,
     }}
   />
-
+</Link>
   <span>PetFunCR</span>
 </h2>
 
