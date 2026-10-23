@@ -130,7 +130,9 @@ export default function Home() {
                 <span>Área de clientes</span>
                 <span aria-hidden="true" className={styles.buttonArrow}>→</span>
               </Link>
-
+   <p className={styles.reassurance}>
+              <span aria-hidden="true">♥</span> Solicitá y consultá tus reservas de forma sencilla.
+            </p>
               <a
                 href={whatsappUrl}
                 target="_blank"
@@ -143,9 +145,7 @@ export default function Home() {
               </a>
             </div>
 
-            <p className={styles.reassurance}>
-              <span aria-hidden="true">♥</span> Solicitá y consultá tus reservas de forma sencilla.
-            </p>
+         
           </div>
         </div>
       </section>
